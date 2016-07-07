@@ -1,0 +1,28 @@
+group 'com.frankandrobot'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.0.3'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
+    compile "edu.mit:jwi:2.2.3"
+    compile "edu.emory.mathcs.nlp:nlp4j:1.1.2"
+    compile "edu.emory.mathcs.nlp:nlp4j-english:1.1.2"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
