@@ -1,15 +1,10 @@
 package com.frankandrobot.rapier
 
-import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.Rule
-import com.frankandrobot.rapier.pattern.WordConstraint
 import com.frankandrobot.rapier.document.Document
+import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.nlp.tokenizer
+import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.template.Slot
-
-import edu.emory.mathcs.nlp.tokenization.EnglishTokenizer
-import edu.emory.mathcs.nlp.component.pos.POSTagger
-import edu.emory.mathcs.nlp.component.template.node.NLPNode
 
 
 fun initialRuleBase(slot : Slot, document: Document) : List<Rule> {
@@ -28,7 +23,7 @@ fun initialRuleBase(slot : Slot, document: Document) : List<Rule> {
         val preFiller = doc.substring(startIndex, index)
         val postFiller = doc.substring(index + filler.length)
 
-        //rules.add(initialRule(preFiller, filler, postFiller))
+        rules.add(_initialRule(preFiller, filler, postFiller))
 
         startIndex = index + 1
         index = _index()
@@ -37,31 +32,20 @@ fun initialRuleBase(slot : Slot, document: Document) : List<Rule> {
     return rules
 }
 
-fun initialRule(preFiller : String, filler : String, postFiller : String) : Rule {
 
-    val tokenizer = EnglishTokenizer()
+fun _initialRule(preFiller : String, filler : String, postFiller : String) : Rule {
 
-    val preFillerTokens = tokenizer.tokenize(preFiller).map{ it.toString() }
-    val fillerTokens = tokenizer.tokenize(filler).map{ it.toString() }
-    val postFillerTokens = tokenizer.tokenize(postFiller).map{ it.toString() }
+    val preFillerTokens = tokenizer(preFiller)
+    val fillerTokens = tokenizer(filler)
+    val postFillerTokens = tokenizer(postFiller)
 
-
-    val preFillerPatterns = preFillerTokens.map{ PatternItem(listOf(WordConstraint(it))) }
-    val fillerPatterns = fillerTokens.map{ PatternItem(listOf(WordConstraint(it))) }
-    val postFillerPatterns = postFillerTokens.map{ PatternItem(listOf(WordConstraint(it))) }
+    val preFillerPatterns = preFillerTokens.map{_pattern(it)}
+    val fillerPatterns = fillerTokens.map{_pattern(it)}
+    val postFillerPatterns = postFillerTokens.map{_pattern(it)}
 
     return Rule(preFiller = Pattern(preFillerPatterns),
             filler = Pattern(fillerPatterns),
             posFiller = Pattern(postFillerPatterns))
 }
 
-fun main(args: Array<String>) {
-
-    val tagger = POSTagger<NLPNode>()
-
-    val `in` = "Hello world."
-
-    val result = tagger.
-    for (token in tokenizer.tokenize(`in`))
-        System.out.println(token)
-}
+fun _pattern(token : Token) = PatternItem(listOf(WordConstraint(token.word)), listOf(SyntacticConstraint(token.posTag)))

@@ -25,4 +25,5 @@ dependencies {
     compile "edu.emory.mathcs.nlp:nlp4j:1.1.2"
     compile "edu.emory.mathcs.nlp:nlp4j-english:1.1.2"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.slf4j:slf4j-log4j12:1.7.21"
 }
