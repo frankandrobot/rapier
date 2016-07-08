@@ -1,0 +1,21 @@
+# Java build artifacts class files
+*.class
+
+# other generated files
+bin/
+gen/
+build/
+
+# local configuration file (for Android sdk path, etc)
+local.properties
+
+# OSX files
+.DS_Store
+
+*.iml
+/.idea
+/.gradle
+/out
+
+gradlew
+gradlew.bat
