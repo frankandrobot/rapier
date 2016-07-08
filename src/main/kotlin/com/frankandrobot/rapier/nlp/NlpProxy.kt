@@ -10,15 +10,17 @@ val config = DecodeConfig(IOUtils.createFileInputStream(configUri))
 val decoder = NLPDecoder(config)
 
 
-data class Token(val word : String, val posTag : String)
+data class Token(val word: String, val posTag: String)
 
 
-fun tokenizer(string : String) : List<Token> {
+fun tokenizer(string: String): List<Token> {
 
-    return decoder.decode(string)
-            .foldIndexed(mutableListOf<Token>()){ i, tokens, node ->
+  return decoder.decode(string)
+    .foldIndexed(mutableListOf<Token>()) { i, tokens, node ->
 
-                if (i != 0) { tokens.add(Token(node.wordForm, node.partOfSpeechTag)) }
-                tokens
-            }
+      if (i != 0) {
+        tokens.add(Token(node.wordForm, node.partOfSpeechTag))
+      }
+      tokens
+    }
 }

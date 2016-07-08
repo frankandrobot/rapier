@@ -1,14 +1,18 @@
 <configuration>
-    <tsv>
-        <column index="1" field="form"/>
-    </tsv>
+  <tsv>
+    <column index="1" field="form"/>
+  </tsv>
 
-    <lexica>
-        <ambiguity_classes field="word_form_simplified_lowercase">edu/emory/mathcs/nlp/lexica/en-ambiguity-classes-simplified-lowercase.xz</ambiguity_classes>
-        <word_clusters field="word_form_simplified_lowercase">edu/emory/mathcs/nlp/lexica/en-brown-clusters-simplified-lowercase.xz</word_clusters>
-    </lexica>
+  <lexica>
+    <ambiguity_classes field="word_form_simplified_lowercase">
+      edu/emory/mathcs/nlp/lexica/en-ambiguity-classes-simplified-lowercase.xz
+    </ambiguity_classes>
+    <word_clusters field="word_form_simplified_lowercase">
+      edu/emory/mathcs/nlp/lexica/en-brown-clusters-simplified-lowercase.xz
+    </word_clusters>
+  </lexica>
 
-    <models>
-        <pos>edu/emory/mathcs/nlp/models/en-pos.xz</pos>
-    </models>
+  <models>
+    <pos>edu/emory/mathcs/nlp/models/en-pos.xz</pos>
+  </models>
 </configuration>
