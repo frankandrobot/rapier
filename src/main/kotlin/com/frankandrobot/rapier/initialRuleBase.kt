@@ -7,6 +7,9 @@ import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.template.Slot
 
 
+/**
+ * Create a rule list for the Document for the given slot.
+ */
 fun initialRuleBase(slot: Slot, document: Document): List<Rule> {
 
   val doc = document.value
@@ -32,7 +35,9 @@ fun initialRuleBase(slot: Slot, document: Document): List<Rule> {
   return rules
 }
 
-
+/**
+ * Initial rule list has no semantic constraints and no pattern lists.
+ */
 internal fun _initialRule(preFiller: String, filler: String, postFiller: String): Rule {
 
   val preFillerTokens = tokenize(preFiller)
@@ -48,4 +53,6 @@ internal fun _initialRule(preFiller: String, filler: String, postFiller: String)
     postFiller = Pattern(postFillerPatterns))
 }
 
-internal fun _pattern(token: Token) = PatternItem(listOf(WordConstraint(token.word)), listOf(SyntacticConstraint(token.posTag)))
+internal fun _pattern(token: Token) = PatternItem(
+  listOf(WordConstraint(token.word)), listOf(SyntacticConstraint(token.posTag))
+)

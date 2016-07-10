@@ -7,17 +7,17 @@ package com.frankandrobot.rapier.pattern
  * - part-of-speech tags
  * - semenatic classes - we use WordNet synsets
  */
-abstract class PatternElement(open val word: List<WordConstraint> = listOf(),
-                              open val syntactic: List<SyntacticConstraint> = listOf(),
-                              open val semantic: List<SemanticConstraint> = listOf())
+abstract class PatternElement(open val wordConstraints: List<WordConstraint> = listOf(),
+                              open val syntacticContraints: List<SyntacticConstraint> = listOf(),
+                              open val semanticConstraints: List<SemanticConstraint> = listOf())
 
-class PatternItem(override val word: List<WordConstraint> = listOf(),
-                  override val syntactic: List<SyntacticConstraint> = listOf(),
-                  override val semantic: List<SemanticConstraint> = listOf()) :
-  PatternElement(word, syntactic, semantic)
+class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
+                  override val syntacticContraints: List<SyntacticConstraint> = listOf(),
+                  override val semanticConstraints: List<SemanticConstraint> = listOf()) :
+  PatternElement(wordConstraints, syntacticContraints, semanticConstraints)
 
-class PatternList(override val word: List<WordConstraint> = listOf(),
-                  override val syntactic: List<SyntacticConstraint> = listOf(),
-                  override val semantic: List<SemanticConstraint> = listOf(),
+class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
+                  override val syntacticContraints: List<SyntacticConstraint> = listOf(),
+                  override val semanticConstraints: List<SemanticConstraint> = listOf(),
                   val length: Int = 1) :
-  PatternElement(word, syntactic, semantic)
+  PatternElement(wordConstraints, syntacticContraints, semanticConstraints)

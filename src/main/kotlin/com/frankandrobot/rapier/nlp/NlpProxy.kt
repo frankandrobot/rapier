@@ -16,11 +16,6 @@ data class Token(val word: String, val posTag: String)
 fun tokenize(string: String): List<Token> {
 
   return decoder.decode(string)
-    .foldIndexed(mutableListOf<Token>()) { i, tokens, node ->
-
-      if (i != 0) {
-        tokens.add(Token(node.wordForm, node.partOfSpeechTag))
-      }
-      tokens
-    }
+    .drop(1)
+    .map({ node -> Token(node.wordForm, node.partOfSpeechTag) })
 }
