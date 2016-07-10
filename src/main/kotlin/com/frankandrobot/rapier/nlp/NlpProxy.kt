@@ -13,7 +13,7 @@ val decoder = NLPDecoder(config)
 data class Token(val word: String, val posTag: String)
 
 
-fun tokenizer(string: String): List<Token> {
+fun tokenize(string: String): List<Token> {
 
   return decoder.decode(string)
     .foldIndexed(mutableListOf<Token>()) { i, tokens, node ->
