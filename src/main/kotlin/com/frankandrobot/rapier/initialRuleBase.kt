@@ -45,7 +45,7 @@ internal fun _initialRule(preFiller: String, filler: String, postFiller: String)
 
   return Rule(preFiller = Pattern(preFillerPatterns),
     filler = Pattern(fillerPatterns),
-    posFiller = Pattern(postFillerPatterns))
+    postFiller = Pattern(postFillerPatterns))
 }
 
 internal fun _pattern(token: Token) = PatternItem(listOf(WordConstraint(token.word)), listOf(SyntacticConstraint(token.posTag)))
