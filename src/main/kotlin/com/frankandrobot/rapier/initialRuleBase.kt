@@ -23,7 +23,7 @@ fun initialRuleBase(slot: Slot, document: Document): List<Rule> {
 
   while (index >= 0) {
 
-    val preFiller = doc.substring(startIndex, index)
+    val preFiller = doc.substring(0, index)
     val postFiller = doc.substring(index + filler.length)
 
     rules.add(_initialRule(preFiller, filler, postFiller))

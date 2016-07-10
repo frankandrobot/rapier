@@ -53,7 +53,7 @@ class InitialRuleBaseTest : Spek({
       )
       assertEquals(
         SimplifiedRule(rule2),
-        SimplifiedRule(preFiller = listOf("one ten foo"), filler = listOf("ten"), postFiller = listOf())
+        SimplifiedRule(preFiller = listOf("one", "ten", "foo"), filler = listOf("ten"), postFiller = listOf())
       )
     }
   }
