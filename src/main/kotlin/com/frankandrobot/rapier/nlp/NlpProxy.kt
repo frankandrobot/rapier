@@ -5,9 +5,9 @@ import edu.emory.mathcs.nlp.decode.DecodeConfig
 import edu.emory.mathcs.nlp.decode.NLPDecoder
 
 
-val configUri = "src/main/resources/nlp4j/config.xml"
-val config = DecodeConfig(IOUtils.createFileInputStream(configUri))
-val decoder = NLPDecoder(config)
+private val configUri = "src/main/resources/nlp4j/config.xml"
+private val config = DecodeConfig(IOUtils.createFileInputStream(configUri))
+private val decoder = NLPDecoder(config)
 
 
 data class Token(val word: String, val posTag: String)
