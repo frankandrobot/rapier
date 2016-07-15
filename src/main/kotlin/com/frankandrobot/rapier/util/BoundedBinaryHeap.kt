@@ -3,11 +3,20 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
+private inline fun <reified T> injectArray(initialValues: ArrayList<T>, size : Int) : Array<T?> {
+
+  val array = arrayOfNulls<T>(size)
+
+  initialValues.withIndex().forEach { array[it.index] = it.value }
+
+  return array
+}
+
 class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arrayFactory: (Int) -> Array<T?>) {
 
   internal val array = arrayFactory(size)
 
-  private var lastIndex = array.lastIndex
+  private var lastItemIndex = 0
 
 
   companion object {
@@ -16,16 +25,17 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
 
       BoundedBinaryHeap(size, { size -> arrayOfNulls<T>(size) })
 
-    internal inline fun <reified T : Comparable<T>> invoke(initialValues: ArrayList<T>, size: Int = initialValues.size) =
+    internal inline fun <reified T : Comparable<T>> invoke(
+      initialValues: ArrayList<T>,
+      size: Int = initialValues.size
+    ) : BoundedBinaryHeap<T> {
 
-      BoundedBinaryHeap(size, { size ->
+      val heap = BoundedBinaryHeap(size, { size -> injectArray(initialValues, size) })
 
-        val array = arrayOfNulls<T>(size)
+      heap.lastItemIndex = initialValues.lastIndex
 
-        initialValues.withIndex().forEach { array[it.index] = it.value }
-
-        array
-      })
+      return heap
+    }
   }
 
 
@@ -33,12 +43,12 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
 
   fun deleteMin(): T? {
 
-    if (lastIndex >= 0) {
+    if (lastItemIndex >= 0) {
 
       val root = array[1]
-      val lastValue = array[lastIndex]
+      val lastValue = array[lastItemIndex]
 
-      --lastIndex
+      --lastItemIndex
 
       percolateDown(1, lastValue)
 
@@ -50,7 +60,7 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
 
   fun insert(value: T): Boolean {
 
-    if (lastIndex < array.size - 1) {
+    if (lastItemIndex < array.size - 1) {
 
       percolateUp(value)
 
@@ -69,7 +79,7 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
 
 
     // both children exist
-    if (rightChildIndex <= lastIndex) {
+    if (rightChildIndex <= lastItemIndex) {
 
       val smallerIndex = if (leftChild()!!.compareTo(rightChild()!!) < 0) leftChildIndex else rightChildIndex
       val smaller = array[smallerIndex]
@@ -84,7 +94,7 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
       }
     }
     // only left child exists
-    else if (leftChildIndex <= lastIndex) {
+    else if (leftChildIndex <= lastItemIndex) {
 
       if (leftChild()!!.compareTo(value!!) < 0) {
 
@@ -104,9 +114,9 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
 
   internal fun percolateUp(value: T) {
 
-    ++lastIndex
+    ++lastItemIndex
 
-    var currentIndex = lastIndex
+    var currentIndex = lastItemIndex
     var parentIndex = Math.floor(currentIndex / 2.0).toInt()
     var parent = array[parentIndex]
 

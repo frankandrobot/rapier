@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.test
 
 import com.frankandrobot.rapier.util.BoundedBinaryHeap
 import org.jetbrains.spek.api.Spek
+import java.util.*
 import kotlin.test.assertEquals
 
 
@@ -67,6 +68,10 @@ class BoundedBinaryHeapTest : Spek({
       val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap(), size = simpleHeap().size + 1)
 
       heap.percolateUp(4)
+
+      println(Arrays.toString(expected))
+      println(Arrays.toString(heap.array))
+      println(arrayOf(1, 2, 3))
 
       assertEquals(expected, heap.array)
     }
