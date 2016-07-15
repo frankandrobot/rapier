@@ -3,41 +3,37 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
-private inline fun <reified T> injectArray(initialValues: ArrayList<T>, size : Int) : Array<T?> {
-
-  val array = arrayOfNulls<T>(size)
-
-  initialValues.withIndex().forEach { array[it.index] = it.value }
-
-  return array
-}
-
-class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arrayFactory: (Int) -> Array<T?>) {
-
-  internal val array = arrayFactory(size)
+class BoundedBinaryHeap<T : Comparable<T>> protected constructor(internal val array : ArrayList<T?>) {
 
   private var lastItemIndex = 0
 
 
   companion object {
 
-    inline fun <reified T : Comparable<T>> invoke(size: Int) =
+    fun <T : Comparable<T>> invoke(size: Int) : BoundedBinaryHeap<T> {
 
-      BoundedBinaryHeap(size, { size -> arrayOfNulls<T>(size) })
+      val array = ArrayList<T?>(size + 1)
+      (0..size).forEach{ array.add(null) }
 
-    internal inline fun <reified T : Comparable<T>> invoke(
-      initialValues: ArrayList<T>,
-      size: Int = initialValues.size
+      return BoundedBinaryHeap(array)
+    }
+
+    internal fun<T : Comparable<T>> invoke(
+      initialValues : ArrayList<T?>,
+      size : Int = initialValues.size
     ) : BoundedBinaryHeap<T> {
 
-      val heap = BoundedBinaryHeap(size, { size -> injectArray(initialValues, size) })
+      val heap = invoke<T>(size)
 
-      heap.lastItemIndex = initialValues.lastIndex
+      (0..initialValues.size - 1).forEach{ heap.array[it + 1] = initialValues[it] }
+
+      heap.lastItemIndex = initialValues.size
 
       return heap
     }
   }
 
+  internal fun heap() = array.drop(1)
 
   fun findMin() = array[1]
 
@@ -120,7 +116,7 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(size : Int, arr
     var parentIndex = Math.floor(currentIndex / 2.0).toInt()
     var parent = array[parentIndex]
 
-    while (value.compareTo(parent!!) < 0 && currentIndex >= 1) {
+    while (currentIndex > 1 && value!!.compareTo(parent!!) < 0) {
 
       array[currentIndex] = parent
 
