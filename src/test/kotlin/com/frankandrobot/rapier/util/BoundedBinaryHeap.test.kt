@@ -64,6 +64,42 @@ class BoundedBinaryHeapTest : Spek({
       assertEquals(null, result)
     }
 
+    it("should work in simplest case (last element smaller than all other elements") {
+
+      val simpleHeap = arrayListOf<Int?>(
+        2,
+        3, 4,
+        0
+      )
+      val expected = arrayListOf(
+        0,
+        3, 4
+      )
+
+      val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap)
+      heap.deleteMin()
+
+      assertEquals(expected, heap.heap())
+    }
+
+    it("should work in most complex case (last element larger than all other elements") {
+
+      val simpleHeap = arrayListOf<Int?>(
+        2,
+        3, 4,
+        10
+      )
+      val expected = arrayListOf(
+        3,
+        10, 4
+      )
+
+      val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap)
+      heap.deleteMin()
+
+      assertEquals(expected, heap.heap())
+    }
+
     it("should percolate down") {
 
       val heap = BoundedBinaryHeap.invoke(initialValues = array)
@@ -76,7 +112,7 @@ class BoundedBinaryHeapTest : Spek({
 
       heap.deleteMin()
 
-      assertEquals(afterDeletion, heap.heap().dropLast(1))
+      assertEquals(afterDeletion, heap.heap())
     }
   }
 

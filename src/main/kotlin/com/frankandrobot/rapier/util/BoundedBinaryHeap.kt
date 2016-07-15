@@ -33,7 +33,10 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(private val arr
     }
   }
 
-  fun heap() = array.drop(1)
+  /**
+   * This is actually really inefficient in scala but it's mainly for debugging purposes.
+   */
+  internal fun heap() = array.withIndex().filter { it.index <= lastItemIndex }.map{ it.value }.drop(1)
 
   fun findMin() = array[1]
 
@@ -44,6 +47,7 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(private val arr
       val root = array[1]
       val lastValue = array[lastItemIndex]
 
+      array[lastItemIndex] = null
       --lastItemIndex
 
       percolateDown(1, lastValue)
