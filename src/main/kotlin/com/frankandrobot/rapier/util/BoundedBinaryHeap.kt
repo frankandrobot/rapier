@@ -3,7 +3,7 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
-class BoundedBinaryHeap<T : Comparable<T>> protected constructor(internal val array : ArrayList<T?>) {
+class BoundedBinaryHeap<T : Comparable<T>> protected constructor(private val array : ArrayList<T?>) {
 
   private var lastItemIndex = 0
 
@@ -33,13 +33,13 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(internal val ar
     }
   }
 
-  internal fun heap() = array.drop(1)
+  fun heap() = array.drop(1)
 
   fun findMin() = array[1]
 
   fun deleteMin(): T? {
 
-    if (lastItemIndex >= 0) {
+    if (lastItemIndex > 0) {
 
       val root = array[1]
       val lastValue = array[lastItemIndex]

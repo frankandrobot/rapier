@@ -23,13 +23,45 @@ class BoundedBinaryHeapTest : Spek({
 
   describe("#deleteMin") {
 
+    var item : Int? = 1
+    var oneItemHeap : BoundedBinaryHeap<Int> = BoundedBinaryHeap.invoke(0)
+    var emptyHeap : BoundedBinaryHeap<Int> = BoundedBinaryHeap.invoke(0)
+
+    beforeEach() {
+
+      item  = 1
+      emptyHeap = BoundedBinaryHeap.invoke<Int>(0)
+      oneItemHeap = BoundedBinaryHeap.invoke(initialValues = arrayListOf(item))
+    }
+
     it("should return root") {
 
       val heap = BoundedBinaryHeap.invoke(initialValues = array)
-
       val result = heap.deleteMin()
 
       assertEquals(2, result)
+    }
+
+    it("should work on empty heap") {
+
+      val result = emptyHeap.deleteMin()
+
+      assertEquals(null, result)
+    }
+
+    it("should work on a heap with one item") {
+
+      val result = oneItemHeap.deleteMin()
+
+      assertEquals(item, result)
+    }
+
+    it("should work repeatedly") {
+
+      oneItemHeap.deleteMin()
+      val result = oneItemHeap.deleteMin()
+
+      assertEquals(null, result)
     }
 
     it("should percolate down") {
