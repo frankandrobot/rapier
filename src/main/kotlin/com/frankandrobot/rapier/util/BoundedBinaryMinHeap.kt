@@ -3,25 +3,25 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
-class BoundedBinaryHeap<T : Comparable<T>> protected constructor(private val array : ArrayList<T?>) {
+class BoundedBinaryMinHeap<T : Comparable<T>> protected constructor(private val array : ArrayList<T?>) {
 
   private var lastItemIndex = 0
 
 
   companion object {
 
-    fun <T : Comparable<T>> invoke(size: Int) : BoundedBinaryHeap<T> {
+    fun <T : Comparable<T>> invoke(size: Int) : BoundedBinaryMinHeap<T> {
 
       val array = ArrayList<T?>(size + 1)
       (0..size).forEach{ array.add(null) }
 
-      return BoundedBinaryHeap(array)
+      return BoundedBinaryMinHeap(array)
     }
 
     internal fun<T : Comparable<T>> invoke(
       initialValues : ArrayList<T?>,
       size : Int = initialValues.size
-    ) : BoundedBinaryHeap<T> {
+    ) : BoundedBinaryMinHeap<T> {
 
       val heap = invoke<T>(size)
 
@@ -37,6 +37,8 @@ class BoundedBinaryHeap<T : Comparable<T>> protected constructor(private val arr
    * This is actually really inefficient in scala but it's mainly for debugging purposes.
    */
   internal fun heap() = array.withIndex().filter { it.index <= lastItemIndex }.map{ it.value }.drop(1)
+
+  fun elementCount() = array.size - 1
 
   fun findMin() = array[1]
 

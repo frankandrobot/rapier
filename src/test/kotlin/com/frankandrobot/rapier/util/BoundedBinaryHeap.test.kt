@@ -1,11 +1,11 @@
 package com.frankandrobot.rapier.test
 
-import com.frankandrobot.rapier.util.BoundedBinaryHeap
+import com.frankandrobot.rapier.util.BoundedBinaryMinHeap
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class BoundedBinaryHeapTest : Spek({
+class BoundedBinaryMinHeapTest : Spek({
 
   // val text = """If you can't explain it simply, you don't understand it well enough."""
 
@@ -24,19 +24,19 @@ class BoundedBinaryHeapTest : Spek({
   describe("#deleteMin") {
 
     var item : Int? = 1
-    var oneItemHeap : BoundedBinaryHeap<Int> = BoundedBinaryHeap.invoke(0)
-    var emptyHeap : BoundedBinaryHeap<Int> = BoundedBinaryHeap.invoke(0)
+    var oneItemHeap : BoundedBinaryMinHeap<Int> = BoundedBinaryMinHeap.invoke(0)
+    var emptyHeap : BoundedBinaryMinHeap<Int> = BoundedBinaryMinHeap.invoke(0)
 
     beforeEach() {
 
       item  = 1
-      emptyHeap = BoundedBinaryHeap.invoke<Int>(0)
-      oneItemHeap = BoundedBinaryHeap.invoke(initialValues = arrayListOf(item))
+      emptyHeap = BoundedBinaryMinHeap.invoke<Int>(0)
+      oneItemHeap = BoundedBinaryMinHeap.invoke(initialValues = arrayListOf(item))
     }
 
     it("should return root") {
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = array)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = array)
       val result = heap.deleteMin()
 
       assertEquals(2, result)
@@ -76,7 +76,7 @@ class BoundedBinaryHeapTest : Spek({
         3, 4
       )
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = simpleHeap)
       heap.deleteMin()
 
       assertEquals(expected, heap.heap())
@@ -94,7 +94,7 @@ class BoundedBinaryHeapTest : Spek({
         10, 4
       )
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = simpleHeap)
       heap.deleteMin()
 
       assertEquals(expected, heap.heap())
@@ -102,7 +102,7 @@ class BoundedBinaryHeapTest : Spek({
 
     it("should percolate down") {
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = array)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = array)
       val afterDeletion = arrayListOf(
         3,
         4,        8,
@@ -136,7 +136,7 @@ class BoundedBinaryHeapTest : Spek({
         4
       )
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap, size = simpleHeap.size + 1)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = simpleHeap, size = simpleHeap.size + 1)
 
       heap.percolateUp(4)
 
@@ -151,7 +151,7 @@ class BoundedBinaryHeapTest : Spek({
         2
       )
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = simpleHeap, size = simpleHeap.size + 1)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = simpleHeap, size = simpleHeap.size + 1)
 
       heap.percolateUp(0)
 
@@ -160,7 +160,7 @@ class BoundedBinaryHeapTest : Spek({
 
     it("should percolate up with large number") {
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = array, size = array.size + 1)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = array, size = array.size + 1)
       val afterPercolate = arrayListOf<Int?>(
         2,
         4,            3,
@@ -176,7 +176,7 @@ class BoundedBinaryHeapTest : Spek({
 
     it("should percolate up with tiny number") {
 
-      val heap = BoundedBinaryHeap.invoke(initialValues = array, size = array.size + 1)
+      val heap = BoundedBinaryMinHeap.invoke(initialValues = array, size = array.size + 1)
       val afterPercolate = arrayListOf<Int?>(
         1,
         4,            2,
