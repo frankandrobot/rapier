@@ -49,6 +49,7 @@ Example 1:
 patternItem = {
   wordConstraint: ['foo']
 }
+
 patternList = {
   maxLength: 2 // any sequence of 2 words or symbols
 }
@@ -74,6 +75,7 @@ patternList = {
   posTagConstraint: ['nnp']  // proper noun
   maxLength: 1               // note that a patternList of length 1 != patternItem
 }
+
 patternItem = {
   wordConstraint: ['girl', 'boy']
 }
@@ -90,45 +92,102 @@ Examples of matching phrases:
 -  `boy`
 -  `girl woman`
 
-## Filled Template
+## Template
 
-Given a *sample document* and a list of *slots*, we find values (called
-*slot-fillers*) from the document for each slot. The slots and corresponding
-values form a list of key/value pairs called a **filled
-template**.
-
-Note there can be more than one value per slot.
-
+A list of **slots**, which are the names of the patterns to extract from a
+document.
 
 Example:
 
-```
-//Sample Document:
+```javascript
+//template to extract information from a job listing
+template = [
+  'title',
+  'salary',
+  'programming languages',
+  'state'
+]
 
+```
+## Filled Template
+
+A template and the actual values from a *sample document*.
+
+Example:
+
+```javascript
+sampleDocument = `
 Software Developer
 Position available for Software Developer experienced in C++ and Java.
 Salary is 40k.
+`
+filledTemplate = {
+  filledSlots: [
+    {slot: 'title', slotFiller: 'Software Developer'},
+    {slot: 'salary', slotFiller: '40k'},
+    {slot: 'languages', slotFiller: 'C++'},
+    {slot: 'languages', slotFiller: 'Java'},
+    {slot: 'state', slotFiller: undefined}
+  ],
+  document: sampleDocument
+}
 ```
+
+Notes:
+
+1.  The values found in the document are called **slot-fillers**.
+2.  The slots and the slot-fillers form a list of key/value pairs.
+3.  There can be more than one slot-filler per slot.
+4.  Slots can be empty.
+
+## Examples
+
+A template, a set of documents and the corresponding filled templates.
+
+Example:
 
 ```javascript
-filledTemplate = [
-  {title: Software Developer},
-  {salary: 40k},
-  {languages: C++},
-  {languages: Java}
-]
+template = ['profession']
+document1 = 'John is a teacher.'
+document2 = 'Sam is a lawyer. Debbie is a doctor.'
+filledTemplate1 = {
+  filledSlots: [
+    {slot: 'profession', slotFiller: 'teacher'}
+  ],
+  document: document1
+}
+filledTemplate2 = {
+  filledSlots: [
+    {slot: 'profession', slotFiller: 'lawyer'},
+    {slot: 'profession', slotFiller: 'doctor'}
+  ],
+  document: document2
+}
+
+examples = {
+  template,
+  documents: [document1, document2],
+  filledTemplates = [filledTemplate1, filledTemplate2]
+}
 ```
 
+Note that this structure is for learning purposes only. In actuality, it makes
+sense to partition the examples by slots.
+
 ## Slot-Filler
-the string to be extracted in the sample document for a given slot.
+
+The string to be extracted in the sample document for a given slot.
 
 ## Pre-Filler Pattern
-a pattern that matches text immediately to the left of the slot-filler
+
+A pattern that matches text immediately to the left of the slot-filler
 
 ## Post-Filler Pattern
-a pattern that matches text immediately to the right of the slot-filler.
+
+A pattern that matches text immediately to the right of the slot-filler.
 
 ## Rule
+
 Consists of 3 patterns:
 
 1.  a *pre-filler pattern* that must match the text immediately preceding
@@ -137,31 +196,91 @@ Consists of 3 patterns:
 3.  *a post-filler pattern* that must match the text
     immediately following the filler.
 
-Each rule also contains information about what template and slot they
+Each rule also contains information about what filled template and slot they
 apply to.
 
 ## Definition
+
 is specific to a slot. Consists of one or more rules.
 
-# Compression
+## Compression
+
+Systems that use compression begin by creating an initial set of highly specific
+rules, typically one for each example. At each iteration a more general rule is
+constructed, which replaces the rules it subsumes, thus compressing the rule
+set. At each iteration, all positive examples are under consideration to some
+extent, and the metric for evaluating new rules is biased toward greater
+compression of the rule set. Rule learning ends when no new rules to compress
+the rule set are found.
 
 Rapier begins with an initial definition and then compresses it by replacing
 rules with more general rules. Since a slot's rules are independent of other
 slot rules, the system actually creates the most specific definition and then
 compacts it separately for each slot in the template.
 
-# Main outer loop
+## Empircal Subsumption
 
+If a clause A covers all of the examples covered by clause B along with one or
+more additional examples, then A empirically subsumes B.
+
+# Overview
+## Main loop
+
+```javascript
+/**
+ * @param {Example} examples
+ * @param {Int} compressLim
+ */
+function mainLoop(examples, compressLim) {
+
+  for(slot in examples.template) {
+
+    const slotRules = initialRules(slot, examples.filledTemplates)
+
+    let failures = 0
+
+    while(failures < compressLim) {
+
+      const bestNewRule = findNewRule(slotRules, examples)
+
+      if (bestNewRule is acceptable) { // TODO
+        slotRules.add(bestNewRule)
+        //remove empirically subsumed rules from SlotRules TODO
+      }
+      else
+        failures++
+    }
+  }
+}
 ```
-fun outerLoop(CompressLim : Int) {
-  For each slot, S in the template being learned
-    SlotRules = most specific rules for S from example documents
-Failures = 0
-while Failures < CompressLim
-BestNewRule = FindNewRule(SlotRules, Examples)
-if BestNewRule is acceptable
-add BestNewRule to SlotRules
-remove empirically subsumed rules from SlotRules
-else
-Add 1 to Failures
+
+## initialRules
+
+```javascript
+/**
+ * @param {Slot} slot
+ * @param {Array[filledTemplates]} filledTemplates
+ */
+fun initialRules(slot, filledTemplates) {
+
+  return filledTemplates.flatMap(filledTemplate => {
+
+    const filledSlots = filledTemplate.filledSlots
+    const document = filledTemplate.document
+    const matchingFilledSlots = filledSlots.filter(filledSlot => filledSlot.slot === slot)
+
+    return matchingFilledSlots.map(filledSlot => {
+
+      // construct a rule each filledSlot, using everything in the document
+      // preceding the slotFiller as the pre-filler, everything following the
+      // slotFiller as the post-filler.
+
+      // Since the rules are to be maximally specific, the constructed patterns
+      // contain one pattern item for each token of the document.
+
+      // There are no semantic contraints, only word and POS tag constraints.
+    })
+  })
+}
 ```
+## fileNewRule
