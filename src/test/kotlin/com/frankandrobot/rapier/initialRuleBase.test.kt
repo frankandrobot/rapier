@@ -1,4 +1,4 @@
-package com.frankandrobot.rapier.test
+package com.frankandrobot.rapier
 
 import com.frankandrobot.rapier._initialRule
 import com.frankandrobot.rapier.document.Document

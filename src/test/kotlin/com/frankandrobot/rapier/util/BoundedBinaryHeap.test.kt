@@ -1,4 +1,4 @@
-package com.frankandrobot.rapier.test
+package com.frankandrobot.rapier.util
 
 import com.frankandrobot.rapier.util.BoundedBinaryMinHeap
 import org.jetbrains.spek.api.Spek

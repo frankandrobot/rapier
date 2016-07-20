@@ -1,8 +1,4 @@
-/**
- * Created by scottmmjackson on 7/8/16.
- */
-
-package com.frankandrobot.rapier.test
+package com.frankandrobot.rapier
 
 import org.jetbrains.spek.api.Spek
 

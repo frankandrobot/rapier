@@ -1,4 +1,4 @@
-package com.frankandrobot.rapier.test
+package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.nlp.tokenize
 import org.jetbrains.spek.api.Spek
