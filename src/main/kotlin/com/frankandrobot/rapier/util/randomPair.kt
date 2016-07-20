@@ -43,24 +43,39 @@ fun <T> randomPair(list: ArrayList<T>): Pair<T, T> {
  */
 
 fun <T> randomPairs(list: ArrayList<T>, numPairs: Int = (list.size / 2)): ArrayList<Pair<T, T>> {
-  // create an index list and shuffle it
-  val indicies = (0..(list.size)).toList()
-  Collections.shuffle(indicies)
+  assert(numPairs <= list.size/2, { "Too many pairs for list" })
+
+  // picker for random uniques
+  val randomUniquePicker = object {
+    private val picked = ArrayList<Int>()
+    private val max = list.size
+
+    fun next() : T {
+      assert(picked.size < max, {
+        "No more elements to pick"
+      })
+
+      var i = randomGenerator.nextInt(max)
+      while (picked.contains(i)) {
+        i = randomGenerator.nextInt(max)
+      }
+      picked.add(i)
+      return list.get(i)
+    }
+  }
 
   // prep the return
   val out = ArrayList<Pair<T,T>>()
 
-  // could also use for(i in (0..(numpairs))
-  (0..(numPairs)).map {
-    out.add(Pair(
-      list.get(
-        indicies.get(it * 2)
-      ),
-      list.get(
-        indicies.get(it * 2 + 1)
+  for(i in 1..numPairs) {
+    out.add(
+      Pair(
+        randomUniquePicker.next(),
+        randomUniquePicker.next()
       )
-    ))
+    )
   }
 
   return out
 }
+
