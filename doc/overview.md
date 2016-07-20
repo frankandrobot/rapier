@@ -284,3 +284,34 @@ fun initialRules(slot, filledTemplates) {
 }
 ```
 ## fileNewRule
+
+```javascript
+/**
+ * @param {SlotRules} slotRules for a given slot
+ * @param {Examples} set of examples
+ * @param {Int} k - size of priority queue
+ * @param {Int} m - number of pairs to select from SlotRules
+ */
+function findNewRule(slotRules, examples, k, m) {
+  const ruleList = new PriorityQueue(k)
+  const rulePairs = randomSelect(slotRules)
+  const generalizations = findFillerGeneralizations(rulePairs)
+  for(pattern in generalizations) {
+
+    // create a rule NewRule with filler P and empty pre- and post-fillers
+    //evaluate NewRule and add NewRule to RuleList
+  }
+  let n = 0
+  do {
+    ++n
+    for each rule, CurRule, in RuleList
+      NewRuleList = SpecializePreFiller (CurRule, n)
+      evaluate each rule in NewRuleList and add it to RuleList
+    for each rule, CurRule, in RuleList
+      NewRuleList = SpecializePostFiller (CurRule, n)
+      evaluate each rule in NewRuleList and add it to RuleList
+  }
+  until best rule in RuleList produces only valid fillers or
+  the value of the best rule in RuleList has failed to
+  improve over the last LimNoImprovements iterations
+```
