@@ -47,7 +47,7 @@ fun <T> randomPairs(list: ArrayList<T>, numPairs: Int = (list.size / 2)): ArrayL
 
   // picker for random uniques
   val randomUniquePicker = object {
-    private val picked = ArrayList<Int>()
+    private val picked = HashSet<Int>()
     private val max = list.size
 
     fun next() : T {
