@@ -294,7 +294,7 @@ fun initialRules(slot, filledTemplates) {
  */
 function findNewRule(slotRules, examples, k, m) {
   const ruleList = new PriorityQueue(k)
-  const rulePairs = randomSelect(slotRules)
+  const rulePairs = randomPair(slotRules)
   const generalizations = findFillerGeneralizations(rulePairs)
   for(pattern in generalizations) {
 
