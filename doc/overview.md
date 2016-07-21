@@ -231,7 +231,7 @@ more additional examples, then A empirically subsumes B.
  * @param {Example} examples
  * @param {Int} compressLim
  */
-function mainLoop(examples, compressLim) {
+function mainLoop(examples, compressLim = 3) {
 
   for(slot in examples.template) {
 
@@ -243,12 +243,15 @@ function mainLoop(examples, compressLim) {
 
       const bestNewRule = findNewRule(slotRules, examples)
 
-      if (bestNewRule is acceptable) { // TODO
+      if (bestNewRule.acceptable()) { // TODO
+
         slotRules.add(bestNewRule)
-        //remove empirically subsumed rules from SlotRules TODO
+        slotRules.removeEmpiricallySubsumedRules() // TODO
       }
-      else
+      else {
+
         failures++
+      }
     }
   }
 }
@@ -283,7 +286,7 @@ fun initialRules(slot, filledTemplates) {
   })
 }
 ```
-## fileNewRule
+## findNewRule
 
 ```javascript
 /**
@@ -292,26 +295,63 @@ fun initialRules(slot, filledTemplates) {
  * @param {Int} k - size of priority queue
  * @param {Int} m - number of pairs to select from SlotRules
  */
-function findNewRule(slotRules, examples, k, m) {
-  const ruleList = new PriorityQueue(k)
-  const rulePairs = randomPair(slotRules)
-  const generalizations = findFillerGeneralizations(rulePairs)
-  for(pattern in generalizations) {
+function findNewRule(slotRules, examples, k = 5, m = 6, limNoImprovements = 3) {
 
-    // create a rule NewRule with filler P and empty pre- and post-fillers
-    //evaluate NewRule and add NewRule to RuleList
-  }
+  const ruleList = new PriorityQueue(k)
+  const rulePairs = randomPairs(slotRules, m)
+
+  return findGeneralization(rulePairs, ruleList, limNoImprovements)
+}
+
+/**
+ * @returns {Rule} best rule in priority queue
+ */
+function findGeneralization(rulePairs, ruleList, limNoImprovements = 3) {
+
+  // RAPIER’s rule generalization method operates on the principle that the
+  // relevant information for extracting a slot-filler is likely to be close to
+  // that filler in the document. Therefore, RAPIER begins by generalizing
+  // the two filler patterns and creates rules with the resulting generalized
+  // filler patterns and empty pre-filler and post-filler patterns. It then
+  // specializes those rules by adding pattern elements to the pre-filler and
+  // post-filler patterns, working outward from the filler. The elements to be
+  // added to the patterns are created by generalizing the appropriate portions
+  // of the pre-fillers or post-fillers of the pair of rules from which the
+  // new rule is generalized. Working in this way takes advantage of the
+  // locality of language, but does not preclude the possibility of using
+  // pattern elements that are fairly distant from the filler.
+
+  const newRule = //create a new rule with empty pre- and post-fillers
+
+  const newRules = rulePairs
+    .reduce((newRules, rulePair) => newRules.concat(rulePair), [])
+    .map(emptyPreAndPostFiller)
+    .uniq()
+
+  ruleList.addAll(newRules)
+
   let n = 0
+
   do {
     ++n
-    for each rule, CurRule, in RuleList
-      NewRuleList = SpecializePreFiller (CurRule, n)
-      evaluate each rule in NewRuleList and add it to RuleList
-    for each rule, CurRule, in RuleList
-      NewRuleList = SpecializePostFiller (CurRule, n)
-      evaluate each rule in NewRuleList and add it to RuleList
+    for(rule in RuleList) {
+      const newRuleList = specializePreFiller (rule, n)
+      ruleList.addAll(newRuleList)
+    }
+    for(rule in RuleList) {
+      const newRuleList = specializePostFiller (rule, n)
+      ruleList.addAll(newRuleList)
+    }
   }
   until best rule in RuleList produces only valid fillers or
   the value of the best rule in RuleList has failed to
   improve over the last LimNoImprovements iterations
+
+  return ruleList.max()
+}
 ```
+
+# Links
+
+-   [30 page paper](http://www.cs.utexas.edu/~ml/papers/rapier-jmlr-03.pdf)
+-   [thesis](http://www.cs.utexas.edu/~ml/papers/rapier-dissertation-98.pdf)
