@@ -218,12 +218,12 @@ rules with more general rules. Since a slot's rules are independent of other
 slot rules, the system actually creates the most specific definition and then
 compacts it separately for each slot in the template.
 
-## Empircal Subsumption
+## Empirical Subsumption
 
 If a clause A covers all of the examples covered by clause B along with one or
 more additional examples, then A empirically subsumes B.
 
-# Overview
+# Algorithms
 ## Main loop
 
 ```javascript
@@ -246,7 +246,7 @@ function mainLoop(examples, compressLim = 3) {
       if (bestNewRule.acceptable()) { // TODO
 
         slotRules.add(bestNewRule)
-        slotRules.removeEmpiricallySubsumedRules() // TODO
+        slotRules.removeEmpiricallySubsumedRules() // TODO See above. This seems potentially expensive
       }
       else {
 
@@ -326,7 +326,6 @@ function findGeneralization(rulePairs, ruleList, limNoImprovements = 3) {
   const newRules = rulePairs
     .reduce((newRules, rulePair) => newRules.concat(rulePair), [])
     .map(emptyPreAndPostFiller)
-    .uniq()
 
   ruleList.addAll(newRules)
 
@@ -334,6 +333,7 @@ function findGeneralization(rulePairs, ruleList, limNoImprovements = 3) {
 
   do {
     ++n
+
     for(rule in RuleList) {
       const newRuleList = specializePreFiller (rule, n)
       ruleList.addAll(newRuleList)
@@ -348,6 +348,31 @@ function findGeneralization(rulePairs, ruleList, limNoImprovements = 3) {
   improve over the last LimNoImprovements iterations
 
   return ruleList.max()
+}
+```
+
+# Data Structures
+
+## Rule
+
+```javascript
+class Rule {
+  preFillerPattern
+  slotFillerPattern
+  postFillerPattern
+
+  examples
+  filledTemplate
+  slotName
+
+  metrics() { return new Metrics(examples) }
+}
+
+class Metrics {
+
+  constructor(examples) {
+    
+  }
 }
 ```
 

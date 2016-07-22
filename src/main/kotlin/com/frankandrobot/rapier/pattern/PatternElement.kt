@@ -8,16 +8,16 @@ package com.frankandrobot.rapier.pattern
  * - semenatic classes - we use WordNet synsets
  */
 abstract class PatternElement(open val wordConstraints: List<WordConstraint> = listOf(),
-                              open val syntacticContraints: List<SyntacticConstraint> = listOf(),
+                              open val posTagContraints: List<PosTagConstraint> = listOf(),
                               open val semanticConstraints: List<SemanticConstraint> = listOf())
 
 class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
-                  override val syntacticContraints: List<SyntacticConstraint> = listOf(),
+                  override val posTagContraints: List<PosTagConstraint> = listOf(),
                   override val semanticConstraints: List<SemanticConstraint> = listOf()) :
-  PatternElement(wordConstraints, syntacticContraints, semanticConstraints)
+  PatternElement(wordConstraints, posTagContraints, semanticConstraints)
 
 class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
-                  override val syntacticContraints: List<SyntacticConstraint> = listOf(),
+                  override val posTagContraints: List<PosTagConstraint> = listOf(),
                   override val semanticConstraints: List<SemanticConstraint> = listOf(),
                   val length: Int = 1) :
-  PatternElement(wordConstraints, syntacticContraints, semanticConstraints)
+  PatternElement(wordConstraints, posTagContraints, semanticConstraints)
