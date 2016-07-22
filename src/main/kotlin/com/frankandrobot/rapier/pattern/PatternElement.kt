@@ -7,17 +7,25 @@ package com.frankandrobot.rapier.pattern
  * - part-of-speech tags
  * - semenatic classes - we use WordNet synsets
  */
-abstract class PatternElement(open val wordConstraints: List<WordConstraint> = listOf(),
-                              open val posTagContraints: List<PosTagConstraint> = listOf(),
-                              open val semanticConstraints: List<SemanticConstraint> = listOf())
+abstract class PatternElement
 
-class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
-                  override val posTagContraints: List<PosTagConstraint> = listOf(),
-                  override val semanticConstraints: List<SemanticConstraint> = listOf()) :
-  PatternElement(wordConstraints, posTagContraints, semanticConstraints)
+class PatternItem(val wordConstraints: List<WordConstraint> = listOf(),
+                  val posTagContraints: List<PosTagConstraint> = listOf(),
+                  val semanticConstraints: List<SemanticConstraint> = listOf()) : PatternElement() {
 
-class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
-                  override val posTagContraints: List<PosTagConstraint> = listOf(),
-                  override val semanticConstraints: List<SemanticConstraint> = listOf(),
-                  val length: Int = 1) :
-  PatternElement(wordConstraints, posTagContraints, semanticConstraints)
+  fun test(token: Token) : Boolean {
+
+    return wordConstraints.any{ it.satisfies(token) } &&
+      posTagContraints.any{ it.satisfies(token) } &&
+      semanticConstraints.any{ it.satisfies(token) }
+  }
+}
+
+class PatternList(val patternItem: PatternItem,
+                  val length: Int = 1) : PatternElement() {
+
+  fun test(token: List<Token>) : Boolean {
+
+    return token.size <= length && token.all{ patternItem.test(it) }
+  }
+}
