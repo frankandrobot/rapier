@@ -1,8 +1,6 @@
 package com.frankandrobot.rapier
 
-import com.frankandrobot.rapier._initialRule
 import com.frankandrobot.rapier.document.Document
-import com.frankandrobot.rapier.initialRuleBase
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.Rule
 import com.frankandrobot.rapier.template.Slot
@@ -74,7 +72,7 @@ class InitialRuleBaseTest : Spek({
 
       it("should create PatternElements with *no* semantic constraints") {
 
-        patternElements.forEach{ assertEquals(it.semanticConstraints.size, 0) }
+        patternElements.forEach{ assertEquals(it.posTagConstraints.size, 0) }
       }
 
       it("should create PatternElements that are PatternItems only") {

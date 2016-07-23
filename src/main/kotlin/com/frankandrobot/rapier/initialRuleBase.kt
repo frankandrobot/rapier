@@ -5,18 +5,19 @@ import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.tokenize
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.template.Slot
+import com.frankandrobot.rapier.template.SlotFiller
 
 
 /**
  * Create a rule list for the Document for the given slot.
  */
-fun initialRuleBase(slot: Slot, document: Document): List<Rule> {
+fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule> {
 
   val doc = document.value
-  val filler = slot.value
+  val filler = slot.second
 
   var startIndex = 0
-  var _index = { doc.indexOf(filler, startIndex) }
+  var _index = { doc.indexOf(filler.value, startIndex) }
   var index = _index()
 
   val rules = mutableListOf<Rule>()
@@ -24,9 +25,9 @@ fun initialRuleBase(slot: Slot, document: Document): List<Rule> {
   while (index >= 0) {
 
     val preFiller = doc.substring(0, index)
-    val postFiller = doc.substring(index + filler.length)
+    val postFiller = doc.substring(index + filler.value.length)
 
-    rules.add(_initialRule(preFiller, filler, postFiller))
+    rules.add(_initialRule(preFiller, filler.value, postFiller))
 
     startIndex = index + 1
     index = _index()
