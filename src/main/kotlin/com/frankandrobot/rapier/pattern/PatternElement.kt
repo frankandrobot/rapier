@@ -12,11 +12,15 @@ import java.util.*
  * - part-of-speech tags
  * - semenatic classes - we use WordNet synsets
  */
-abstract class PatternElement
+abstract class PatternElement(open val wordConstraints: List<WordConstraint> = listOf(),
+                              open val posTagContraints: List<PosTagConstraint> = listOf(),
+                              open val semanticConstraints: List<SemanticConstraint> = listOf())
 
-class PatternItem(val wordConstraints: List<WordConstraint> = listOf(),
-                  val posTagContraints: List<PosTagConstraint> = listOf(),
-                  val semanticConstraints: List<SemanticConstraint> = listOf()) : PatternElement(), IParseable<Token> {
+
+class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
+                  override val posTagContraints: List<PosTagConstraint> = listOf(),
+                  override val semanticConstraints: List<SemanticConstraint> = listOf()) :
+  PatternElement(), IParseable<Token> {
 
   fun test(token: Token) : Boolean {
 
@@ -38,7 +42,9 @@ class PatternItem(val wordConstraints: List<WordConstraint> = listOf(),
 /**
  * There's no #test because it's not needed (due to expandedForm)
  */
-class PatternList(val patternItem: PatternItem,
+class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
+                  override val posTagContraints: List<PosTagConstraint> = listOf(),
+                  override val semanticConstraints: List<SemanticConstraint> = listOf(),
                   val length: Int = 1) : PatternElement() {
 
   /**
@@ -47,6 +53,8 @@ class PatternList(val patternItem: PatternItem,
    * Ex: {word: foo, length: 2} => [], [foo], [foo, foo]
    */
   val expandedForm : ArrayList<PatternItemList> by lazy {
+
+    val patternItem = PatternItem(wordConstraints, posTagContraints, semanticConstraints)
 
     (0..length).fold(ArrayList<PatternItemList>(), { total, count ->
 

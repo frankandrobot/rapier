@@ -4,6 +4,7 @@ import com.frankandrobot.rapier.document.Document
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.Rule
 import com.frankandrobot.rapier.template.Slot
+import com.frankandrobot.rapier.template.SlotFiller
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -22,7 +23,7 @@ class InitialRuleBaseTest : Spek({
 
     it("should work when the slot doesn't repeat in document") {
 
-      val slot = Slot("salary", "ten")
+      val slot = Pair(Slot("salary"), SlotFiller("ten"))
       val document = Document("one ten foo")
 
       val result = initialRuleBase(slot, document)
@@ -37,7 +38,7 @@ class InitialRuleBaseTest : Spek({
 
     it("should work when slot repeats in document") {
 
-      val slot = Slot("salary", "ten")
+      val slot = Pair(Slot("salary"), SlotFiller("ten"))
       val document = Document("one ten foo ten")
 
       val result = initialRuleBase(slot, document)
@@ -72,7 +73,7 @@ class InitialRuleBaseTest : Spek({
 
       it("should create PatternElements with *no* semantic constraints") {
 
-        patternElements.forEach{ assertEquals(it.posTagConstraints.size, 0) }
+        patternElements.forEach{ assertEquals(it.posTagContraints.size, 0) }
       }
 
       it("should create PatternElements that are PatternItems only") {
