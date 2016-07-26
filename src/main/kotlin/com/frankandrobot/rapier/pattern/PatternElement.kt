@@ -1,8 +1,7 @@
 package com.frankandrobot.rapier.pattern
 
-import com.frankandrobot.rapier.parse.IParseable
+import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.parse.PatternItemList
-import com.frankandrobot.rapier.util.BetterIterator
 import java.util.*
 
 
@@ -19,23 +18,13 @@ abstract class PatternElement(open val wordConstraints: List<WordConstraint> = l
 
 class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
                   override val posTagContraints: List<PosTagConstraint> = listOf(),
-                  override val semanticConstraints: List<SemanticConstraint> = listOf()) :
-  PatternElement(), IParseable<Token> {
+                  override val semanticConstraints: List<SemanticConstraint> = listOf()) : PatternElement() {
 
   fun test(token: Token) : Boolean {
 
     return wordConstraints.any{ it.satisfies(token) } &&
       posTagContraints.any{ it.satisfies(token) } &&
       semanticConstraints.any{ it.satisfies(token) }
-  }
-
-  override fun parse(tokens : BetterIterator<Token>) : BetterIterator<Token> {
-
-    val _tokens = tokens.clone()
-
-    if (_tokens.hasNext() && test(_tokens.peek())) _tokens.next()
-
-    return _tokens
   }
 }
 
@@ -66,6 +55,4 @@ class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
   }
 
   inline fun expand() = expandedForm
-
 }
-
