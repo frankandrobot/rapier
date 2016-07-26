@@ -6,22 +6,42 @@ import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
 import java.util.*
 
+
 /**
- * Expands pattern elements into multiple pattern item lists.
+ * Expands Patterns into PatternItemLists.
  * (As will become clear, this is fine because we expect these to be local to a filler...hence, small)
  *
  * Example:
- * [{word: 'foo', length: 1}, {word: 'bar', length: 1}]
+ * [{word: foo}, {word: bar}] // two pattern items
  *
- * expands to the pattern items:
+ * expands to the following PatternItemList:
  *
- * {word: foo}
- * {word: bar}
- * [{word: foo}, {word: bar}]
+ * -  [{word: foo}, {word: bar}]
+ *
+ *
+ * Example:
+ * [{word: foo}, {word: bar, length: 1}] // pattern item followed by pattern list
+ *
+ * expands to the following PatternItemLists:
+ *
+ * -  [{word: foo}]
+ * -  [{word: foo}, {word: bar}]
+ *
+ *
+ * Example:
+ * [{word: 'foo', length: 1}, {word: 'bar', length: 1}] // two pattern lists
+ *
+ * expands to the following PatternItemLists:
+ *
+ * -  []
+ * -  [{word: foo}]
+ * -  [{word: bar}]
+ * -  [{word: foo}, {word: bar}]
+ *
  */
-data class ExpandedPatterns(private val pattern : Pattern) {
+data class PatternExpandedForm(private val pattern : Pattern) {
 
-  var patterns : ArrayList<PatternItemList>
+  private var patterns : ArrayList<PatternItemList>
 
   init {
 
@@ -46,7 +66,7 @@ data class ExpandedPatterns(private val pattern : Pattern) {
 
   private fun split(patternList : PatternList) {
 
-    val patternItemLists = patternList.expand()
+    val patternItemLists = patternList.expandedForm()
     val newSize = patterns.size * patternItemLists.size
     val oldPatterns = patterns
 
@@ -63,6 +83,8 @@ data class ExpandedPatterns(private val pattern : Pattern) {
         patterns.add(PatternItemList(clone))
       }
     }
-
   }
+
+  operator fun invoke() = patterns
+  operator fun get(i : Int) = patterns[i]
 }

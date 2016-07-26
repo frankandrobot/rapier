@@ -1,28 +1,30 @@
-package com.frankandrobot.rapier.pattern
+package com.frankandrobot.rapier.parse
 
-import com.frankandrobot.rapier.parse.PatternItemList
+import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.pattern.PatternList
+import com.frankandrobot.rapier.pattern.WordConstraint
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class PatternListTest : Spek({
+class PatternListExpandedFormTest : Spek({
 
   describe("PatternList") {
 
-    val constraint1 = {WordConstraint("one")}
-    val constraint2 = {WordConstraint("two")}
+    val constraint1 = { WordConstraint("one") }
+    val constraint2 = { WordConstraint("two") }
 
-    val item1 = {PatternItem(constraint1())}
-    val itemConstraints2 = {PatternItem(constraint1(), constraint2())}
+    val item1 = { PatternItem(constraint1()) }
+    val itemConstraints2 = { PatternItem(constraint1(), constraint2()) }
 
-    val listLength1 = {PatternList(constraint1())}
-    val listLength2 = {PatternList(constraint1(), length = 2)}
+    val listLength1 = { PatternList(constraint1()) }
+    val listLength2 = { PatternList(constraint1(), length = 2) }
 
-    val listLength2Constraints2 = {PatternList(constraint1(), constraint2(), length = 2)}
+    val listLength2Constraints2 = { PatternList(constraint1(), constraint2(), length = 2) }
 
     it("should expand a list of length 1 into 2 item lists") {
 
-      val result = listLength1().expandedForm
+      val result = listLength1().expandedForm()
 
       assertEquals(2, result.size)
       assertEquals(PatternItemList(), result[0])
@@ -31,7 +33,7 @@ class PatternListTest : Spek({
 
     it("should expand a list of length 2 into into 3 item lists") {
 
-      val result = listLength2().expandedForm
+      val result = listLength2().expandedForm()
 
       assertEquals(3, result.size)
       assertEquals(PatternItemList(), result[0])
@@ -41,7 +43,7 @@ class PatternListTest : Spek({
 
     it("should expand a list of length 1 with two contraints into 4 item lists") {
 
-      val result = listLength2Constraints2().expandedForm
+      val result = listLength2Constraints2().expandedForm()
 
       assertEquals(3, result.size)
       assertEquals(PatternItemList(), result[0])

@@ -20,18 +20,18 @@ class ExpandedPatternTest : Spek ({
 
     it("should expand a pattern with a single item into itself") {
 
-      val result = ExpandedPatterns(patternSingleItem())
+      val result = PatternExpandedForm(patternSingleItem())
 
-      assertEquals(1, result.patterns.size)
-      assertEquals(PatternItemList(item1()), result.patterns[0])
+      assertEquals(1, result().size)
+      assertEquals(PatternItemList(item1()), result[0])
     }
 
     it("should expand a pattern with multiple items into itself") {
 
-      val result = ExpandedPatterns(patternMultiItem())
+      val result = PatternExpandedForm(patternMultiItem())
 
-      assertEquals(1, result.patterns.size)
-      assertEquals(PatternItemList(item2()), result.patterns[0])
+      assertEquals(1, result().size)
+      assertEquals(PatternItemList(item2()), result[0])
     }
 
     it("should expand a pattern with a list") {

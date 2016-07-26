@@ -2,8 +2,8 @@ package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.document.Document
 import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.parse.ExpandedPatterns
 import com.frankandrobot.rapier.parse.Glob
+import com.frankandrobot.rapier.parse.PatternExpandedForm
 import com.frankandrobot.rapier.parse.parse
 import com.frankandrobot.rapier.template.SlotFiller
 import com.frankandrobot.rapier.util.BetterIterator
@@ -12,19 +12,19 @@ import java.util.*
 
 class Rule(val preFiller: Pattern, val filler: Pattern, val postFiller: Pattern) {
 
-  internal val expandedPrefillerPatterns : ExpandedPatterns by lazy {
+  internal val expandedPrefillerPatterns : PatternExpandedForm by lazy {
 
-    ExpandedPatterns(preFiller)
+    PatternExpandedForm(preFiller)
   }
 
-  internal val expandedFillerPatterns : ExpandedPatterns by lazy {
+  internal val expandedFillerPatterns : PatternExpandedForm by lazy {
 
-    ExpandedPatterns(filler)
+    PatternExpandedForm(filler)
   }
 
-  internal val expandedPostfillerPatterns : ExpandedPatterns by lazy {
+  internal val expandedPostfillerPatterns : PatternExpandedForm by lazy {
 
-    ExpandedPatterns(postFiller)
+    PatternExpandedForm(postFiller)
   }
 
   fun match(doc : Document) : List<SlotFiller> {
@@ -39,13 +39,13 @@ class Rule(val preFiller: Pattern, val filler: Pattern, val postFiller: Pattern)
    */
   private fun _match(tokens : BetterIterator<Token>) : List<Token> {
 
-    return expandedPrefillerPatterns.patterns
+    return expandedPrefillerPatterns()
       .map{ parse(it, Glob(tokens)) }
       .flatMap{ glob -> glob.then{
-        expandedFillerPatterns.patterns
+        expandedFillerPatterns()
           .map{ parse(it, glob) }
           .flatMap{ glob -> glob.then{
-            expandedPostfillerPatterns.patterns.map { parse(it, glob) }}
+            expandedPostfillerPatterns().map { parse(it, glob) }}
           }
         }
       }

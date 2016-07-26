@@ -1,7 +1,7 @@
 package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.parse.PatternItemList
+import com.frankandrobot.rapier.parse.PatternListExpandedForm
 import java.util.*
 
 
@@ -58,23 +58,7 @@ class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
   : this(wordConstraint.asList(), length = length)
 
-  /**
-   * Converts the PatternList into a collection of PatternItemLists i.e., it expands the pattern list into lists of pattern items.
-   *
-   * Ex: {word: foo, length: 2} => [], [{word: foo}], [{word: foo}, {word: foo}]
-   */
-  val expandedForm : ArrayList<PatternItemList> by lazy {
+  private val expandedForm = PatternListExpandedForm(this)
 
-    val patternItem = PatternItem(wordConstraints, posTagContraints, semanticConstraints)
-
-    (0..length).fold(ArrayList<PatternItemList>(), { total, count ->
-
-      if (count === 0) { total.add(PatternItemList()) }
-      else { total.add(PatternItemList((1..count).map { patternItem } as ArrayList<PatternItem>)) }
-
-      total
-    })
-  }
-
-  inline fun expand() = expandedForm
+  fun expandedForm() = this.expandedForm.invoke()
 }
