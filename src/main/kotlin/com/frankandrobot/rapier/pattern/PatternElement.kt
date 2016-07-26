@@ -41,6 +41,8 @@ class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
                   override val semanticConstraints: List<SemanticConstraint> = listOf(),
                   val length: Int = 1) : PatternElement {
 
+  internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1) : this(wordConstraint.asList(), length = length)
+
   /**
    * Converts the pattern list into a list of pattern item lists.
    *

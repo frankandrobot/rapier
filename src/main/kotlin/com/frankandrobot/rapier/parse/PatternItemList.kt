@@ -11,9 +11,7 @@ import java.util.*
  */
 data class PatternItemList(val patternItemList : ArrayList<PatternItem> = ArrayList<PatternItem>()) {
 
-  internal constructor(patternItem: PatternItem) : this() {
-
-    patternItemList.add(patternItem)
-  }
+  internal constructor(vararg patternItem: PatternItem)
+  : this(ArrayList<PatternItem>().plus(patternItem.asList()) as ArrayList<PatternItem>)
 }
 
