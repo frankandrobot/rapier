@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class ExpandedPatternTest : Spek ({
+class PatternExpandedFormTest : Spek ({
 
   describe("ExpandedPattern") {
 
@@ -15,7 +15,7 @@ class ExpandedPatternTest : Spek ({
     val item2 = {PatternItem(WordConstraint("two"))}
 
     val patternSingleItem = {Pattern(item1())}
-    val patternMultiItem = {Pattern(item2())}
+    val patternMultiItem = {Pattern(item1(), item2())}
 
 
     it("should expand a pattern with a single item into itself") {
@@ -31,7 +31,7 @@ class ExpandedPatternTest : Spek ({
       val result = PatternExpandedForm(patternMultiItem())
 
       assertEquals(1, result().size)
-      assertEquals(PatternItemList(item2()), result[0])
+      assertEquals(PatternItemList(item1(), item2()), result[0])
     }
 
     it("should expand a pattern with a list") {

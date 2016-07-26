@@ -13,9 +13,9 @@ class InitialRuleBaseTest : Spek({
 
   data class SimplifiedRule(val preFiller : List<String>, val filler : List<String>, val postFiller : List<String>) {
     constructor(rule : Rule) : this(
-      rule.preFiller.patternElements.flatMap{ it.wordConstraints }.map{ it.value },
-      rule.filler.patternElements.flatMap{ it.wordConstraints }.map{ it.value },
-      rule.postFiller.patternElements.flatMap{ it.wordConstraints }.map{ it.value }
+      rule.preFiller().flatMap{ it.wordConstraints }.map{ it.value },
+      rule.filler().flatMap{ it.wordConstraints }.map{ it.value },
+      rule.postFiller().flatMap{ it.wordConstraints }.map{ it.value }
     )
   }
 
@@ -67,9 +67,7 @@ class InitialRuleBaseTest : Spek({
 
       val result = _initialRule(prefiller, filler, postfiller)
 
-      val patternElements = result.preFiller.patternElements +
-        result.filler.patternElements +
-        result.postFiller.patternElements
+      val patternElements = result.preFiller() + result.filler() + result.postFiller()
 
       it("should create PatternElements with *no* semantic constraints") {
 

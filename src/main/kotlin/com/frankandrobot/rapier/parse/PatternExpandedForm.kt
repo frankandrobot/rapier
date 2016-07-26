@@ -41,22 +41,25 @@ import java.util.*
  */
 data class PatternExpandedForm(private val pattern : Pattern) {
 
-  private var patterns : ArrayList<PatternItemList>
+  private var _expansion = ArrayList<PatternItemList>(pattern().size)
 
-  init {
+  /**
+   * By making this lazy, you guarantee that the construction is synchronized across threads
+   */
+  val expansion: ArrayList<PatternItemList> by lazy {
 
-    patterns = ArrayList<PatternItemList>(pattern.patternElements.size)
+    _expansion.add(PatternItemList())
 
-    patterns.add(PatternItemList())
+    pattern().forEach{ patternElement -> add(patternElement) }
 
-    pattern.patternElements.forEach{ patternElement -> add(patternElement) }
+    _expansion
   }
 
   private fun add(patternElement: PatternElement) {
 
     if (patternElement is PatternItem) {
 
-      patterns.forEach{ pattern -> pattern.items.add(patternElement) }
+      _expansion.forEach{ pattern -> pattern.items.add(patternElement) }
     }
     else if (patternElement is PatternList) {
 
@@ -66,25 +69,25 @@ data class PatternExpandedForm(private val pattern : Pattern) {
 
   private fun split(patternList : PatternList) {
 
-    val patternItemLists = patternList.expandedForm()
-    val newSize = patterns.size * patternItemLists.size
-    val oldPatterns = patterns
+    val patternListExpansion = patternList.expandedForm()
+    val newSize = _expansion.size * patternListExpansion.size
+    val prevPatterns = _expansion
 
-    patterns = ArrayList<PatternItemList>(newSize)
+    _expansion = ArrayList<PatternItemList>(newSize)
 
-    patternItemLists.forEach{ newPattern ->
+    patternListExpansion.forEach{ newItemList ->
+      prevPatterns.forEach{ prevItemList ->
 
-      oldPatterns.forEach{ oldPattern ->
+        val clone = prevItemList.items.clone() as ArrayList<PatternItem>
 
-        val clone = oldPattern.items.clone() as ArrayList<PatternItem>
+        clone.addAll(newItemList.items)
 
-        clone.addAll(newPattern.items)
-
-        patterns.add(PatternItemList(clone))
+        _expansion.add(PatternItemList(clone))
       }
     }
   }
 
-  operator fun invoke() = patterns
-  operator fun get(i : Int) = patterns[i]
+  operator fun invoke() = expansion
+
+  operator fun get(i : Int) = expansion[i]
 }
