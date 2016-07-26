@@ -10,12 +10,9 @@ private val config = DecodeConfig(IOUtils.createFileInputStream(configUri))
 private val decoder = NLPDecoder(config)
 
 
-data class Token(val word: String, val posTag: String)
-
-
 fun tokenize(string: String): List<Token> {
 
   return decoder.decode(string)
     .drop(1)
-    .map({ node -> Token(node.wordForm, node.partOfSpeechTag) })
+    .map({ node -> Token(node.wordForm, node.partOfSpeechTag, semanticClass = "") })
 }
