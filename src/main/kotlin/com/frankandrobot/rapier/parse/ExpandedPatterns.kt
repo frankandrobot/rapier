@@ -7,8 +7,8 @@ import com.frankandrobot.rapier.pattern.PatternList
 import java.util.*
 
 /**
- * Expands pattern element lists into all the possible combinations.
- * (This is fine because we expect these to be local to a filler...hence, small)
+ * Expands pattern elements into multiple pattern item lists.
+ * (As will become clear, this is fine because we expect these to be local to a filler...hence, small)
  *
  * Example:
  * [{word: 'foo', length: 1}, {word: 'bar', length: 1}]
@@ -19,7 +19,7 @@ import java.util.*
  * {word: bar}
  * [{word: foo}, {word: bar}]
  */
-data class ExpandedPatterns(val pattern : Pattern) {
+data class ExpandedPatterns(private val pattern : Pattern) {
 
   var patterns : ArrayList<PatternItemList>
 

@@ -32,6 +32,11 @@ class Rule(val preFiller: Pattern, val filler: Pattern, val postFiller: Pattern)
     return _match(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
   }
 
+  /**
+   * While elegant, this is actually pretty inefficient.
+   * It traverses all of the globs that didn't find matches anyway,
+   * so it ends up visiting all of the possible combinations of prefillers, fillers, postfillers
+   */
   private fun _match(tokens : BetterIterator<Token>) : List<Token> {
 
     return expandedPrefillerPatterns.patterns

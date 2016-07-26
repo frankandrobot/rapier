@@ -11,14 +11,19 @@ import java.util.*
  * - part-of-speech tags
  * - semenatic classes - we use WordNet synsets
  */
-abstract class PatternElement(open val wordConstraints: List<WordConstraint> = listOf(),
-                              open val posTagContraints: List<PosTagConstraint> = listOf(),
-                              open val semanticConstraints: List<SemanticConstraint> = listOf())
+interface PatternElement {
+
+  val wordConstraints: List<WordConstraint>
+  val posTagContraints: List<PosTagConstraint>
+  val semanticConstraints: List<SemanticConstraint>
+}
 
 
-class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
+data class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
                   override val posTagContraints: List<PosTagConstraint> = listOf(),
-                  override val semanticConstraints: List<SemanticConstraint> = listOf()) : PatternElement() {
+                  override val semanticConstraints: List<SemanticConstraint> = listOf()) : PatternElement {
+
+  internal constructor(wordConstraint: WordConstraint) : this(listOf(wordConstraint))
 
   fun test(token: Token) : Boolean {
 
@@ -34,7 +39,7 @@ class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
 class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
                   override val posTagContraints: List<PosTagConstraint> = listOf(),
                   override val semanticConstraints: List<SemanticConstraint> = listOf(),
-                  val length: Int = 1) : PatternElement() {
+                  val length: Int = 1) : PatternElement {
 
   /**
    * Converts the pattern list into a list of pattern item lists.

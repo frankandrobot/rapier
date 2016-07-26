@@ -9,5 +9,11 @@ import java.util.*
  *
  * It's mainly for parsing, not Rule creation.
  */
-class PatternItemList(val patternItemList : ArrayList<PatternItem> = ArrayList<PatternItem>())
+data class PatternItemList(val patternItemList : ArrayList<PatternItem> = ArrayList<PatternItem>()) {
+
+  internal constructor(patternItem: PatternItem) : this() {
+
+    patternItemList.add(patternItem)
+  }
+}
 
