@@ -36,7 +36,7 @@ data class ExpandedPatterns(private val pattern : Pattern) {
 
     if (patternElement is PatternItem) {
 
-      patterns.forEach{ pattern -> pattern.patternItemList.add(patternElement) }
+      patterns.forEach{ pattern -> pattern.items.add(patternElement) }
     }
     else if (patternElement is PatternList) {
 
@@ -56,9 +56,9 @@ data class ExpandedPatterns(private val pattern : Pattern) {
 
       oldPatterns.forEach{ oldPattern ->
 
-        val clone = oldPattern.patternItemList.clone() as ArrayList<PatternItem>
+        val clone = oldPattern.items.clone() as ArrayList<PatternItem>
 
-        clone.addAll(newPattern.patternItemList)
+        clone.addAll(newPattern.items)
 
         patterns.add(PatternItemList(clone))
       }

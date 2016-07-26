@@ -24,11 +24,11 @@ fun parse(patternItemList: PatternItemList, glob : Glob) : Glob {
 
   val tokens = glob.tokens()
 
-  val consumed = patternItemList.patternItemList.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
+  val consumed = patternItemList.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
 
   if (consumed) {
 
-    return Glob(tokens, matchFound = true, matches = tokens.next(patternItemList.patternItemList.size))
+    return Glob(tokens, matchFound = true, matches = tokens.next(patternItemList.items.size))
   }
 
   return Glob(tokens, matchFound = false)
