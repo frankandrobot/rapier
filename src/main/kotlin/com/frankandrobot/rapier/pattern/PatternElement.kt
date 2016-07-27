@@ -26,6 +26,10 @@ data class PatternItem(override val wordConstraints: List<WordConstraint> = list
   internal constructor(vararg wordConstraint: WordConstraint)
   : this(ArrayList<WordConstraint>().plus(wordConstraint))
 
+  internal constructor(vararg words : String)
+  : this(ArrayList<WordConstraint>().plus(words.map { WordConstraint(it) }))
+
+
   fun test(token: Token) : Boolean {
 
     return wordConstraints.any{ it.satisfies(token) } &&
