@@ -3,9 +3,14 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
-class BetterIterator<T>(private val array : ArrayList<T>, start : Int = 0) : Iterator<T> {
+data class BetterIterator<T>(private val array : ArrayList<T>) : Iterator<T> {
 
-  private var len = start
+  /**
+   * Don't make start a property, so it doesn't show up in data annotation
+   */
+  constructor(array : ArrayList<T>, start : Int = 0) : this(array) { len = start }
+
+  private var len = 0
 
   override fun hasNext() = len < array.lastIndex
 
@@ -23,4 +28,17 @@ class BetterIterator<T>(private val array : ArrayList<T>, start : Int = 0) : Ite
   fun peek() = array[len]
 
   fun clone() = BetterIterator(array, len)
+
+  /**
+   * data#equals fails, so write our own
+   */
+  override fun equals(other: Any?): Boolean {
+
+    if (other is BetterIterator<*>) {
+
+      return array == other.array && len === other.len
+    }
+
+    return false
+  }
 }

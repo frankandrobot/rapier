@@ -32,9 +32,9 @@ data class PatternItem(override val wordConstraints: List<WordConstraint> = list
 
   fun test(token: Token) : Boolean {
 
-    return wordConstraints.any{ it.satisfies(token) } &&
-      posTagContraints.any{ it.satisfies(token) } &&
-      semanticConstraints.any{ it.satisfies(token) }
+    return (wordConstraints.size === 0 || wordConstraints.any{ it.satisfies(token) }) &&
+      (posTagContraints.size === 0 || posTagContraints.any{ it.satisfies(token) }) &&
+      (semanticConstraints.size === 0 || semanticConstraints.any{ it.satisfies(token) })
   }
 }
 

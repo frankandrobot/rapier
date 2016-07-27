@@ -18,6 +18,11 @@ data class Glob(private val tokens : BetterIterator<Token>,
                 val matchFound : Boolean = true,
                 val matches : ArrayList<Token> = ArrayList<Token>()) {
 
+  internal constructor(tokens : BetterIterator<Token>,
+                       matchFound : Boolean = true,
+                       vararg matches : String)
+  : this(tokens, matchFound, (ArrayList<Token>() + matches.map{ Token(it) }) as ArrayList)
+
   fun tokens() = this.tokens.clone()
 
   fun <T> then(next : (Glob) -> List<T>) : List<T> {

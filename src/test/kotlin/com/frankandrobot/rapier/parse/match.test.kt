@@ -4,9 +4,7 @@ import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.Rule
-import com.frankandrobot.rapier.util.BetterIterator
 import org.jetbrains.spek.api.Spek
-import java.util.*
 import kotlin.test.assertEquals
 
 
@@ -73,5 +71,3 @@ class MatchTest : Spek({
   }
 })
 
-private fun textToTokenList(vararg text : String) = text.flatMap{it.split(" ")}.map{Token(it)}
-private fun textToTokenIterator(text : String) = BetterIterator(textToTokenList(text) as ArrayList)
