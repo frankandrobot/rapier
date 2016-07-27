@@ -5,14 +5,11 @@ import com.frankandrobot.rapier.pattern.PatternItem
 import java.util.*
 
 
-/**
- * These might actually make sense as extension functions
- */
-fun parse(patternItem: PatternItem, glob : Glob) : Glob {
+fun PatternItem.parse(glob : Glob) : Glob {
 
   val tokens = glob.tokens()
 
-  if (tokens.hasNext() && patternItem.test(tokens.peek())) {
+  if (tokens.hasNext() && this.test(tokens.peek())) {
 
     return Glob(tokens, matchFound = true, matches = glob.matches.plus(tokens.next()) as ArrayList<Token>)
   }
@@ -20,15 +17,15 @@ fun parse(patternItem: PatternItem, glob : Glob) : Glob {
   return Glob(tokens, matchFound = false)
 }
 
-fun parse(patternItemList: PatternItemList, glob : Glob) : Glob {
+fun PatternItemList.parse(glob : Glob) : Glob {
 
   val tokens = glob.tokens()
 
-  val consumed = patternItemList.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
+  val consumed = this.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
 
   if (consumed) {
 
-    return Glob(tokens, matchFound = true, matches = tokens.next(patternItemList.items.size))
+    return Glob(tokens, matchFound = true, matches = tokens.next(this.items.size))
   }
 
   return Glob(tokens, matchFound = false)
