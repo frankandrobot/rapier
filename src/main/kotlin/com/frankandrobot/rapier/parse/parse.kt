@@ -14,7 +14,7 @@ fun PatternItem.parse(glob : Glob) : Glob {
     return Glob(tokens, matchFound = true, matches = glob.matches.plus(tokens.next()) as ArrayList<Token>)
   }
 
-  return Glob(tokens, matchFound = false)
+  return Glob(glob.tokens(), matchFound = false)
 }
 
 fun PatternItemList.parse(glob : Glob) : Glob {
@@ -25,8 +25,8 @@ fun PatternItemList.parse(glob : Glob) : Glob {
 
   if (consumed) {
 
-    return Glob(tokens, matchFound = true, matches = tokens.next(this.items.size))
+    return Glob(tokens, matchFound = true, matches = glob.tokens().peek(this.items.size))
   }
 
-  return Glob(tokens, matchFound = false)
+  return Glob(glob.tokens(), matchFound = false)
 }

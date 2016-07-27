@@ -20,15 +20,23 @@ fun Rule.match(doc : Document) : List<SlotFiller> {
  */
 internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
 
-  return preFiller.expandedForm()
-    .map{ it.parse(Glob(tokens)) }
-    .flatMap{ glob -> glob.then{
-      filler.expandedForm()
-        .map{ it.parse(glob) }
-        .flatMap{ glob -> glob.then{
-          postFiller.expandedForm().map { it.parse(glob) }}
+  return (tokens.curIndex()..tokens.lastIndex())
+    .map{ tokens.clone().overrideIndex(it) }
+    .flatMap { latestTokens ->
+      preFiller.expandedForm()
+        .map { it.parse(Glob(latestTokens)) }
+        .flatMap { glob ->
+          glob.then {
+            filler.expandedForm()
+              .map { it.parse(glob) }
+              .flatMap { glob ->
+                glob.then {
+                  postFiller.expandedForm().map { it.parse(glob) }
+                }
+              }
+          }
         }
-    }}
-    .filter{ it.matchFound }
-    .map{ it.matches[1] }
+    }
+    .filter { it.matchFound }
+    .map { it.matches[1] }
 }

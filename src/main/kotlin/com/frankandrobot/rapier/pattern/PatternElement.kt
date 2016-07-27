@@ -62,6 +62,9 @@ class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
   : this(wordConstraint.asList(), length = length)
 
+  internal constructor(vararg words: String, length : Int = 1)
+  : this(words.map{WordConstraint(it)}, length = length)
+
   private val expandedForm = PatternListExpandedForm(this)
 
   fun expandedForm() = this.expandedForm.invoke()

@@ -22,7 +22,7 @@ class MatchTest : Spek({
 
   describe("match") {
 
-    it("should match a simple rule") {
+    fit("should match a simple rule") {
 
       val text = textToTokenIterator("start prefiller filler postfiller end")
 
