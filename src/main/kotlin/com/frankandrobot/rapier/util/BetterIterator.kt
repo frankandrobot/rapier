@@ -14,7 +14,7 @@ data class BetterIterator<T>(val array : ArrayList<T>) : Iterator<T>, Iterable<T
 
   private var len = 0
 
-  override fun hasNext() = len < array.lastIndex
+  override fun hasNext() = len <= array.lastIndex
 
   override fun next() : T = array[len++]
 
@@ -42,8 +42,17 @@ data class BetterIterator<T>(val array : ArrayList<T>) : Iterator<T>, Iterable<T
     return false
   }
 
-  fun curIndex() = this.len
-  fun lastIndex() = array.size - 1
+  override fun toString() : String {
+
+    return "Itor(${array}, curIndex=${curIndex})"
+  }
+
+  val curIndex : Int
+    get() = len
+
+  val lastIndex : Int
+    get() = array.size - 1
+
   fun overrideIndex(index : Int) : BetterIterator<T> {
 
     len = index

@@ -20,7 +20,7 @@ fun Rule.match(doc : Document) : List<SlotFiller> {
  */
 internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
 
-  return (tokens.curIndex()..tokens.lastIndex())
+  return (tokens.curIndex..tokens.lastIndex)
     .map{ tokens.clone().overrideIndex(it) }
     .flatMap { latestTokens ->
       preFiller.expandedForm()
@@ -31,7 +31,8 @@ internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
               .map { it.parse(glob) }
               .flatMap { glob ->
                 glob.then {
-                  postFiller.expandedForm().map { it.parse(glob) }
+                  postFiller.expandedForm()
+                    .map { it.parse(glob) }
                 }
               }
           }

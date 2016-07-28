@@ -4,3 +4,5 @@ data class Token(val word : String, val posTag : String, val semanticClass : Str
 
   internal constructor(word : String) : this(word, "", "")
 }
+
+val EmptyToken = Token(word = "", posTag = "", semanticClass = "")
