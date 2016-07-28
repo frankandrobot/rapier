@@ -34,40 +34,40 @@ class MatchTest : Spek({
     it("should repeatedly match a simple rule") {
 
       val text = textToTokenIterator(
-        "start prefiller filler postfiller and prefiller postfiller postfiller"
+        "start prefiller filler postfiller and prefiller filler postfiller"
       )
 
       val result = simpleRule()._match(text)
 
       assertEquals(textToTokenList("filler", "filler"), result)
     }
-  }
 
-  it("should NOT find matches when prefiller doesn't match") {
+    it("should NOT find matches when prefiller doesn't match") {
 
-    val text = textToTokenIterator("nope filler postfiller")
+      val text = textToTokenIterator("nope filler postfiller")
 
-    val result = simpleRule()._match(text)
+      val result = simpleRule()._match(text)
 
-    assertEquals(emptyList<Token>(), result)
-  }
+      assertEquals(emptyList<Token>(), result)
+    }
 
-  it("should NOT find matches when filler doesn't match") {
+    it("should NOT find matches when filler doesn't match") {
 
-    val text = textToTokenIterator("prefiller nope postfiller")
+      val text = textToTokenIterator("prefiller nope postfiller")
 
-    val result = simpleRule()._match(text)
+      val result = simpleRule()._match(text)
 
-    assertEquals(emptyList<Token>(), result)
-  }
+      assertEquals(emptyList<Token>(), result)
+    }
 
-  it("should NOT find matches when postfiller doesn't match") {
+    it("should NOT find matches when postfiller doesn't match") {
 
-    val text = textToTokenIterator("prefiller filler nope")
+      val text = textToTokenIterator("prefiller filler nope")
 
-    val result = simpleRule()._match(text)
+      val result = simpleRule()._match(text)
 
-    assertEquals(emptyList<Token>(), result)
+      assertEquals(emptyList<Token>(), result)
+    }
   }
 })
 
