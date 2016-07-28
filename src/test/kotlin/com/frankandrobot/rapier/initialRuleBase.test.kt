@@ -71,7 +71,7 @@ class InitialRuleBaseTest : Spek({
 
       it("should create PatternElements with *no* semantic constraints") {
 
-        patternElements.forEach{ assertEquals(it.posTagContraints.size, 0) }
+        patternElements.forEach{ assertEquals(it.semanticConstraints.size, 0) }
       }
 
       it("should create PatternElements that are PatternItems only") {
