@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class parseTest : Spek({
 
   val anyItem = { PatternItem("one") }
-  val anyItemList = { PatternItemList("one", "two") }
+  val anyItemList = { ParsePatternItemList("one", "two") }
 
   val tokens = { start : Int -> textToTokenIterator("one two three four", start) }
 

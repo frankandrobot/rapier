@@ -6,14 +6,14 @@ import java.util.*
 
 class PatternListExpandedForm(private val patternList : PatternList) {
 
-  val expansion: ArrayList<PatternItemList> by lazy { calculatePatternListExpandedForm(patternList) }
+  val expansion: ArrayList<ParsePatternItemList> by lazy { calculatePatternListExpandedForm(patternList) }
 
   /**
    * Converts the PatternList into a collection of PatternItemLists i.e., it expands the pattern list into lists of pattern items.
    *
    * Ex: {word: foo, length: 2} => [], [{word: foo}], [{word: foo}, {word: foo}]
    */
-  internal fun calculatePatternListExpandedForm(patternList : PatternList) : ArrayList<PatternItemList> {
+  internal fun calculatePatternListExpandedForm(patternList : PatternList) : ArrayList<ParsePatternItemList> {
 
     val patternItem = PatternItem(
       patternList.wordConstraints,
@@ -21,10 +21,10 @@ class PatternListExpandedForm(private val patternList : PatternList) {
       patternList.semanticConstraints
     )
 
-    return (0..patternList.length).fold(ArrayList<PatternItemList>(), { total, count ->
+    return (0..patternList.length).fold(ArrayList<ParsePatternItemList>(), { total, count ->
 
-      if (count === 0) { total.add(PatternItemList()) }
-      else { total.add(PatternItemList((1..count).map { patternItem } as ArrayList<PatternItem>)) }
+      if (count === 0) { total.add(ParsePatternItemList()) }
+      else { total.add(ParsePatternItemList((1..count).map { patternItem } as ArrayList<PatternItem>)) }
 
       total
     })

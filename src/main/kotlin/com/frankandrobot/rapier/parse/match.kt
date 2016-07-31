@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.document.Document
+import com.frankandrobot.rapier.nlp.EmptyToken
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.pattern.Rule
 import com.frankandrobot.rapier.template.SlotFiller
@@ -38,6 +39,6 @@ internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
           }
         }
     }
-    .filter { it.matchFound }
+    .filter { it.matchFound && it.matches[1] != EmptyToken }
     .map { it.matches[1] }
 }

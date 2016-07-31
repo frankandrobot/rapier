@@ -10,7 +10,7 @@ import java.util.*
  *
  * It's mainly for parsing, not Rule creation.
  */
-data class PatternItemList(val items: ArrayList<PatternItem> = ArrayList<PatternItem>()) {
+data class ParsePatternItemList(val items: ArrayList<PatternItem> = ArrayList<PatternItem>()) {
 
   internal constructor(vararg patternItem : PatternItem)
   : this((ArrayList<PatternItem>() + patternItem.asList()) as ArrayList<PatternItem>)

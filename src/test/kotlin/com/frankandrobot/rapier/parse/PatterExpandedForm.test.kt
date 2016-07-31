@@ -29,7 +29,7 @@ class PatternExpandedFormTest : Spek ({
       val result = PatternExpandedForm(patternSingleItem())
 
       assertEquals(1, result().size)
-      assertEquals(PatternItemList(anyItem()), result[0])
+      assertEquals(ParsePatternItemList(anyItem()), result[0])
     }
 
     it("should expand a pattern with multiple items into itself") {
@@ -37,7 +37,7 @@ class PatternExpandedFormTest : Spek ({
       val result = PatternExpandedForm(patternMultiItem())
 
       assertEquals(1, result().size)
-      assertEquals(PatternItemList(anyItem(), anyOtherItem()), result[0])
+      assertEquals(ParsePatternItemList(anyItem(), anyOtherItem()), result[0])
     }
 
     it("should expand a pattern with a list") {
@@ -45,8 +45,8 @@ class PatternExpandedFormTest : Spek ({
       val result = PatternExpandedForm(patternSingleList())
 
       assertEquals(2, result().size)
-      assertEquals(PatternItemList(), result[0])
-      assertEquals(PatternItemList(anyItem()), result[1])
+      assertEquals(ParsePatternItemList(), result[0])
+      assertEquals(ParsePatternItemList(anyItem()), result[1])
     }
 
     it("should expand a pattern with an item and a list") {
@@ -54,8 +54,8 @@ class PatternExpandedFormTest : Spek ({
       val result = PatternExpandedForm(patternItemList())
 
       assertEquals(2, result().size)
-      assertEquals(PatternItemList(anyItem()), result[0])
-      assertEquals(PatternItemList(anyItem(), anyOtherItem()), result[1])
+      assertEquals(ParsePatternItemList(anyItem()), result[0])
+      assertEquals(ParsePatternItemList(anyItem(), anyOtherItem()), result[1])
 
     }
   }

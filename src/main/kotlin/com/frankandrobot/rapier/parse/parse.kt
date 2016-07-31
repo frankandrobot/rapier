@@ -18,7 +18,7 @@ fun PatternItem.parse(glob : Glob) : Glob {
   return Glob(glob.tokens(), matchFound = false)
 }
 
-fun PatternItemList.parse(glob : Glob) : Glob {
+fun ParsePatternItemList.parse(glob : Glob) : Glob {
 
   val tokens = glob.tokens()
 

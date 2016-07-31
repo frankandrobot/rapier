@@ -14,7 +14,7 @@ import java.util.*
  * Example:
  * [{word: foo}, {word: bar}] // two pattern items
  *
- * expands to the following PatternItemList:
+ * expands to the following ParsePatternItemList:
  *
  * -  [{word: foo}, {word: bar}]
  *
@@ -22,7 +22,7 @@ import java.util.*
  * Example:
  * [{word: foo}, {word: bar, length: 1}] // pattern item followed by pattern list
  *
- * expands to the following PatternItemLists:
+ * expands to the following ParsePatternItemLists:
  *
  * -  [{word: foo}]
  * -  [{word: foo}, {word: bar}]
@@ -31,7 +31,7 @@ import java.util.*
  * Example:
  * [{word: 'foo', length: 1}, {word: 'bar', length: 1}] // two pattern lists
  *
- * expands to the following PatternItemLists:
+ * expands to the following ParsePatternItemLists:
  *
  * -  []
  * -  [{word: foo}]
@@ -41,14 +41,14 @@ import java.util.*
  */
 data class PatternExpandedForm(private val pattern : Pattern) {
 
-  private var _expansion = ArrayList<PatternItemList>(pattern().size)
+  private var _expansion = ArrayList<ParsePatternItemList>(pattern().size)
 
   /**
    * By making this lazy, you guarantee that the construction is synchronized across threads
    */
-  val expansion: ArrayList<PatternItemList> by lazy {
+  val expansion: ArrayList<ParsePatternItemList> by lazy {
 
-    _expansion.add(PatternItemList())
+    _expansion.add(ParsePatternItemList())
 
     pattern().forEach{ patternElement -> add(patternElement) }
 
@@ -73,7 +73,7 @@ data class PatternExpandedForm(private val pattern : Pattern) {
     val newSize = _expansion.size * patternListExpansion.size
     val prevPatterns = _expansion
 
-    _expansion = ArrayList<PatternItemList>(newSize)
+    _expansion = ArrayList<ParsePatternItemList>(newSize)
 
     patternListExpansion.forEach{ newItemList ->
       prevPatterns.forEach{ prevItemList ->
@@ -82,7 +82,7 @@ data class PatternExpandedForm(private val pattern : Pattern) {
 
         clone.addAll(newItemList.items)
 
-        _expansion.add(PatternItemList(clone))
+        _expansion.add(ParsePatternItemList(clone))
       }
     }
   }
