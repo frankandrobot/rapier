@@ -3,6 +3,6 @@ package com.frankandrobot.rapier.template
 import com.frankandrobot.rapier.document.Document
 
 
-class Examples(template : Template,
-               documents : List<Document>,
-               filledTemplates : List<FilledTemplate>)
+class Examples(val template : Template,
+               val documents : List<Document>,
+               val filledTemplates : List<FilledTemplate>)

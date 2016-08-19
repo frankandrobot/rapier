@@ -5,6 +5,7 @@ import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
 import com.frankandrobot.rapier.pattern.Rule
+import com.frankandrobot.rapier.template.Slot
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -12,7 +13,7 @@ import kotlin.test.assertEquals
 class MatchTest : Spek({
 
   val anyText = {textToTokenIterator("start prefiller filler postfiller end")}
-
+  val anySlot = { Slot("any slot") }
 
   describe("match") {
 
@@ -25,7 +26,8 @@ class MatchTest : Spek({
       val patternItemRule = { Rule(
         preFiller = Pattern(anyPreFiller()),
         filler = Pattern(anyFiller()),
-        postFiller = Pattern(anyPostFiller())
+        postFiller = Pattern(anyPostFiller()),
+        slot = anySlot()
       )}
 
       it("should match a simple rule") {
@@ -87,7 +89,8 @@ class MatchTest : Spek({
       val patternListRule = { Rule(
         preFiller = Pattern(PatternList("prefiller")),
         filler = Pattern(PatternItem("filler")),
-        postFiller = Pattern(PatternList("postfiller"))
+        postFiller = Pattern(PatternList("postfiller")),
+        slot = anySlot()
       )}
 
 

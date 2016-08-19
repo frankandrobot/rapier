@@ -14,6 +14,7 @@ import com.frankandrobot.rapier.template.SlotFiller
 fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule> {
 
   val doc = document.value
+  val slotName = slot.first
   val filler = slot.second
 
   var startIndex = 0
@@ -27,7 +28,7 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule
     val preFiller = doc.substring(0, index)
     val postFiller = doc.substring(index + filler.value.length)
 
-    rules.add(_initialRule(preFiller, filler.value, postFiller))
+    rules.add(_initialRule(preFiller, filler.value, postFiller, slotName))
 
     startIndex = index + 1
     index = _index()
@@ -39,7 +40,7 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule
 /**
  * Initial rule list has no semantic constraints and no pattern lists.
  */
-internal fun _initialRule(preFiller: String, filler: String, postFiller: String): Rule {
+internal fun _initialRule(preFiller: String, filler: String, postFiller: String, slot : Slot): Rule {
 
   val preFillerTokens = tokenize(preFiller)
   val fillerTokens = tokenize(filler)
@@ -49,9 +50,12 @@ internal fun _initialRule(preFiller: String, filler: String, postFiller: String)
   val fillerPatterns = fillerTokens.map { _pattern(it) }
   val postFillerPatterns = postFillerTokens.map { _pattern(it) }
 
-  return Rule(preFiller = Pattern(preFillerPatterns),
+  return Rule(
+    preFiller = Pattern(preFillerPatterns),
     filler = Pattern(fillerPatterns),
-    postFiller = Pattern(postFillerPatterns))
+    postFiller = Pattern(postFillerPatterns),
+    slot = slot
+  )
 }
 
 internal fun _pattern(token: Token) = PatternItem(

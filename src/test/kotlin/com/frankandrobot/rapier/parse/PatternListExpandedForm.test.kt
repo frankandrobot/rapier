@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class PatternListExpandedFormTest : Spek({
+class FullParsePatternItemListTest : Spek({
 
   describe("PatternList") {
 
