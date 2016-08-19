@@ -4,16 +4,32 @@ import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
 import java.util.*
 
+
+/**
+ * The collection of all possible PatternItem lists the PatternList represents.
+ * For example, the pattern list {word:[foo, bar], length: 2} expands to:
+ *
+ * - `` (empty)
+ * - `foo`
+ * - `foo`, `foo`
+ * - `foo`, `bar`
+ * - `bar`
+ * - `bar`, `foo`
+ * - `bar`, `bar`
+ *
+ * Each element of the collection is of type ParsePatternItemList.
+ */
 class PatternListExpandedForm(private val patternList : PatternList) {
 
-  val expansion: ArrayList<ParsePatternItemList> by lazy { calculatePatternListExpandedForm(patternList) }
+  val expansion: ArrayList<ParsePatternItemList> by lazy { expand(patternList) }
 
   /**
-   * Converts the PatternList into a collection of PatternItemLists i.e., it expands the pattern list into lists of pattern items.
+   * Converts the PatternList into a collection of PatternItemLists i.e.,
+   * it expands the pattern list into lists of pattern items.
    *
    * Ex: {word: foo, length: 2} => [], [{word: foo}], [{word: foo}, {word: foo}]
    */
-  internal fun calculatePatternListExpandedForm(patternList : PatternList) : ArrayList<ParsePatternItemList> {
+  internal fun expand(patternList : PatternList) : ArrayList<ParsePatternItemList> {
 
     val patternItem = PatternItem(
       patternList.wordConstraints,

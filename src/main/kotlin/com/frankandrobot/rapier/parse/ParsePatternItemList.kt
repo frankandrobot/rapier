@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Note how this class is not a PatternElement.
  *
- * It's mainly for parsing, not Rule creation.
+ * It's for parsing, not Rule creation. It exists because Kotlin isn't dynamically typed.
  */
 data class ParsePatternItemList(val items: ArrayList<PatternItem> = ArrayList<PatternItem>()) {
 

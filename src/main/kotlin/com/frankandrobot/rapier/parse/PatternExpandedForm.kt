@@ -8,19 +8,23 @@ import java.util.*
 
 
 /**
- * Expands Patterns into PatternItemLists.
- * (As will become clear, this is fine because we expect these to be local to a filler...hence, small)
+ * Recall, a Pattern is a list of PatternElements (which are PatternItems or PatternLists).
+ * Instances of this object represent the collection of all possible PatternItem lists the Pattern represents.
  *
- * Example:
- * [{word: foo}, {word: bar}] // two pattern items
+ * # Examples
  *
- * expands to the following ParsePatternItemList:
+ * ## Example 1
+ *
+ * pattern = [{word: foo}, {word: bar}] // two PatternItems
+ *
+ * expands to a single ParsePatternItemList:
  *
  * -  [{word: foo}, {word: bar}]
  *
  *
- * Example:
- * [{word: foo}, {word: bar, length: 1}] // pattern item followed by pattern list
+ * ## Example 2
+ *
+ * pattern = [{word: foo}, {word: bar, length: 1}] // PatternItem followed by PatternList
  *
  * expands to the following ParsePatternItemLists:
  *
@@ -28,15 +32,20 @@ import java.util.*
  * -  [{word: foo}, {word: bar}]
  *
  *
- * Example:
- * [{word: 'foo', length: 1}, {word: 'bar', length: 1}] // two pattern lists
+ * ## Example 3
+ *
+ * pattern = [{word: 'foo', length: 1}, {word: 'bar', length: 1}] // two PatternLists
  *
  * expands to the following ParsePatternItemLists:
  *
- * -  []
+ * -  [] //empty
  * -  [{word: foo}]
  * -  [{word: bar}]
  * -  [{word: foo}, {word: bar}]
+ *
+ * # Too Inefficient?
+ *
+ * Note that while this is very inefficient, this is fine because we expect these to be local to a filler...hence, small.
  *
  */
 data class PatternExpandedForm(private val pattern : Pattern) {
