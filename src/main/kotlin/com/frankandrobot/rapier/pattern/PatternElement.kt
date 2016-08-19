@@ -29,7 +29,9 @@ data class PatternItem(override val wordConstraints: List<WordConstraint> = list
   internal constructor(vararg words : String)
   : this(ArrayList<WordConstraint>().plus(words.map { WordConstraint(it) }))
 
-
+  /**
+   * Does the token satisfy all the constraints?
+   */
   fun test(token: Token) : Boolean {
 
     return (wordConstraints.size === 0 || wordConstraints.any{ it.satisfies(token) }) &&
@@ -41,9 +43,6 @@ data class PatternItem(override val wordConstraints: List<WordConstraint> = list
 /**
  * A PatternList is a PatternItem that can repeat 0 or more times.
  *
- * Unfortunately, the code doesn't make this relationship explicit
- * due to the fact that it actually doesn't make sense to share code with PatternItem
- *
  * For example, the pattern list {word:[foo, bar], length: 2} matches:
  *
  * - `` (empty)
@@ -53,6 +52,10 @@ data class PatternItem(override val wordConstraints: List<WordConstraint> = list
  * - `bar`
  * - `bar foo`
  * - `bar bar
+ *
+ * Unfortunately, the code doesn't make this relationship explicit
+ * due to the fact that it actually doesn't make sense to share code with PatternItem
+ *
  */
 class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
                   override val posTagContraints: List<PosTagConstraint> = listOf(),
