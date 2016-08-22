@@ -22,17 +22,17 @@ class parseTest : Spek({
       val initialTokens = tokens(startToken)
       val nextTokens = tokens(nextToken)
 
-      val result = anyItem().parse(Glob(initialTokens))
+      val result = anyItem().parse(ParseResult(initialTokens))
 
-      assertEquals(Glob(nextTokens, matchFound = true, matches = "one"), result)
+      assertEquals(ParseResult(nextTokens, matchFound = true, matches = "one"), result)
     }
 
     it("should work when no match") {
 
       val noMatch = textToTokenIterator("two three")
-      val result = anyItem().parse(Glob(noMatch))
+      val result = anyItem().parse(ParseResult(noMatch))
 
-      assertEquals(Glob(noMatch, matchFound = false), result)
+      assertEquals(ParseResult(noMatch, matchFound = false), result)
     }
   }
 
@@ -46,17 +46,17 @@ class parseTest : Spek({
       val initialTokens = tokens(startToken)
       val nextTokens = tokens(nextToken)
 
-      val result = anyItemList().parse(Glob(initialTokens))
+      val result = anyItemList().parse(ParseResult(initialTokens))
 
-      assertEquals(Glob(nextTokens, true, "one", "two"), result)
+      assertEquals(ParseResult(nextTokens, true, "one", "two"), result)
     }
 
     it("should work when no match") {
 
       val noMatch = textToTokenIterator("two three")
-      val result = anyItemList().parse(Glob(noMatch))
+      val result = anyItemList().parse(ParseResult(noMatch))
 
-      assertEquals(Glob(noMatch, matchFound = false), result)
+      assertEquals(ParseResult(noMatch, matchFound = false), result)
     }
   }
 })

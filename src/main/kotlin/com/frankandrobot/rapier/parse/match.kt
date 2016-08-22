@@ -28,7 +28,7 @@ internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
     .map{ tokens.clone().overrideIndex(it) }
     .flatMap { latestTokens ->
       preFiller.expandedForm()
-        .map { it.parse(Glob(latestTokens)) }
+        .map { it.parse(ParseResult(latestTokens)) }
         .flatMap { glob ->
           glob.then {
             filler.expandedForm()
@@ -54,7 +54,7 @@ fun Rule.exactMatch(doc : Document) : List<SlotFiller> {
 internal fun Rule._exactMatch(tokens : BetterIterator<Token>) : List<Token> {
 
   return preFiller.expandedForm()
-    .map { it.parse(Glob(tokens)) }
+    .map { it.parse(ParseResult(tokens)) }
     .flatMap { glob ->
       glob.then {
         filler.expandedForm()

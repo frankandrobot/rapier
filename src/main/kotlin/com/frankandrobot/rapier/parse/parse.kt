@@ -6,21 +6,25 @@ import com.frankandrobot.rapier.pattern.PatternItem
 import java.util.*
 
 
-fun PatternItem.parse(glob : Glob) : Glob {
+fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
 
-  val tokens = glob.tokens()
+  val tokens = parseResult.tokens()
 
   if (tokens.hasNext() && this.test(tokens.peek())) {
 
-    return Glob(tokens, matchFound = true, matches = glob.matches.plus(tokens.next()) as ArrayList<Token>)
+    return ParseResult(
+      tokens,
+      matchFound = true,
+      matches = parseResult.matches.plus(tokens.next()) as ArrayList<Token>
+    )
   }
 
-  return Glob(glob.tokens(), matchFound = false)
+  return ParseResult(parseResult.tokens(), matchFound = false)
 }
 
-fun ParsePatternItemList.parse(glob : Glob) : Glob {
+fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
-  val tokens = glob.tokens()
+  val tokens = parseResult.tokens()
 
   val consumed =
     this.items.size === 0 ||
@@ -31,10 +35,14 @@ fun ParsePatternItemList.parse(glob : Glob) : Glob {
     var matches : List<Token>
 
     if (this.items.size === 0) { matches = arrayListOf(EmptyToken) }
-    else { matches = glob.tokens().peek(this.items.size) }
+    else { matches = parseResult.tokens().peek(this.items.size) }
 
-    return Glob(tokens, matchFound = true, matches = glob.matches.plus(matches) as ArrayList)
+    return ParseResult(
+      tokens,
+      matchFound = true,
+      matches = parseResult.matches.plus(matches) as ArrayList
+    )
   }
 
-  return Glob(glob.tokens(), matchFound = false)
+  return ParseResult(parseResult.tokens(), matchFound = false)
 }

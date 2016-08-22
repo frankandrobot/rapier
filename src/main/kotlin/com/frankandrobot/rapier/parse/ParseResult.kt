@@ -13,12 +13,12 @@ import java.util.*
  * - contains the latest token iterator
  * - #then is a "continuation" function---it will call next provided a match is found.
  *   The idea is that you can track `matches` by calling #then.
- *   Additional matches will be added only if the current Glob has a match.
+ *   Additional matches will be added only if the current ParseResult has a match.
  *   It's a "continuation" because you can chain these together.
  */
-data class Glob(private val tokens : BetterIterator<Token>,
-                val matchFound : Boolean = true,
-                val matches : ArrayList<Token> = ArrayList<Token>()) {
+data class ParseResult(private val tokens : BetterIterator<Token>,
+                       val matchFound : Boolean = true,
+                       val matches : ArrayList<Token> = ArrayList<Token>()) {
 
   internal constructor(tokens : BetterIterator<Token>,
                        matchFound : Boolean = true,
@@ -27,7 +27,7 @@ data class Glob(private val tokens : BetterIterator<Token>,
 
   fun tokens() = this.tokens.clone()
 
-  fun <T> then(next : (Glob) -> List<T>) : List<T> {
+  fun <T> then(next : (ParseResult) -> List<T>) : List<T> {
 
     if (matchFound) { return next(this) }
 
