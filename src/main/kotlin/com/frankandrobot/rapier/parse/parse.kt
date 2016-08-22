@@ -3,8 +3,11 @@ package com.frankandrobot.rapier.parse
 import com.frankandrobot.rapier.nlp.EmptyToken
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.util.BetterIterator
 import java.util.*
 
+
+fun PatternItem.parse(tokens : BetterIterator<Token>) : ParseResult = parse(ParseResult(tokens))
 
 fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
 
@@ -21,6 +24,8 @@ fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
 
   return ParseResult(parseResult.tokens(), matchFound = false)
 }
+
+fun ParsePatternItemList.parse(tokens : BetterIterator<Token>) : ParseResult = parse(ParseResult(tokens))
 
 fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 

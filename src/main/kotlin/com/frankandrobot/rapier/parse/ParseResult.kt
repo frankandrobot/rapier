@@ -10,11 +10,7 @@ import java.util.*
  *
  * - tracks the location of the token iterator
  * - as well as the current matches
- * - contains the latest token iterator
- * - #then is a "continuation" function---it will call next provided a match is found.
- *   The idea is that you can track `matches` by calling #then.
- *   Additional matches will be added only if the current ParseResult has a match.
- *   It's a "continuation" because you can chain these together.
+ * - if matchFound, continuation function will execute if called
  */
 data class ParseResult(private val tokens : BetterIterator<Token>,
                        val matchFound : Boolean = true,

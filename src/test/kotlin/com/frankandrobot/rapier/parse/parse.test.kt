@@ -22,7 +22,7 @@ class parseTest : Spek({
       val initialTokens = tokens(startToken)
       val nextTokens = tokens(nextToken)
 
-      val result = anyItem().parse(ParseResult(initialTokens))
+      val result = anyItem().parse(initialTokens)
 
       assertEquals(ParseResult(nextTokens, matchFound = true, matches = "one"), result)
     }
@@ -30,7 +30,7 @@ class parseTest : Spek({
     it("should work when no match") {
 
       val noMatch = textToTokenIterator("two three")
-      val result = anyItem().parse(ParseResult(noMatch))
+      val result = anyItem().parse(noMatch)
 
       assertEquals(ParseResult(noMatch, matchFound = false), result)
     }
