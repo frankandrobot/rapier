@@ -6,8 +6,10 @@ import java.util.*
 
 
 /**
- * Monad-like data structure.
+ * Monad-inspired data structure.
  *
+ * - tracks the location of the token iterator
+ * - as well as the current matches
  * - contains the latest token iterator
  * - #then is a "continuation" function---it will call next provided a match is found.
  *   The idea is that you can track `matches` by calling #then.

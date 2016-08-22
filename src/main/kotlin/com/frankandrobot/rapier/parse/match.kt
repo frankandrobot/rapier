@@ -9,6 +9,9 @@ import com.frankandrobot.rapier.util.BetterIterator
 import java.util.*
 
 
+/**
+ * Returns matched prefillers *anywhere* in the Document
+ */
 fun Rule.match(doc : Document) : List<SlotFiller> {
 
   return _match(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
@@ -38,6 +41,31 @@ internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
               }
           }
         }
+    }
+    .filter { it.matchFound && it.matches[1] != EmptyToken }
+    .map { it.matches[1] }
+}
+
+fun Rule.exactMatch(doc : Document) : List<SlotFiller> {
+
+  return _match(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
+}
+
+internal fun Rule._exactMatch(tokens : BetterIterator<Token>) : List<Token> {
+
+  return preFiller.expandedForm()
+    .map { it.parse(Glob(tokens)) }
+    .flatMap { glob ->
+      glob.then {
+        filler.expandedForm()
+          .map { it.parse(glob) }
+          .flatMap { glob ->
+            glob.then {
+              postFiller.expandedForm()
+                .map { it.parse(glob) }
+            }
+          }
+      }
     }
     .filter { it.matchFound && it.matches[1] != EmptyToken }
     .map { it.matches[1] }

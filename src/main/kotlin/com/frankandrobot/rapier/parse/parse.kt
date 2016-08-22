@@ -22,7 +22,9 @@ fun ParsePatternItemList.parse(glob : Glob) : Glob {
 
   val tokens = glob.tokens()
 
-  val consumed = this.items.size === 0 || this.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
+  val consumed =
+    this.items.size === 0 ||
+    this.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
 
   if (consumed) {
 
