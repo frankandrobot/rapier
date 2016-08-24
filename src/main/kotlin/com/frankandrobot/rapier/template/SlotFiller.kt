@@ -1,4 +1,4 @@
 package com.frankandrobot.rapier.template
 
 
-class SlotFiller(val value : String)
+data class SlotFiller(val value : String)

@@ -1,4 +1,4 @@
 package com.frankandrobot.rapier.template
 
 
-class Slot(val name: String)
+data class Slot(val name: String)
