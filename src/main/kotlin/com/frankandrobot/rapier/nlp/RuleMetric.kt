@@ -19,14 +19,17 @@ class RuleMetric(private val rule : Rule) {
    * "positive examples" are filler matches that are found in the filledTemplates.
    * "negative examples" are filler matches that are *not* found in the filledTemplates.
    *
-   * @param ruleFillers the fillers that correspond to the rule
-   * @param documentTokens the collection of all document tokens
+   * @param examples
+   * @param exampleDocumentTokens each example has a collection of tokens (document) -
+   * we don't calculate this from the Examples because getting a Document's tokens loads the NLP4j library,
+   * which is slow (so we do that as late as possible, for testing purposes)
    */
   internal fun evaluate(
-    ruleFillers: HashSet<SlotFiller>,
-    documentTokens : List<List<Token>>) : Pair<List<SlotFiller>, List<SlotFiller>> {
+    examples : Examples,
+    exampleDocumentTokens: List<List<Token>>) : Pair<List<SlotFiller>, List<SlotFiller>> {
 
-    val matches = documentTokens.flatMap{ rule.exactFillerMatch((ArrayList<Token>() + it) as ArrayList<Token>) }
+    val ruleFillers = examples.slotFillers(rule.slot)
+    val matches = exampleDocumentTokens.flatMap{ rule.exactFillerMatch((ArrayList<Token>() + it) as ArrayList<Token>) }
 
     val positives = matches.filter{ ruleFillers.contains(it) }
     val negatives = matches.filter { !ruleFillers.contains(it) }
@@ -39,7 +42,7 @@ class RuleMetric(private val rule : Rule) {
   fun metric(examples : Examples) : Double {
 
     val metrics = evaluate(
-      examples.slotFillers(rule.slot),
+      examples,
       examples.documents.map{it.tokens})
     val p = metrics.first.size
     val n = metrics.second.size

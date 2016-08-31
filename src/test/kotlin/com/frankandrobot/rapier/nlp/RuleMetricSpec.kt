@@ -17,11 +17,13 @@ class RuleMetricSpec : Spek({
   var yetAnotherFiller = SlotFiller("none")
 
   var anySimpleRule = Rule(slot = Slot("none"))
-  var anyRuleWithDisjunction = Rule(slot = Slot("none"))
+  var anyRuleMatchingTwoFillers = Rule(slot = Slot("none"))
 
-  var anyDocument = emptyList<Token>()
-  var anyOtherDocument = emptyList<Token>()
+  var anyDocument = Document("none")
+  var anyOtherDocument = Document("none")
 
+  var anySimpleExample = Examples()
+  var anyOtherExample = Examples()
 
   beforeEach {
 
@@ -36,15 +38,22 @@ class RuleMetricSpec : Spek({
       postFiller = Pattern(PatternItem("postFiller")),
       slot = anySlot
     )
-    anyRuleWithDisjunction = Rule(
+    anyRuleMatchingTwoFillers = Rule(
       preFiller = Pattern(PatternItem("preFiller")),
       filler = Pattern(PatternItem(anyFiller.value, anyOtherFiller.value)),
       postFiller = Pattern(PatternItem("postFiller")),
       slot = anySlot
     )
 
-    anyDocument = toTokens("preFiller ${anyFiller.value} postFiller")
-    anyOtherDocument = toTokens("preFiller ${anyOtherFiller.value} postFiller")
+    anyDocument = Document("preFiller ${anyFiller.value} postFiller")
+    anyOtherDocument = Document("preFiller ${anyOtherFiller.value} postFiller")
+
+    anySimpleExample = Examples(Template(anySlot), FilledTemplate(anyDocument, Pair(anySlot, anyFiller)))
+    anyOtherExample = Examples(
+      Template(anySlot),
+      FilledTemplate(anyDocument, Pair(anySlot, anyFiller)),
+      FilledTemplate(anyOtherDocument, Pair(anySlot, yetAnotherFiller))
+    )
   }
 
   describe("RuleMetric") {
@@ -53,21 +62,21 @@ class RuleMetricSpec : Spek({
 
       it("should find positive examples in simple rules") {
 
-        val result = RuleMetric(anySimpleRule).evaluate(hashSetOf(anyFiller), listOf(anyDocument))
+        val result = RuleMetric(anySimpleRule).evaluate(anySimpleExample, toTokens(anyDocument))
 
         assertEquals(listOf(anyFiller), result.first)
       }
 
       it("should find no negative examples in simple rules") {
 
-        val result = RuleMetric(anySimpleRule).evaluate(hashSetOf(anyFiller), listOf(anyDocument))
+        val result = RuleMetric(anySimpleRule).evaluate(anySimpleExample, toTokens(anyDocument))
 
         assertEquals(emptyList<SlotFiller>(), result.second)
       }
 
       it("should still find positive examples in complex rules") {
 
-        val result = RuleMetric(anyRuleWithDisjunction).evaluate(hashSetOf(anyFiller, yetAnotherFiller), listOf(anyDocument))
+        val result = RuleMetric(anyRuleMatchingTwoFillers).evaluate(anyOtherExample, toTokens(anyDocument, anyOtherDocument))
 
         assertEquals(listOf(anyFiller), result.first)
 
@@ -75,7 +84,7 @@ class RuleMetricSpec : Spek({
 
       it("should find negative examples in complex rules") {
 
-        val result = RuleMetric(anyRuleWithDisjunction).evaluate(hashSetOf(anyFiller, yetAnotherFiller), listOf(anyDocument, anyOtherDocument))
+        val result = RuleMetric(anyRuleMatchingTwoFillers).evaluate(anyOtherExample, toTokens(anyDocument, anyOtherDocument))
 
         assertEquals(listOf(anyOtherFiller), result.second)
 
@@ -84,4 +93,4 @@ class RuleMetricSpec : Spek({
   }
 })
 
-fun toTokens(words : String) = words.split(" ").map{Token(it)}
+fun toTokens(vararg documents: Document) = documents.map{ it.value.split(" ").map{Token(it)} }
