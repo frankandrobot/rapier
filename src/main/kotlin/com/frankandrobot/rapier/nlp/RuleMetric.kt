@@ -14,26 +14,13 @@ class RuleMetric(private val rule : Rule) {
   private val ruleSize : Float by lazy { rule.ruleSize() }
 
   /**
-   * Finds the fillers that correspond to the given Rule
-   */
-  private fun slotFillers(filledTemplates: List<FilledTemplate>) : List<SlotFiller> {
-
-    return filledTemplates
-      .flatMap{
-        it.filledSlots
-          .filter{ it.first === rule.slot }
-          .map{ it.second}
-      }
-  }
-
-  /**
    * For each example, find the filler matches.
    * "positive examples" are filler matches that are found in the filledTemplates.
    * "negative examples" are filler matches that are *not* found in the filledTemplates.
    */
   internal fun evaluate(examples: Examples) : Pair<List<SlotFiller>, List<SlotFiller>> {
 
-    val templateFillers = this.slotFillers(examples.filledTemplates)
+    val templateFillers = examples.slotFillers(rule.slot)
     val matches = examples.documents.flatMap{ rule.exactFillerMatch(it) }
 
     val positives = matches.filter{ templateFillers.contains(it) }
