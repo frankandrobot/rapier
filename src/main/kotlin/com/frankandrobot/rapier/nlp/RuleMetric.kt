@@ -7,6 +7,7 @@ import com.frankandrobot.rapier.template.Examples
 import com.frankandrobot.rapier.template.FilledTemplate
 import com.frankandrobot.rapier.template.Slot
 import com.frankandrobot.rapier.template.SlotFiller
+import java.util.*
 
 
 class RuleMetric(private val rule : Rule) {
@@ -17,14 +18,18 @@ class RuleMetric(private val rule : Rule) {
    * For each example, find the filler matches.
    * "positive examples" are filler matches that are found in the filledTemplates.
    * "negative examples" are filler matches that are *not* found in the filledTemplates.
+   *
+   * @param ruleFillers the fillers that correspond to the rule
+   * @param documentTokens the collection of all document tokens
    */
-  internal fun evaluate(examples: Examples) : Pair<List<SlotFiller>, List<SlotFiller>> {
+  internal fun evaluate(
+    ruleFillers: HashSet<SlotFiller>,
+    documentTokens : List<List<Token>>) : Pair<List<SlotFiller>, List<SlotFiller>> {
 
-    val templateFillers = examples.slotFillers(rule.slot)
-    val matches = examples.documents.flatMap{ rule.exactFillerMatch(it) }
+    val matches = documentTokens.flatMap{ rule.exactFillerMatch((ArrayList<Token>() + it) as ArrayList<Token>) }
 
-    val positives = matches.filter{ templateFillers.contains(it) }
-    val negatives = matches.filter { !templateFillers.contains(it) }
+    val positives = matches.filter{ ruleFillers.contains(it) }
+    val negatives = matches.filter { !ruleFillers.contains(it) }
 
     return Pair(positives, negatives)
   }
@@ -33,7 +38,9 @@ class RuleMetric(private val rule : Rule) {
 
   fun metric(examples : Examples) : Double {
 
-    val metrics = evaluate(examples)
+    val metrics = evaluate(
+      examples.slotFillers(rule.slot),
+      examples.documents.map{it.tokens})
     val p = metrics.first.size
     val n = metrics.second.size
 

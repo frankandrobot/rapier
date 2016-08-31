@@ -46,9 +46,9 @@ internal fun Rule._fillerMatch(tokens : BetterIterator<Token>) : List<Token> {
     .map { it.matches[1] }
 }
 
-fun Rule.exactFillerMatch(doc : Document) : List<SlotFiller> {
+fun Rule.exactFillerMatch(documentTokens : ArrayList<Token>) : List<SlotFiller> {
 
-  return _fillerMatch(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
+  return _fillerMatch(BetterIterator(documentTokens)).map{SlotFiller(it.word)}
 }
 
 internal fun Rule._exactFillerMatch(tokens : BetterIterator<Token>) : List<Token> {
