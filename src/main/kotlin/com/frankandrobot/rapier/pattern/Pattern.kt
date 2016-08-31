@@ -6,7 +6,7 @@ import java.util.*
 /**
  * Each pattern is a sequence of zero or more pattern elements.
  */
-class Pattern(private val patternElements: List<PatternElement>) {
+class Pattern(private val patternElements: List<PatternElement> = emptyList()) {
 
   internal constructor(vararg patternElement: PatternElement)
   : this(ArrayList<PatternElement>() + patternElement.asList())

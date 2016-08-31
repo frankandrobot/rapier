@@ -4,9 +4,9 @@ import com.frankandrobot.rapier.document.Document
 import java.util.*
 
 
-class Examples(val template : Template,
-               val documents : List<Document>,
-               val filledTemplates : List<FilledTemplate>) {
+class Examples(val template : Template = Template(),
+               val documents : List<Document> = emptyList(),
+               val filledTemplates : List<FilledTemplate> = emptyList()) {
 
   val slotFillers : HashMap<Slot, SlotFillers> by lazy {
 
