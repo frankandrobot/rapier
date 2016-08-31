@@ -9,7 +9,7 @@ import com.frankandrobot.rapier.template.Slot
 
 class RuleMetric(private val rule : Rule) {
 
-  private val ruleSize : Int by lazy { rule.ruleSize() }
+  private val ruleSize : Float by lazy { rule.ruleSize() }
 
   internal fun evaluate(examples: Examples) : Pair<Int, Int> {
 
