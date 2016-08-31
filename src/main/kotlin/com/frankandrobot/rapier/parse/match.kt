@@ -10,11 +10,11 @@ import java.util.*
 
 
 /**
- * Returns matched prefillers *anywhere* in the Document
+ * Returns matched fillers *anywhere* in the Document
  */
-fun Rule.match(doc : Document) : List<SlotFiller> {
+fun Rule.fillerMatch(doc : Document) : List<SlotFiller> {
 
-  return _match(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
+  return _fillerMatch(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
 }
 
 /**
@@ -22,7 +22,7 @@ fun Rule.match(doc : Document) : List<SlotFiller> {
  * It traverses all of the globs that didn't find matches anyway,
  * so it ends up visiting all of the possible combinations of prefillers, fillers, postfillers
  */
-internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
+internal fun Rule._fillerMatch(tokens : BetterIterator<Token>) : List<Token> {
 
   return (tokens.curIndex..tokens.lastIndex)
     .map{ tokens.clone().overrideIndex(it) }
@@ -46,12 +46,12 @@ internal fun Rule._match(tokens : BetterIterator<Token>) : List<Token> {
     .map { it.matches[1] }
 }
 
-fun Rule.exactMatch(doc : Document) : List<SlotFiller> {
+fun Rule.exactFillerMatch(doc : Document) : List<SlotFiller> {
 
-  return _match(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
+  return _fillerMatch(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
 }
 
-internal fun Rule._exactMatch(tokens : BetterIterator<Token>) : List<Token> {
+internal fun Rule._exactFillerMatch(tokens : BetterIterator<Token>) : List<Token> {
 
   return preFiller.expandedForm()
     .map { it.parse(tokens) }

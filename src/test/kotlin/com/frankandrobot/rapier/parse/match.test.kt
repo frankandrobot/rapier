@@ -32,7 +32,7 @@ class MatchTest : Spek({
 
       it("should match a simple rule") {
 
-        val result = patternItemRule()._match(anyText())
+        val result = patternItemRule()._fillerMatch(anyText())
 
         assertEquals(textToTokenList("filler"), result)
       }
@@ -43,7 +43,7 @@ class MatchTest : Spek({
           "start prefiller filler postfiller and prefiller filler postfiller"
         )
 
-        val result = patternItemRule()._match(text)
+        val result = patternItemRule()._fillerMatch(text)
 
         assertEquals(textToTokenList("filler", "filler"), result)
       }
@@ -52,7 +52,7 @@ class MatchTest : Spek({
 
         val text = textToTokenIterator("nope filler postfiller")
 
-        val result = patternItemRule()._match(text)
+        val result = patternItemRule()._fillerMatch(text)
 
         assertEquals(emptyList<Token>(), result)
       }
@@ -61,7 +61,7 @@ class MatchTest : Spek({
 
         val text = textToTokenIterator("prefiller nope postfiller")
 
-        val result = patternItemRule()._match(text)
+        val result = patternItemRule()._fillerMatch(text)
 
         assertEquals(emptyList<Token>(), result)
       }
@@ -70,7 +70,7 @@ class MatchTest : Spek({
 
         val text = textToTokenIterator("prefiller filler nope")
 
-        val result = patternItemRule()._match(text)
+        val result = patternItemRule()._fillerMatch(text)
 
         assertEquals(emptyList<Token>(), result)
       }
@@ -97,7 +97,7 @@ class MatchTest : Spek({
       it("should match full expansion") {
 
         val text = textToTokenIterator("prefiller filler postfiller")
-        val result = patternListRule()._match(text)
+        val result = patternListRule()._fillerMatch(text)
 
         assertEquals(textToTokenList("filler"), result.distinct())
       }
@@ -105,7 +105,7 @@ class MatchTest : Spek({
       it("should generate all patterns") {
 
         val text = textToTokenIterator("prefiller filler postfiller")
-        val result = patternListRule()._match(text)
+        val result = patternListRule()._fillerMatch(text)
 
         assertEquals(4, result.size)
       }
@@ -113,7 +113,7 @@ class MatchTest : Spek({
       it("should match variation 1: no prefiller") {
 
         val text = textToTokenIterator("start filler postfiller end")
-        val result = patternListRule()._match(text)
+        val result = patternListRule()._fillerMatch(text)
 
         assertEquals(textToTokenList("filler"), result.distinct())
       }
@@ -122,7 +122,7 @@ class MatchTest : Spek({
 
         val text = textToTokenIterator("start prefiller filler end")
 
-        val result = patternListRule()._match(text)
+        val result = patternListRule()._fillerMatch(text)
 
         assertEquals(textToTokenList("filler"), result.distinct())
       }
@@ -131,7 +131,7 @@ class MatchTest : Spek({
 
         val text = textToTokenIterator("start filler end")
 
-        val result = patternListRule()._match(text)
+        val result = patternListRule()._fillerMatch(text)
 
         assertEquals(textToTokenList("filler"), result.distinct())
       }
@@ -140,7 +140,7 @@ class MatchTest : Spek({
 
         val text = textToTokenIterator("start end")
 
-        val result = patternListRule()._match(text)
+        val result = patternListRule()._fillerMatch(text)
 
         assertEquals(emptyList(), result.distinct())
       }
