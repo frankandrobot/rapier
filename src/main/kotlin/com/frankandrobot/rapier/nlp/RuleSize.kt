@@ -3,9 +3,14 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.pattern.*
 
 
-fun Rule.ruleSize() : Float {
+fun Rule.ruleSize() : Double {
 
   return preFiller.ruleSize() + filler.ruleSize() + postFiller.ruleSize()
+}
+
+fun Pattern.ruleSize() : Double {
+
+  return _ruleSize(this) / 100.0
 }
 
 /**
@@ -31,9 +36,4 @@ internal fun _ruleSize(pattern : Pattern) : Int {
     metric
 
   }.fold(0) { total, cur -> total + cur }
-}
-
-fun Pattern.ruleSize() : Float {
-
-  return _ruleSize(this) / 100f
 }

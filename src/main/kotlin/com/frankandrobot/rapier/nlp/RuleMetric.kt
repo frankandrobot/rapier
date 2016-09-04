@@ -9,10 +9,14 @@ import com.frankandrobot.rapier.template.Slot
 import com.frankandrobot.rapier.template.SlotFiller
 import java.util.*
 
+internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
+
+internal fun metric(p : Int, n : Int, ruleSize : Double) =
+  -log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
 class RuleMetric(private val rule : Rule) {
 
-  private val ruleSize : Float by lazy { rule.ruleSize() }
+  private val ruleSize : Double by lazy { rule.ruleSize() }
 
   /**
    * For each example, find the filler matches.
@@ -37,16 +41,20 @@ class RuleMetric(private val rule : Rule) {
     return Pair(positives, negatives)
   }
 
-  private fun log2(a : Double) = Math.log(a) / Math.log(2.0)
-
+  /**
+   * This exists because Documents#token is expensive so can't
+   * be used for unit tests
+   */
   fun metric(examples : Examples) : Double {
 
     val metrics = evaluate(
       examples,
-      examples.documents.map{it.tokens})
+      examples.documents.map{it.tokens}
+    )
+
     val p = metrics.first.size
     val n = metrics.second.size
 
-    return -log2((p+1.0)/(p+n+2.0)) + ruleSize / p
+    return metric(p, n, ruleSize)
   }
 }

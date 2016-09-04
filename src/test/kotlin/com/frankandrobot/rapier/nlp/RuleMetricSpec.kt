@@ -90,6 +90,21 @@ class RuleMetricSpec : Spek({
 
       }
     }
+
+    describe("metric") {
+
+      val anyPvalue = 2
+      val anyNvalue = 3
+      val anyRuleSize = 0.4
+
+      it ("should use the correct formula") {
+
+        val expected = -log2((anyPvalue + 1.0) / (anyPvalue + anyNvalue + 2.0)) + anyRuleSize / anyPvalue.toDouble()
+        val actual = metric(anyPvalue, anyNvalue, anyRuleSize)
+
+        assertEquals(expected, actual)
+      }
+    }
   }
 })
 
