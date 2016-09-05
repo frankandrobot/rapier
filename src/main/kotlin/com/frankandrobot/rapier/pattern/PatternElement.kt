@@ -13,21 +13,22 @@ import java.util.*
  */
 interface PatternElement {
 
-  val wordConstraints: List<out WordConstraint>
-  val posTagContraints: List<out PosTagConstraint>
-  val semanticConstraints: List<out SemanticConstraint>
+  val wordConstraints: HashSet<out WordConstraint>
+  val posTagContraints: HashSet<out PosTagConstraint>
+  val semanticConstraints: HashSet<out SemanticConstraint>
 }
 
 
-data class PatternItem(override val wordConstraints: List<out WordConstraint> = listOf(),
-                       override val posTagContraints: List<out PosTagConstraint> = listOf(),
-                       override val semanticConstraints: List<out SemanticConstraint> = listOf()) : PatternElement {
+data class PatternItem(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
+                       override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
+                       override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf())
+: PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint)
-  : this(ArrayList<WordConstraint>().plus(wordConstraint))
+  : this(HashSet<WordConstraint>().plus(wordConstraint) as HashSet<out WordConstraint>)
 
   internal constructor(vararg words : String)
-  : this(ArrayList<WordConstraint>().plus(words.map { WordConstraint(it) }))
+  : this(HashSet<WordConstraint>().plus(words.map { WordConstraint(it) }) as HashSet<out WordConstraint>)
 
   /**
    * Does the token satisfy all the constraints?
@@ -57,16 +58,16 @@ data class PatternItem(override val wordConstraints: List<out WordConstraint> = 
  * due to the fact that it actually doesn't make sense to share code with PatternItem
  *
  */
-class PatternList(override val wordConstraints: List<out WordConstraint> = listOf(),
-                  override val posTagContraints: List<out PosTagConstraint> = listOf(),
-                  override val semanticConstraints: List<out SemanticConstraint> = listOf(),
+class PatternList(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
+                  override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
+                  override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf(),
                   val length: Int = 1) : PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
-  : this(wordConstraint.asList(), length = length)
+  : this(wordConstraint.toHashSet(), length = length)
 
   internal constructor(vararg words: String, length : Int = 1)
-  : this(words.map{WordConstraint(it)}, length = length)
+  : this(words.map{WordConstraint(it)}.toHashSet(), length = length)
 
   private val expandedForm = PatternListExpandedForm(this)
 

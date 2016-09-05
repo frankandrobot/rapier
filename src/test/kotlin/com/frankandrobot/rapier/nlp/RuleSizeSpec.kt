@@ -33,7 +33,7 @@ class RuleSizeSpec : Spek({
 
     it("should add 1 for each pos tag constraint disjunct") {
 
-      val pattern = Pattern(PatternItem(posTagContraints = listOf(
+      val pattern = Pattern(PatternItem(posTagContraints = hashSetOf(
         PosTagConstraint("one"), PosTagConstraint("two"), PosTagConstraint("three")
       )))
 
@@ -42,7 +42,7 @@ class RuleSizeSpec : Spek({
 
     it("should add 1 for each semantic constraint disjunct") {
 
-      val pattern = Pattern(PatternItem(semanticConstraints = listOf(
+      val pattern = Pattern(PatternItem(semanticConstraints = hashSetOf(
         SemanticConstraint("one"), SemanticConstraint("two"), SemanticConstraint("three")
       )))
 

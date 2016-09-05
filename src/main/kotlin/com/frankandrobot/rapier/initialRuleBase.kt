@@ -59,5 +59,5 @@ internal fun _initialRule(preFiller: String, filler: String, postFiller: String,
 }
 
 internal fun _pattern(token: Token) = PatternItem(
-  listOf(WordConstraint(token.word)), listOf(PosTagConstraint(token.posTag))
+  hashSetOf(WordConstraint(token.word)), hashSetOf(PosTagConstraint(token.posTag))
 )

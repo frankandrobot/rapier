@@ -1,14 +1,15 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.*
+import java.util.*
 
 
 /**
  * If the constraints are the same, returns the same constraints.
  * Otherwise it returns two constraints: an empty constraint and the union of both constraints.
  */
-internal fun <T : Constraint> generalize(a : List<out T>, b : List<out T>)
-  : List<List<T>> {
+internal fun <T : Constraint> generalize(a : HashSet<out T>, b : HashSet<out T>)
+  : List<HashSet<out T>> {
 
   //first check if the constraints are the same
   if (a.size == 0 && b.size == 0 || (a.size == b.size && a.containsAll(b) && b.containsAll(a))) {
@@ -16,7 +17,7 @@ internal fun <T : Constraint> generalize(a : List<out T>, b : List<out T>)
     return listOf(a)
   }
 
-  return listOf(emptyList(), a + b)
+  return listOf(hashSetOf(), (a + b) as HashSet<T>)
 }
 
 /**
