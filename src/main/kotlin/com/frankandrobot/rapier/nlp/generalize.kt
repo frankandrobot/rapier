@@ -5,13 +5,13 @@ import com.frankandrobot.rapier.pattern.*
 
 /**
  * If the constraints are the same, returns the same constraints.
- * Otherwise it returns two constraints: an empty contraint and the union of both constraints.
+ * Otherwise it returns two constraints: an empty constraint and the union of both constraints.
  */
 internal fun <T : Constraint> generalize(a : List<out T>, b : List<out T>)
   : List<List<T>> {
 
   //first check if the constraints are the same
-  if (a.size == b.size && a.containsAll(b) && b.containsAll(a)) {
+  if (a.size == 0 && b.size == 0 || (a.size == b.size && a.containsAll(b) && b.containsAll(a))) {
 
     return listOf(a)
   }
@@ -19,6 +19,10 @@ internal fun <T : Constraint> generalize(a : List<out T>, b : List<out T>)
   return listOf(emptyList(), a + b)
 }
 
+/**
+ * Currently generalizes only words and POS tags so...
+ * returns at most 4 pattern elements.
+ */
 internal fun generalize(a : PatternElement, b : PatternElement) : List<PatternElement> {
 
   var wordGeneralizations = generalize(a.wordConstraints, b.wordConstraints)

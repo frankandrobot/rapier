@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.WordConstraint
+import edu.mit.jwi.item.Word
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -9,11 +10,14 @@ fun <T> equals(a : List<T>, b : List<T>) = a.size == b.size && a.containsAll(b) 
 
 class GeneralizeSpec : Spek({
 
-  describe("generalize") {
+  describe("generalize constraints") {
 
     val anyConstraint = listOf(WordConstraint("a"), WordConstraint("b"))
     val anyConstraint2 = listOf(WordConstraint("b"), WordConstraint("a"))
     val anyOtherContraint = listOf(WordConstraint("c"), WordConstraint("d"))
+    val emptyContraint = emptyList<WordConstraint>()
+    val anotherEmptyConstraint = emptyList<WordConstraint>()
+
 
     it("should return the same constraints if they are the same") {
 
@@ -39,6 +43,23 @@ class GeneralizeSpec : Spek({
 
       assert(nonEmptyIndex >= 0)
       assert(equals(result[nonEmptyIndex], anyConstraint + anyOtherContraint))
+    }
+
+    it("should work when both constraints are empty") {
+
+      val result = generalize(emptyContraint, anotherEmptyConstraint)
+
+      assertEquals(1, result.size)
+      assert(equals(result[0], emptyList<WordConstraint>()))
+    }
+
+    it("should work when one of the constraints is empty") {
+
+      val result = generalize(emptyContraint, anyConstraint)
+
+      assertEquals(2, result.size)
+      assert(equals(result[0], emptyList<WordConstraint>()))
+      assert(equals(result[1], anyConstraint))
     }
   }
 })
