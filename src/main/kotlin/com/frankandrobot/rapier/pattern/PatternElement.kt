@@ -13,15 +13,15 @@ import java.util.*
  */
 interface PatternElement {
 
-  val wordConstraints: List<WordConstraint>
-  val posTagContraints: List<PosTagConstraint>
-  val semanticConstraints: List<SemanticConstraint>
+  val wordConstraints: List<out WordConstraint>
+  val posTagContraints: List<out PosTagConstraint>
+  val semanticConstraints: List<out SemanticConstraint>
 }
 
 
-data class PatternItem(override val wordConstraints: List<WordConstraint> = listOf(),
-                       override val posTagContraints: List<PosTagConstraint> = listOf(),
-                       override val semanticConstraints: List<SemanticConstraint> = listOf()) : PatternElement {
+data class PatternItem(override val wordConstraints: List<out WordConstraint> = listOf(),
+                       override val posTagContraints: List<out PosTagConstraint> = listOf(),
+                       override val semanticConstraints: List<out SemanticConstraint> = listOf()) : PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint)
   : this(ArrayList<WordConstraint>().plus(wordConstraint))
@@ -57,9 +57,9 @@ data class PatternItem(override val wordConstraints: List<WordConstraint> = list
  * due to the fact that it actually doesn't make sense to share code with PatternItem
  *
  */
-class PatternList(override val wordConstraints: List<WordConstraint> = listOf(),
-                  override val posTagContraints: List<PosTagConstraint> = listOf(),
-                  override val semanticConstraints: List<SemanticConstraint> = listOf(),
+class PatternList(override val wordConstraints: List<out WordConstraint> = listOf(),
+                  override val posTagContraints: List<out PosTagConstraint> = listOf(),
+                  override val semanticConstraints: List<out SemanticConstraint> = listOf(),
                   val length: Int = 1) : PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
