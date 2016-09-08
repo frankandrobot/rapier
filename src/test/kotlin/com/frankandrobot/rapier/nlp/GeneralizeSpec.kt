@@ -78,15 +78,44 @@ class GeneralizeSpec : Spek({
 
     describe("pattern items") {
 
+      val anyWordConstraint1 = hashSetOf(WordConstraint("word1"), WordConstraint("word2"))
+      val anyWordConstraint2 = hashSetOf(WordConstraint("word3"), WordConstraint("word4"))
+
+      val anyTagConstraint1 = hashSetOf(PosTagConstraint("tag1"), PosTagConstraint("tag2"))
+      val anyTagConstraint2 = hashSetOf(PosTagConstraint("tag3"), PosTagConstraint("tag4"))
+
       val anyPatternElem = PatternItem(
-        hashSetOf(WordConstraint("word1"), WordConstraint("word2")),
-        hashSetOf(PosTagConstraint("tag1"), PosTagConstraint("tag2"))
+        anyWordConstraint1,
+        anyTagConstraint1
       )
       val anyOtherPatternElem = PatternItem(
-        hashSetOf(WordConstraint("word3"), WordConstraint("word4")),
-        hashSetOf(PosTagConstraint("tag3"), PosTagConstraint("tag4"))
+        anyWordConstraint2,
+        anyTagConstraint2
       )
-    }
 
+      it("should work with pattern items") {
+
+        val pattern1 = PatternItem()
+        val pattern2 = PatternItem(
+          posTagContraints = (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
+        )
+        val pattern3 = PatternItem(
+          (anyWordConstraint1 + anyWordConstraint2) as HashSet<out WordConstraint>
+        )
+        val pattern4 = PatternItem(
+          (anyWordConstraint1 + anyWordConstraint2) as HashSet<out WordConstraint>,
+          (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
+        )
+
+        val result = generalize(anyPatternElem, anyOtherPatternElem)
+
+        println(result)
+        assert(result.contains(pattern1))
+        assert(result.contains(pattern2))
+        assert(result.contains(pattern3))
+        assert(result.contains(pattern4))
+        assertEquals(4, result.size)
+      }
+    }
   }
 })

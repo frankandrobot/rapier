@@ -35,13 +35,15 @@ internal fun generalize(a : PatternElement, b : PatternElement) : List<PatternEl
 
       PatternItem(wordConstraints, tagConstraints)
     }
+    else {
 
-    val aLength = if (a is PatternList) a.length else 0
-    val bLength = if (b is PatternList) b.length else 0
+      val aLength = if (a is PatternList) a.length else 0
+      val bLength = if (b is PatternList) b.length else 0
 
-    val length = Math.max(aLength, bLength)
+      val length = Math.max(aLength, bLength)
 
-    PatternList(wordConstraints, tagConstraints, length = length)
+      PatternList(wordConstraints, tagConstraints, length = length)
+    }
   }}
 }
 

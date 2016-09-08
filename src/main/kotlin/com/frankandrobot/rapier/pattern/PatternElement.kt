@@ -58,7 +58,7 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
  * due to the fact that it actually doesn't make sense to share code with PatternItem
  *
  */
-class PatternList(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
+data class PatternList(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
                   override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
                   override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf(),
                   val length: Int = 1) : PatternElement {
