@@ -63,6 +63,15 @@ class GeneralizeSpec : Spek({
       assert(_equals(result[0], hashSetOf<WordConstraint>()))
       assert(_equals(result[1], anyConstraint))
     }
+
+    it("should work with duplicate constraints") {
+
+      val duplicates = hashSetOf(anyConstraint.first(), WordConstraint("e"))
+      val result = generalize(anyConstraint, duplicates)
+
+      assertEquals(0, result[0].size)
+      assertEquals(3, result[1].size)
+    }
   }
 
   describe("generalize pattern elements") {
