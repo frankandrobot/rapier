@@ -91,18 +91,34 @@ class RuleMetricSpec : Spek({
       }
     }
 
+    /**
+     * Maxima code:
+     *
+     * log2(x) := log(x) / log(2);
+     * f(p,n,ruleSize) := -log2((p+1)/(p+n+2)) + ruleSize/p;
+     */
     describe("metric") {
 
-      val anyPvalue = 2
-      val anyNvalue = 3
-      val anyRuleSize = 0.4
+      it ("should use the correct formula 1") {
 
-      it ("should use the correct formula") {
-
-        val expected = -log2((anyPvalue + 1.0) / (anyPvalue + anyNvalue + 2.0)) + anyRuleSize / anyPvalue.toDouble()
+        val anyPvalue = 2
+        val anyNvalue = 3
+        val anyRuleSize = 0.4
+        val expected = 1.422392421336448
         val actual = metric(anyPvalue, anyNvalue, anyRuleSize)
 
-        assertEquals(expected, actual)
+        assert(Math.abs(expected - actual) < 0.00000000000001)
+      }
+
+      it ("should use the correct formula 2") {
+
+        val anyPvalue = 10
+        val anyNvalue = 5
+        val anyRuleSize = 0.8
+        val expected = 0.7080312226130421
+        val actual = metric(anyPvalue, anyNvalue, anyRuleSize)
+
+        assert(Math.abs(expected - actual) < 0.00000000000001)
       }
     }
   }
