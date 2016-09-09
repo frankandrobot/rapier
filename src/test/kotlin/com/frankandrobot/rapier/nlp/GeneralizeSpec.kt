@@ -17,109 +17,99 @@ private data class HashSetContraints<T : Constraint>(val hashSet : HashSet<out T
   constructor(vararg constraint : T) : this(constraint.toHashSet())
 
   operator fun invoke() = hashSet
-  operator fun plus(other : T) = HashSetContraints((hashSet + other) as HashSet<out T>)
-  operator fun plus(other : HashSetContraints<T>) = HashSetContraints((hashSet + other()) as HashSet<out T>)
+  operator fun plus(other : T) = (hashSet + other) as HashSet<out T>
+  operator fun plus(other : HashSetContraints<T>) = (hashSet + other()) as HashSet<out T>
 }
 
 
 class GeneralizeSpec : Spek({
 
-  val anyConstraint = HashSetContraints(WordConstraint("a"), WordConstraint("b"))
-  val anyConstraintInAnotherOrder = HashSetContraints(WordConstraint("b"), WordConstraint("a"))
-  val anyOtherConstraint = HashSetContraints(WordConstraint("c"), WordConstraint("d"))
+  val anyWordConstraint = HashSetContraints(WordConstraint("a"), WordConstraint("b"))
+  val anyWordConstraintInAnotherOrder = HashSetContraints(WordConstraint("b"), WordConstraint("a"))
+  val anyOtherWordConstraint = HashSetContraints(WordConstraint("c"), WordConstraint("d"))
 
-  val emptyConstraint = HashSetContraints<WordConstraint>()
-  val anotherEmptyConstraint = HashSetContraints<WordConstraint>()
+  val emptyWordConstraint = HashSetContraints<WordConstraint>()
+  val anotherEmptyWordConstraint = HashSetContraints<WordConstraint>()
 
   describe("generalize constraints") {
 
     it("should return the same constraints if they are the same") {
 
-      val result = generalize(anyConstraint(), anyConstraintInAnotherOrder())
+      val result = generalize(anyWordConstraint(), anyWordConstraintInAnotherOrder())
 
-      assert(_equals(result[0], anyConstraint()))
+      assertEquals(1, result.size)
+      assertEquals(anyWordConstraint(), result[0])
     }
 
     it("should return an empty constraint when constraints differ") {
 
-      val result = generalize(anyConstraint(), anyOtherConstraint())
+      val result = generalize(anyWordConstraint(), anyOtherWordConstraint())
 
-      val emptyIndex = if (result[0].isEmpty()) 0 else if (result[1].isEmpty()) 1 else -1
-
-      assert(emptyIndex >= 0)
+      assertEquals(2, result.size)
+      assert(result[0].isEmpty() || result[1].isEmpty())
     }
 
-    it("should return the union of the contraints when constraints differ") {
+    it("should return the union of the constraints when constraints differ") {
 
-      val result = generalize(anyConstraint(), anyOtherConstraint())
+      val result = generalize(anyWordConstraint(), anyOtherWordConstraint())
+      val union = anyWordConstraint + anyOtherWordConstraint
 
-      val nonEmptyIndex = if (!result[0].isEmpty()) 0 else if (!result[1].isEmpty()) 1 else -1
-
-      assert(nonEmptyIndex >= 0)
-      assert(_equals(result[nonEmptyIndex], anyConstraint + anyOtherConstraint))
+      assertEquals(2, result.size)
+      assert(union == result[0] || union == result[1])
     }
 
     it("should work when both constraints are empty") {
 
-      val result = generalize(emptyConstraint(), anotherEmptyConstraint())
+      val result = generalize(emptyWordConstraint(), anotherEmptyWordConstraint())
 
       assertEquals(1, result.size)
-      assert(_equals(result[0], hashSetOf<WordConstraint>()))
+      assertEquals(hashSetOf<WordConstraint>(), result[0])
     }
 
     it("should work when one of the constraints is empty") {
 
-      val result = generalize(emptyConstraint(), anyConstraint())
+      val result = generalize(emptyWordConstraint(), anyWordConstraint())
 
       assertEquals(2, result.size)
-      assert(_equals(result[0], hashSetOf<WordConstraint>()))
-      assert(_equals(result[1], anyConstraint))
+      assertEquals(emptyWordConstraint(), result[0])
+      assertEquals(anyWordConstraint(), result[1])
     }
 
     it("should work with duplicate constraints") {
 
-      val duplicates = hashSetOf(anyConstraint().first(), WordConstraint("e"))
-      val result = generalize(anyConstraint(), duplicates)
+      val duplicates = HashSetContraints(anyWordConstraint().first(), WordConstraint("e"))
+      val result = generalize(anyWordConstraint(), duplicates())
 
       assertEquals(0, result[0].size)
       assertEquals(3, result[1].size)
+      assertEquals(duplicates + anyWordConstraint, result[1])
     }
   }
 
   describe("generalize pattern elements") {
 
+    val anyTagConstraint = HashSetContraints(PosTagConstraint("tag1"), PosTagConstraint("tag2"))
+    val anyOtherTagConstraint = HashSetContraints(PosTagConstraint("tag3"), PosTagConstraint("tag4"))
+
     describe("pattern items") {
 
-      val anyWordConstraint1 = hashSetOf(WordConstraint("word1"), WordConstraint("word2"))
-      val anyWordConstraint2 = hashSetOf(WordConstraint("word3"), WordConstraint("word4"))
-
-      val anyTagConstraint1 = hashSetOf(PosTagConstraint("tag1"), PosTagConstraint("tag2"))
-      val anyTagConstraint2 = hashSetOf(PosTagConstraint("tag3"), PosTagConstraint("tag4"))
-
       val anyPatternElem = PatternItem(
-        anyWordConstraint1,
-        anyTagConstraint1
+        anyWordConstraint(),
+        anyTagConstraint()
       )
       val anyOtherPatternElem = PatternItem(
-        anyWordConstraint2,
-        anyTagConstraint2
+        anyOtherWordConstraint(),
+        anyOtherTagConstraint()
       )
 
       it("should work with pattern items") {
 
-        val pattern1 = PatternItem()
-        val pattern2 = PatternItem(
-          posTagContraints = (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
-        )
-        val pattern3 = PatternItem(
-          (anyWordConstraint1 + anyWordConstraint2) as HashSet<out WordConstraint>
-        )
-        val pattern4 = PatternItem(
-          (anyWordConstraint1 + anyWordConstraint2) as HashSet<out WordConstraint>,
-          (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
-        )
-
         val result = generalize(anyPatternElem, anyOtherPatternElem)
+
+        val pattern1 = PatternItem()
+        val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
+        val pattern3 = PatternItem(anyWordConstraint + anyOtherWordConstraint)
+        val pattern4 = PatternItem(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint)
 
         assert(result.contains(pattern1))
         assert(result.contains(pattern2))
@@ -128,20 +118,16 @@ class GeneralizeSpec : Spek({
         assertEquals(4, result.size)
       }
 
-      it("should work when one of the pattern items has no constraints 1") {
+      it("should work when one of the pattern items has no word constraints") {
 
-        val noWordContraints = PatternItem(posTagContraints = anyTagConstraint2)
+        val noWordContraints = PatternItem(posTagContraints = anyOtherTagConstraint())
+
         val result = generalize(noWordContraints, anyPatternElem)
 
         val pattern1 = PatternItem()
-        val pattern2 = PatternItem(
-          posTagContraints = (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
-        )
-        val pattern3 = PatternItem(anyWordConstraint1)
-        val pattern4 = PatternItem(
-          anyWordConstraint1,
-          (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
-        )
+        val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
+        val pattern3 = PatternItem(anyWordConstraint())
+        val pattern4 = PatternItem(anyWordConstraint(), anyTagConstraint + anyOtherTagConstraint)
 
         assert(result.contains(pattern1))
         assert(result.contains(pattern2))
@@ -150,20 +136,16 @@ class GeneralizeSpec : Spek({
         assertEquals(4, result.size)
       }
 
-      it("should work when one of the pattern items has no constraints 2") {
+      it("should work when one of the pattern items has no constraints at all") {
 
         val noConstraints = PatternItem()
+
         val result = generalize(noConstraints, anyPatternElem)
 
         val pattern1 = PatternItem()
-        val pattern2 = PatternItem(
-          posTagContraints = (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
-        )
-        val pattern3 = PatternItem(anyWordConstraint1)
-        val pattern4 = PatternItem(
-          anyWordConstraint1,
-          (anyTagConstraint1 + anyTagConstraint2) as HashSet<out PosTagConstraint>
-        )
+        val pattern2 = PatternItem(posTagContraints = anyPatternElem.posTagContraints)
+        val pattern3 = PatternItem(anyPatternElem.wordConstraints)
+        val pattern4 = anyPatternElem
 
         assert(result.contains(pattern1))
         assert(result.contains(pattern2))
