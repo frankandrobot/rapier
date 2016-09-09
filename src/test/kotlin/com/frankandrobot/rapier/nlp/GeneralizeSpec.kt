@@ -1,9 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.Constraint
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.PosTagConstraint
-import com.frankandrobot.rapier.pattern.WordConstraint
+import com.frankandrobot.rapier.pattern.*
 import org.jetbrains.spek.api.Spek
 import java.util.*
 import kotlin.test.assertEquals
@@ -91,20 +88,21 @@ class GeneralizeSpec : Spek({
     val anyTagConstraint = HashSetContraints(PosTagConstraint("tag1"), PosTagConstraint("tag2"))
     val anyOtherTagConstraint = HashSetContraints(PosTagConstraint("tag3"), PosTagConstraint("tag4"))
 
+    val anyPatternItem = PatternItem(
+      anyWordConstraint(),
+      anyTagConstraint()
+    )
+
     describe("pattern items") {
 
-      val anyPatternElem = PatternItem(
-        anyWordConstraint(),
-        anyTagConstraint()
-      )
-      val anyOtherPatternElem = PatternItem(
+      val anyOtherPatternitem = PatternItem(
         anyOtherWordConstraint(),
         anyOtherTagConstraint()
       )
 
       it("should work with pattern items") {
 
-        val result = generalize(anyPatternElem, anyOtherPatternElem)
+        val result = generalize(anyPatternItem, anyOtherPatternitem)
 
         val pattern1 = PatternItem()
         val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
@@ -122,7 +120,7 @@ class GeneralizeSpec : Spek({
 
         val noWordContraints = PatternItem(posTagContraints = anyOtherTagConstraint())
 
-        val result = generalize(noWordContraints, anyPatternElem)
+        val result = generalize(noWordContraints, anyPatternItem)
 
         val pattern1 = PatternItem()
         val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
@@ -140,18 +138,60 @@ class GeneralizeSpec : Spek({
 
         val noConstraints = PatternItem()
 
-        val result = generalize(noConstraints, anyPatternElem)
+        val result = generalize(noConstraints, anyPatternItem)
 
         val pattern1 = PatternItem()
-        val pattern2 = PatternItem(posTagContraints = anyPatternElem.posTagContraints)
-        val pattern3 = PatternItem(anyPatternElem.wordConstraints)
-        val pattern4 = anyPatternElem
+        val pattern2 = PatternItem(posTagContraints = anyPatternItem.posTagContraints)
+        val pattern3 = PatternItem(anyPatternItem.wordConstraints)
+        val pattern4 = anyPatternItem
 
         assert(result.contains(pattern1))
         assert(result.contains(pattern2))
         assert(result.contains(pattern3))
         assert(result.contains(pattern4))
         assertEquals(4, result.size)
+      }
+    }
+
+    describe("pattern lists") {
+
+      val anyPatternList = PatternList(anyWordConstraint(), anyTagConstraint(), length = 2)
+      val anyBiggerPatternList = PatternList(anyOtherWordConstraint(), anyOtherTagConstraint(), length = 3)
+
+      it("should work with two pattern lists") {
+
+        val result = generalize(anyPatternList, anyBiggerPatternList)
+
+        val pattern1 = PatternList(length = anyBiggerPatternList.length)
+        val pattern2 = PatternList(posTagContraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
+        val pattern3 = PatternList(anyWordConstraint + anyOtherWordConstraint, length = anyBiggerPatternList.length)
+        val pattern4 = PatternList(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
+
+        assert(result.contains(pattern1))
+        assert(result.contains(pattern2))
+        assert(result.contains(pattern3))
+        assert(result.contains(pattern4))
+        assertEquals(4, result.size)
+
+        result.forEach { assertEquals(anyBiggerPatternList.length, (it as PatternList).length) }
+      }
+
+      it("should work with a pattern item and a pattern list") {
+
+        val result = generalize(anyPatternItem, anyBiggerPatternList)
+
+        val pattern1 = PatternList(length = anyBiggerPatternList.length)
+        val pattern2 = PatternList(posTagContraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
+        val pattern3 = PatternList(anyWordConstraint + anyOtherWordConstraint, length = anyBiggerPatternList.length)
+        val pattern4 = PatternList(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
+
+        assert(result.contains(pattern1))
+        assert(result.contains(pattern2))
+        assert(result.contains(pattern3))
+        assert(result.contains(pattern4))
+        assertEquals(4, result.size)
+
+        result.forEach { assertEquals(anyBiggerPatternList.length, (it as PatternList).length) }
       }
     }
   }
