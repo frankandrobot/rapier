@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.*
+import edu.mit.jwi.item.Word
 import org.jetbrains.spek.api.Spek
 import java.util.*
 import kotlin.test.assertEquals
@@ -55,7 +56,7 @@ class GeneralizeSpec : Spek({
       assert(union == result[0] || union == result[1])
     }
 
-    it("should work when both constraints are empty") {
+    it("should return empty when both constraints are empty") {
 
       val result = generalize(emptyWordConstraint(), anotherEmptyWordConstraint())
 
@@ -63,23 +64,21 @@ class GeneralizeSpec : Spek({
       assertEquals(hashSetOf<WordConstraint>(), result[0])
     }
 
-    it("should work when one of the constraints is empty") {
+    it("should return empty when one constraint is empty") {
 
       val result = generalize(emptyWordConstraint(), anyWordConstraint())
 
-      assertEquals(2, result.size)
+      assertEquals(1, result.size)
       assertEquals(emptyWordConstraint(), result[0])
-      assertEquals(anyWordConstraint(), result[1])
     }
 
-    it("should work with duplicate constraints") {
+    it("should return the superset when one is a superset") {
 
-      val duplicates = HashSetContraints(anyWordConstraint().first(), WordConstraint("e"))
-      val result = generalize(anyWordConstraint(), duplicates())
+      val superset = HashSetContraints((anyWordConstraint() + WordConstraint("e")) as HashSet<WordConstraint>)
+      val result = generalize(anyWordConstraint(), superset())
 
-      assertEquals(0, result[0].size)
-      assertEquals(3, result[1].size)
-      assertEquals(duplicates + anyWordConstraint, result[1])
+      assertEquals(superset(), result[0])
+      assertEquals(1, result.size)
     }
   }
 
@@ -124,14 +123,10 @@ class GeneralizeSpec : Spek({
 
         val pattern1 = PatternItem()
         val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
-        val pattern3 = PatternItem(anyWordConstraint())
-        val pattern4 = PatternItem(anyWordConstraint(), anyTagConstraint + anyOtherTagConstraint)
 
+        assertEquals(2, result.size)
         assert(result.contains(pattern1))
         assert(result.contains(pattern2))
-        assert(result.contains(pattern3))
-        assert(result.contains(pattern4))
-        assertEquals(4, result.size)
       }
 
       it("should work when one of the pattern items has no constraints at all") {
@@ -141,15 +136,9 @@ class GeneralizeSpec : Spek({
         val result = generalize(noConstraints, anyPatternItem)
 
         val pattern1 = PatternItem()
-        val pattern2 = PatternItem(posTagContraints = anyPatternItem.posTagContraints)
-        val pattern3 = PatternItem(anyPatternItem.wordConstraints)
-        val pattern4 = anyPatternItem
 
+        assertEquals(1, result.size)
         assert(result.contains(pattern1))
-        assert(result.contains(pattern2))
-        assert(result.contains(pattern3))
-        assert(result.contains(pattern4))
-        assertEquals(4, result.size)
       }
     }
 

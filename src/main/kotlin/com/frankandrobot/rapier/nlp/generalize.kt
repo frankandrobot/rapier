@@ -5,16 +5,27 @@ import java.util.*
 
 
 /**
- * If the constraints are the same, returns the same constraints.
- * Otherwise it returns two constraints: an empty constraint and the union of both constraints.
+ * -  if the two constraints are identical, then the new constraint is simply the same as the original
+ *    constraints.
+ * -  If either constraint is empty (the word or tag is unconstrained), then the generalized
+ *    constraint is also empty.
+ * -  If either constraint is a superset of the other, the new constraint will be the superset.
+ * -  In all other cases, two alternative generalizations are created: one is the union of the two
+ *    constraints and one is the empty constraint.
  */
 internal fun <T : Constraint> generalize(a : HashSet<out T>, b : HashSet<out T>)
   : List<HashSet<out T>> {
 
-  //first check if the constraints are the same
-  if (a.size == 0 && b.size == 0 || (a.size == b.size && a.containsAll(b) && b.containsAll(a))) {
-
-    return listOf(a)
+  // is one of the contraints empty?
+  if (a.size == 0 || b.size == 0) {
+    return listOf(hashSetOf())
+  }
+  // is one a superset of the other?
+  else if (a.size <= b.size && b.containsAll(a)) {
+    return listOf(b)
+  }
+  else if (b.size <= a.size && a.containsAll(b)) {
+    return listOf(a);
   }
 
   return listOf(hashSetOf(), (a + b) as HashSet<T>)
