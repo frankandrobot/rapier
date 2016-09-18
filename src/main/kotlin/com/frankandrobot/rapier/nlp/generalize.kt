@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.util.combinations
 import java.util.*
 
 
@@ -40,28 +41,23 @@ internal fun generalize(a : PatternElement, b : PatternElement) : List<PatternEl
   var wordGeneralizations = generalize(a.wordConstraints, b.wordConstraints)
   var tagGeneralizations = generalize(a.posTagContraints, b.posTagContraints)
 
-  return wordGeneralizations.flatMap { wordConstraints -> tagGeneralizations.map{ tagConstraints ->
+  return combinations(wordGeneralizations, tagGeneralizations) {
+    wordConstraints : HashSet<out Constraint>, tagConstraints : HashSet<out Constraint> ->
 
-    if (a is PatternItem && b is PatternItem) {
+      if (a is PatternItem && b is PatternItem) {
 
-      PatternItem(wordConstraints, tagConstraints)
-    }
-    else {
+        PatternItem(wordConstraints as HashSet<out WordConstraint>, tagConstraints as HashSet<out PosTagConstraint>)
+      }
+      else {
 
-      val aLength = if (a is PatternList) a.length else 0
-      val bLength = if (b is PatternList) b.length else 0
+        val aLength = if (a is PatternList) a.length else 0
+        val bLength = if (b is PatternList) b.length else 0
 
-      val length = Math.max(aLength, bLength)
+        val length = Math.max(aLength, bLength)
 
-      PatternList(wordConstraints, tagConstraints, length = length)
-    }
-  }}
+        PatternList(
+          wordConstraints as HashSet<out WordConstraint>, tagConstraints as HashSet<out PosTagConstraint>, length = length
+        )
+      }
+  }
 }
-
-//fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
-//
-//  if (a().size == b().size) {
-//
-//    a().withIndex().map
-//  }
-//}

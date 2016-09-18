@@ -3,6 +3,9 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
+/**
+ * @deprecated Use ListIterator
+ */
 data class BetterIterator<T>(val array : ArrayList<T>) : Iterator<T>, Iterable<T> {
 
   override fun iterator(): Iterator<T> = this
