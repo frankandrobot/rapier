@@ -41,6 +41,8 @@ internal fun findMatches(a : Pattern, b : Pattern) : ArrayList<Match> {
 }
 
 /**
+ * The case when the two patterns have the same length.
+ *
  * Pairs up the pattern elements from first to last and compute the generalizations of
  * each pair. Then combine the generalizations of the pairs of elements in order.
  */
@@ -55,26 +57,42 @@ internal fun caseEqualSize(a : Pattern, b : Pattern) : List<Pattern> {
 }
 
 /**
- * Case shorter pattern has 0 elements.
+ * The case when the shorter pattern has 0 elements.
  *
  * The pattern elements in the longer pattern are generalized into a set of pattern lists,
  * one pattern list for each alternative generalization of the constraints of the pattern elements.
  * The length of the pattern lists is the sum of the lengths of the elements of the longer pattern,
  * with pattern items having a length of one.
  */
-internal fun caseZeroSize(a : Pattern) : List<Pattern> {
+internal fun caseEmptyPattern(a : Pattern) : List<Pattern> {
 
-  val length = a().fold(0){ total, patternElement ->
-
-    var newTotal = 0
-
-    if (patternElement is PatternItem) { newTotal = total + 1 }
-    if (patternElement is PatternList) { newTotal = total + patternElement.length }
-
-    newTotal
-  }
+  val length = a().fold(0){ total, patternElement -> total + patternElement.length }
 
   val generalizations = a().fold(listOf(a()[0])){ total, patternElement ->
+
+    total.flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }.distinct()
+  }
+
+  return generalizations
+    .map{PatternList(
+      wordConstraints = it.wordConstraints,
+      posTagContraints = it.posTagContraints,
+      semanticConstraints = it.semanticConstraints,
+      length = length
+    )}
+    .map{Pattern(it)}
+}
+
+/**
+ * The case when the shorter pattern has exactly 1 element.
+ */
+internal fun caseSingleElement(a : Pattern, b : Pattern) : List<Pattern> {
+
+  assert(b().size == 1)
+
+  val length = a().fold(b()[0].length){ total, patternElement -> total + patternElement.length }
+
+  val generalizations = a().fold(listOf(b()[0])){ total, patternElement ->
 
     total.flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }.distinct()
   }

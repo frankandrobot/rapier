@@ -16,6 +16,7 @@ interface PatternElement {
   val wordConstraints: HashSet<out WordConstraint>
   val posTagContraints: HashSet<out PosTagConstraint>
   val semanticConstraints: HashSet<out SemanticConstraint>
+  val length: Int
 }
 
 
@@ -23,6 +24,8 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
                        override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
                        override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf())
 : PatternElement {
+
+  override val length = 1
 
   internal constructor(vararg wordConstraint: WordConstraint)
   : this(HashSet<WordConstraint>().plus(wordConstraint) as HashSet<out WordConstraint>)
@@ -61,7 +64,7 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
 data class PatternList(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
                   override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
                   override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf(),
-                  val length: Int = 1) : PatternElement {
+                  override val length: Int = 1) : PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
   : this(wordConstraint.toHashSet(), length = length)
