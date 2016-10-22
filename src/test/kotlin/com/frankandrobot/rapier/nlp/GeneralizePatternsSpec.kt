@@ -19,9 +19,9 @@ class GeneralizePatternsSpec : Spek ({
       val result = findMatches(anyPattern, anyLongerPattern)
 
       assertEquals(3, result.size)
-      assertEquals(Match(matchIndexSmall = 0, matchIndexLarge = 1), result[0])
-      assertEquals(Match(matchIndexSmall = 1, matchIndexLarge = 3), result[1])
-      assertEquals(Match(matchIndexSmall = 2, matchIndexLarge = 4), result[2])
+      assertEquals(MatchIndeces(leftIndex = 0, rightIndex = 1), result[0])
+      assertEquals(MatchIndeces(leftIndex = 1, rightIndex = 3), result[1])
+      assertEquals(MatchIndeces(leftIndex = 2, rightIndex = 4), result[2])
     }
   }
 
