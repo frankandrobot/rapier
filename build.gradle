@@ -26,7 +26,6 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
     compile "edu.mit:jwi:2.2.3"
     compile "edu.emory.mathcs.nlp:nlp4j:1.1.2"
     compile "edu.emory.mathcs.nlp:nlp4j-english:1.1.2"
