@@ -9,11 +9,10 @@ import kotlin.test.assertEquals
 
 class GeneralizePatternsSpec : Spek ({
 
-
   describe("findExactMatchIndices") {
 
-    val anyShorterPattern = Pattern(listOf("a", "b", "c").map{ PatternItem(it) })
-    val anyLongerPattern = Pattern(listOf("1", "a", "3", "b", "c").map{ PatternItem(it) })
+    val anyShorterPattern = Pattern("a", "b", "c")
+    val anyLongerPattern = Pattern("1", "a", "3", "b", "c")
 
     var result = ArrayList<MatchIndices>()
 
@@ -40,8 +39,8 @@ class GeneralizePatternsSpec : Spek ({
     }
 
     it("should return the first match") {
-      val left = Pattern(listOf("1", "x", "2").map{ PatternItem(it) })
-      val right = Pattern(listOf("3", "x", "x").map{ PatternItem(it) })
+      val left = Pattern("1", "x", "2")
+      val right = Pattern("3", "x", "x")
       val result = findExactMatchIndices(left, right)
 
       assertEquals(MatchIndices(leftIndex = 1, rightIndex = 1), result[1])
@@ -49,22 +48,65 @@ class GeneralizePatternsSpec : Spek ({
     }
 
     it("should NOT return match if elements in shorter pattern cannot match up 1") {
-      val left = Pattern(listOf("1", "x", "y").map{ PatternItem(it) })
-      val right = Pattern(listOf("3", "4", "5", "x").map{ PatternItem(it) })
+      val left = Pattern("1", "x", "y")
+      val right = Pattern("3", "4", "5", "x")
       val result = findExactMatchIndices(left, right)
 
       assertEquals(2, result.size)
     }
 
     it("should NOT return match if elements in shorter pattern cannot match up 2") {
-      val left = Pattern(listOf("1", "x", "y").map{ PatternItem(it) })
-      val right = Pattern(listOf("3", "4", "5", "y", "x").map{ PatternItem(it) })
+      val left = Pattern("1", "x", "y")
+      val right = Pattern("3", "4", "5", "y", "x")
       val result = findExactMatchIndices(left, right)
 
       assertEquals(3, result.size)
       assertEquals(MatchIndices(leftIndex = 2, rightIndex = 3), result[1])
     }
+
+    it("should work in degenerate case") {
+      val emptyPat = Pattern()
+      val result = findExactMatchIndices(emptyPat, anyShorterPattern)
+
+      assertEquals(2, result.size)
+    }
+
+    it("should stop only in exact matches") {
+      assertEquals(1, 0)
+    }
   }
+
+  describe("partitionByExactMatches") {
+
+    val left = Pattern("x","y","z")
+    val right = Pattern("1","x","2","3","z","4")
+
+    var result = emptyList<Pair<Pattern,Pattern>>()
+
+    beforeEach {
+      result = partitionByExactMatches(left, right)
+    }
+
+    it("should find 2 matches so 5 segments") {
+      assertEquals(5, result.size)
+    }
+
+    it("should return segments with empty patterns") {
+      assertEquals(Pair(Pattern(), Pattern("1")), result[0])
+      assertEquals(Pair(Pattern(), Pattern("4")), result[4])
+    }
+
+    it("should return matches") {
+      assertEquals(Pair(Pattern("x"), Pattern("x")), result[1])
+      assertEquals(Pair(Pattern("z"), Pattern("z")), result[3])
+    }
+
+    it("should return segments with non-empty patterns") {
+      assertEquals(Pair(Pattern("y"), Pattern("2","3")), result[2])
+    }
+  }
+
+  //internal fun Pr(vararg patternItems : String) = Pattern(patternItems.map{PatternItem(it)})
 
 //  describe("caseEqualSize") {
 //

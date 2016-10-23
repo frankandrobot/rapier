@@ -87,9 +87,17 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
         val leftPatterns = left().subList(prevLeftIndex, match.leftIndex)
         val rightPatterns = right().subList(prevRightIndex, match.rightIndex)
 
-        total +
-          Pair(Pattern(leftPatterns), Pattern(rightPatterns)) +
-          Pair(Pattern(left()[match.leftIndex]), Pattern(right()[match.rightIndex]))
+        if (i < matches.lastIndex) {
+
+          total +
+            Pair(Pattern(leftPatterns), Pattern(rightPatterns)) +
+            Pair(Pattern(left()[match.leftIndex]), Pattern(right()[match.rightIndex]))
+        }
+        else {
+
+          total +
+            Pair(Pattern(leftPatterns), Pattern(rightPatterns))
+        }
       }
       else {
 

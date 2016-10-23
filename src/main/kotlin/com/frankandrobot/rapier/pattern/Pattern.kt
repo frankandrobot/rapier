@@ -11,6 +11,9 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
   internal constructor(vararg patternElement: PatternElement)
   : this(ArrayList<PatternElement>() + patternElement.asList())
 
+  internal constructor(vararg patternItems : String)
+  : this(patternItems.map{ PatternItem(it) })
+
   operator fun invoke() = patternElements
 
   private val expandedForm = PatternExpandedForm(this)
