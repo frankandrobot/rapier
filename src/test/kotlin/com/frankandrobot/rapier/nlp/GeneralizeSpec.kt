@@ -86,11 +86,9 @@ class GeneralizeSpec : Spek({
 
     val anyTagConstraint = HashSetContraints(PosTagConstraint("tag1"), PosTagConstraint("tag2"))
     val anyOtherTagConstraint = HashSetContraints(PosTagConstraint("tag3"), PosTagConstraint("tag4"))
-
-    val anyPatternItem = PatternItem(
-      anyWordConstraint(),
-      anyTagConstraint()
-    )
+    val anyPatternItem = PatternItem(anyWordConstraint(), anyTagConstraint())
+    val anyPatternList = PatternList(anyWordConstraint(), anyTagConstraint(), length = 2)
+    val anyBiggerPatternList = PatternList(anyOtherWordConstraint(), anyOtherTagConstraint(), length = 3)
 
     describe("pattern items") {
 
@@ -142,30 +140,50 @@ class GeneralizeSpec : Spek({
       }
     }
 
-    describe("pattern lists") {
+    describe("two pattern lists") {
 
-      val anyPatternList = PatternList(anyWordConstraint(), anyTagConstraint(), length = 2)
-      val anyBiggerPatternList = PatternList(anyOtherWordConstraint(), anyOtherTagConstraint(), length = 3)
+      var result = emptyList<PatternElement>()
 
-      it("should work with two pattern lists") {
-
-        val result = generalize(anyPatternList, anyBiggerPatternList)
-
-        val pattern1 = PatternList(length = anyBiggerPatternList.length)
-        val pattern2 = PatternList(posTagConstraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
-        val pattern3 = PatternList(anyWordConstraint + anyOtherWordConstraint, length = anyBiggerPatternList.length)
-        val pattern4 = PatternList(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
-
-        assert(result.contains(pattern1))
-        assert(result.contains(pattern2))
-        assert(result.contains(pattern3))
-        assert(result.contains(pattern4))
-        assertEquals(4, result.size)
-
-        result.forEach { assertEquals(anyBiggerPatternList.length, (it as PatternList).length) }
+      beforeEach {
+        result = generalize(anyPatternList, anyBiggerPatternList)
       }
 
-      it("should work with a pattern item and a pattern list") {
+      it("should produce four patterns") {
+        assertEquals(4, result.size)
+      }
+
+      it("should produce pattern lists") {
+        result.forEach { assertEquals(true, it is PatternList) }
+      }
+
+      it("should produce pattern lists with same length as longer list") {
+        result.forEach { assertEquals(anyBiggerPatternList.length, it.length)}
+      }
+
+      it("should produce an empty pattern list") {
+        assertEquals(true, result.any { it == PatternList(length = anyBiggerPatternList.length) })
+      }
+
+      it("should produce pattern lists that are combinations of the union of constraints") {
+        assertEquals(true, result.any { it == PatternList(
+          posTagConstraints = anyTagConstraint + anyOtherTagConstraint,
+          length = anyBiggerPatternList.length
+        )})
+        assertEquals(true, result.any { it == PatternList(
+          anyWordConstraint + anyOtherWordConstraint,
+          length = anyBiggerPatternList.length
+        )})
+        assertEquals(true, result.any { it == PatternList(
+          anyWordConstraint + anyOtherWordConstraint,
+          anyTagConstraint + anyOtherTagConstraint,
+          length = anyBiggerPatternList.length
+        )})
+      }
+    }
+
+    describe("a pattern list and a pattern item") {
+
+      it("should work just like two pattern lists") {
 
         val result = generalize(anyPatternItem, anyBiggerPatternList)
 

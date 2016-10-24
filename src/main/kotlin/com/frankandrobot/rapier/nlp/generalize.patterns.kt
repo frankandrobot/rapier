@@ -109,3 +109,21 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
   return listOf(Pair(a, b))
 }
 
+
+//fun generalize(a : Pattern, b : Pattern) : List<List<Pattern>> {
+//
+//  val partitions = partitionByExactMatches(a, b)
+//
+//  return partitions.map{ patterns ->
+//
+//    var result : Option<List<Pattern>?>
+//
+//    result = caseEmptyPattern(patterns.first, patterns.second)
+//    if (result.valid) { return result.value }
+//
+//    result = caseEqualSize(patterns.first, patterns.second)
+//    if ( result.valid) { return result.value }
+//
+//
+//  }
+//}

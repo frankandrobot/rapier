@@ -139,32 +139,4 @@ class GeneralizePatternsSpec : Spek ({
       assertEquals(Pair(Pattern("y"), Pattern("y")), result[1])
     }
   }
-
-  //internal fun Pr(vararg patternItems : String) = Pattern(patternItems.map{PatternItem(it)})
-
-//  describe("caseEqualSize") {
-//
-//    it ("should work") {
-//
-//      val anotherSameSizePattern = Pattern(listOf("1", "2", "3").map{ PatternItem(it)})
-//
-//      val result = caseEqualSize(anyPattern, anotherSameSizePattern)
-//
-//      // should contain all combinations of:
-//      // [], [a,1]
-//      // [], [b,2]
-//      // [], [c,3]
-//      // so a total of 8 patterns
-//      assertEquals(8, result.size)
-//      //empty
-//      assert(result.contains(Pattern(PatternItem(), PatternItem(), PatternItem())))
-//      assert(result.contains(Pattern(PatternItem(), PatternItem(), PatternItem("c", "3"))))
-//      assert(result.contains(Pattern(PatternItem(), PatternItem("b", "2"), PatternItem())))
-//      assert(result.contains(Pattern(PatternItem(), PatternItem("b", "2"), PatternItem("c", "3"))))
-//      assert(result.contains(Pattern(PatternItem("a", "1"), PatternItem(), PatternItem())))
-//      assert(result.contains(Pattern(PatternItem("a", "1"), PatternItem(), PatternItem("c", "3"))))
-//      assert(result.contains(Pattern(PatternItem("a", "1"), PatternItem("b", "2"), PatternItem())))
-//      assert(result.contains(Pattern(PatternItem("a", "1"), PatternItem("b", "2"), PatternItem("c", "3"))))
-//    }
-//  }
 })
