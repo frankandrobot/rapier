@@ -39,7 +39,7 @@ internal fun <T : Constraint> generalize(a : HashSet<out T>, b : HashSet<out T>)
 internal fun generalize(a : PatternElement, b : PatternElement) : List<PatternElement> {
 
   var wordGeneralizations = generalize(a.wordConstraints, b.wordConstraints)
-  var tagGeneralizations = generalize(a.posTagContraints, b.posTagContraints)
+  var tagGeneralizations = generalize(a.posTagConstraints, b.posTagConstraints)
 
   return combinations(wordGeneralizations, tagGeneralizations) {
     wordConstraints : HashSet<out Constraint>, tagConstraints : HashSet<out Constraint> ->

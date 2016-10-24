@@ -20,15 +20,15 @@ class GeneralizePatternsSpec : Spek ({
       result = findExactMatchIndices(anyShorterPattern, anyLongerPattern)
     }
 
-    it("should return 3 matches plus 2 dummy fillers") {
+    it("should return 3 matches plus start/end fake matches") {
       assertEquals(5, result.size)
     }
 
-    it("should return dummy filler at beginning") {
+    it("should return start-fake match at beginning") {
       assertEquals(MatchIndices(leftIndex = -1, rightIndex = -1), result[0])
     }
 
-    it("should return dummy filler at end") {
+    it("should return end-fake match at end") {
       assertEquals(MatchIndices(leftIndex = 3, rightIndex = 5), result[4])
     }
 
@@ -47,7 +47,7 @@ class GeneralizePatternsSpec : Spek ({
       assertEquals(3, result.size)
     }
 
-    it("should NOT return match if elements in shorter pattern cannot match up 1") {
+    it("should NOT return match for x if y does not have a chance to match") {
       val left = Pattern("1", "x", "y")
       val right = Pattern("3", "4", "5", "x")
       val result = findExactMatchIndices(left, right)
@@ -55,7 +55,7 @@ class GeneralizePatternsSpec : Spek ({
       assertEquals(2, result.size)
     }
 
-    it("should NOT return match if elements in shorter pattern cannot match up 2") {
+    it("should NOT return matches out of order i.e., should match only y") {
       val left = Pattern("1", "x", "y")
       val right = Pattern("3", "4", "5", "y", "x")
       val result = findExactMatchIndices(left, right)
@@ -71,9 +71,22 @@ class GeneralizePatternsSpec : Spek ({
       assertEquals(2, result.size)
     }
 
-    it("should stop only in exact matches") {
-      assertEquals(1, 0)
+    it("should find only in exact matches") {
+      val left = Pattern(PatternItem(listOf("x"), listOf("tag1")))
+      val right = Pattern("x")
+      val result = findExactMatchIndices(left, right)
+
+      assertEquals(2, result.size)
     }
+
+    it("should find exact matches") {
+      val left = Pattern(PatternItem(listOf("x"), listOf("tag1")))
+      val right = Pattern(PatternItem(listOf("x"), listOf("tag1")))
+      val result = findExactMatchIndices(left, right)
+
+      assertEquals(3, result.size)
+    }
+
   }
 
   describe("partitionByExactMatches") {
@@ -87,22 +100,43 @@ class GeneralizePatternsSpec : Spek ({
       result = partitionByExactMatches(left, right)
     }
 
-    it("should find 2 matches so 5 segments") {
+    it("should find 5 partitions") {
       assertEquals(5, result.size)
     }
 
-    it("should return segments with empty patterns") {
+    it("should return a partition with an empty pattern before x") {
       assertEquals(Pair(Pattern(), Pattern("1")), result[0])
+    }
+
+    it("should return a partition with an empty pattern after z") {
       assertEquals(Pair(Pattern(), Pattern("4")), result[4])
     }
 
-    it("should return matches") {
+    it("should return x and z matches") {
       assertEquals(Pair(Pattern("x"), Pattern("x")), result[1])
       assertEquals(Pair(Pattern("z"), Pattern("z")), result[3])
     }
 
-    it("should return segments with non-empty patterns") {
+    it("should return partitions with non-empty patterns between x and z") {
       assertEquals(Pair(Pattern("y"), Pattern("2","3")), result[2])
+    }
+
+    it("should work in degenerate case") {
+      val left = Pattern()
+      val right = Pattern("a")
+      val result = partitionByExactMatches(left, right)
+
+      assertEquals(Pair(left, right), result[0])
+    }
+
+    it("should work when no partitions between matches") {
+      val left = Pattern("x", "y")
+      val right = Pattern("x", "y")
+      val result = partitionByExactMatches(left, right)
+
+      assertEquals(2, result.size)
+      assertEquals(Pair(Pattern("x"), Pattern("x")), result[0])
+      assertEquals(Pair(Pattern("y"), Pattern("y")), result[1])
     }
   }
 

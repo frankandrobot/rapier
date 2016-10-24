@@ -33,7 +33,7 @@ class PatternListExpandedForm(private val patternList : PatternList) {
 
     val patternItem = PatternItem(
       patternList.wordConstraints,
-      patternList.posTagContraints,
+      patternList.posTagConstraints,
       patternList.semanticConstraints
     )
 

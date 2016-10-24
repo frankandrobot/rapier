@@ -14,14 +14,14 @@ import java.util.*
 interface PatternElement {
 
   val wordConstraints: HashSet<out WordConstraint>
-  val posTagContraints: HashSet<out PosTagConstraint>
+  val posTagConstraints: HashSet<out PosTagConstraint>
   val semanticConstraints: HashSet<out SemanticConstraint>
   val length: Int
 }
 
 
 data class PatternItem(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
-                       override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
+                       override val posTagConstraints: HashSet<out PosTagConstraint> = hashSetOf(),
                        override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf())
 : PatternElement {
 
@@ -33,13 +33,16 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
   internal constructor(vararg words : String)
   : this(HashSet<WordConstraint>().plus(words.map { WordConstraint(it) }) as HashSet<out WordConstraint>)
 
+  internal constructor(words: List<String>, tags: List<String>)
+  : this(words.map{WordConstraint(it)}.toHashSet(), tags.map{PosTagConstraint(it)}.toHashSet())
+
   /**
    * Does the token satisfy all the constraints?
    */
   fun test(token: Token) : Boolean {
 
     return (wordConstraints.size === 0 || wordConstraints.any{ it.satisfies(token) }) &&
-      (posTagContraints.size === 0 || posTagContraints.any{ it.satisfies(token) }) &&
+      (posTagConstraints.size === 0 || posTagConstraints.any{ it.satisfies(token) }) &&
       (semanticConstraints.size === 0 || semanticConstraints.any{ it.satisfies(token) })
   }
 }
@@ -62,9 +65,9 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
  *
  */
 data class PatternList(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
-                  override val posTagContraints: HashSet<out PosTagConstraint> = hashSetOf(),
-                  override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf(),
-                  override val length: Int = 1) : PatternElement {
+                       override val posTagConstraints: HashSet<out PosTagConstraint> = hashSetOf(),
+                       override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf(),
+                       override val length: Int = 1) : PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
   : this(wordConstraint.toHashSet(), length = length)

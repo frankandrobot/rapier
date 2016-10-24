@@ -30,7 +30,7 @@ internal fun _ruleSize(pattern : Pattern) : Int {
     if (patternElement is PatternList) { metric += 3 }
 
     metric += Math.max(0, patternElement.wordConstraints.size - 1) * 2
-    metric += Math.max(0, patternElement.posTagContraints.size - 1) * 1
+    metric += Math.max(0, patternElement.posTagConstraints.size - 1) * 1
     metric += Math.max(0, patternElement.semanticConstraints.size - 1) * 1
 
     metric

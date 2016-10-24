@@ -104,7 +104,7 @@ class GeneralizeSpec : Spek({
         val result = generalize(anyPatternItem, anyOtherPatternitem)
 
         val pattern1 = PatternItem()
-        val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
+        val pattern2 = PatternItem(posTagConstraints = anyTagConstraint + anyOtherTagConstraint)
         val pattern3 = PatternItem(anyWordConstraint + anyOtherWordConstraint)
         val pattern4 = PatternItem(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint)
 
@@ -117,12 +117,12 @@ class GeneralizeSpec : Spek({
 
       it("should work when one of the pattern items has no word constraints") {
 
-        val noWordContraints = PatternItem(posTagContraints = anyOtherTagConstraint())
+        val noWordContraints = PatternItem(posTagConstraints = anyOtherTagConstraint())
 
         val result = generalize(noWordContraints, anyPatternItem)
 
         val pattern1 = PatternItem()
-        val pattern2 = PatternItem(posTagContraints = anyTagConstraint + anyOtherTagConstraint)
+        val pattern2 = PatternItem(posTagConstraints = anyTagConstraint + anyOtherTagConstraint)
 
         assertEquals(2, result.size)
         assert(result.contains(pattern1))
@@ -152,7 +152,7 @@ class GeneralizeSpec : Spek({
         val result = generalize(anyPatternList, anyBiggerPatternList)
 
         val pattern1 = PatternList(length = anyBiggerPatternList.length)
-        val pattern2 = PatternList(posTagContraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
+        val pattern2 = PatternList(posTagConstraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
         val pattern3 = PatternList(anyWordConstraint + anyOtherWordConstraint, length = anyBiggerPatternList.length)
         val pattern4 = PatternList(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
 
@@ -170,7 +170,7 @@ class GeneralizeSpec : Spek({
         val result = generalize(anyPatternItem, anyBiggerPatternList)
 
         val pattern1 = PatternList(length = anyBiggerPatternList.length)
-        val pattern2 = PatternList(posTagContraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
+        val pattern2 = PatternList(posTagConstraints = anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
         val pattern3 = PatternList(anyWordConstraint + anyOtherWordConstraint, length = anyBiggerPatternList.length)
         val pattern4 = PatternList(anyWordConstraint + anyOtherWordConstraint, anyTagConstraint + anyOtherTagConstraint, length = anyBiggerPatternList.length)
 

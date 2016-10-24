@@ -51,7 +51,7 @@ internal fun caseEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>?> 
       .map {
         PatternList(
           wordConstraints = it.wordConstraints,
-          posTagContraints = it.posTagContraints,
+          posTagConstraints = it.posTagConstraints,
           semanticConstraints = it.semanticConstraints,
           length = length
         )
@@ -83,7 +83,7 @@ internal fun caseSingleElement(a: Pattern, b: Pattern) : Option<List<Pattern>?> 
       .map {
         PatternList(
           wordConstraints = it.wordConstraints,
-          posTagContraints = it.posTagContraints,
+          posTagConstraints = it.posTagConstraints,
           semanticConstraints = it.semanticConstraints,
           length = length
         )

@@ -103,7 +103,7 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
 
         total
       }
-    }.filter{ it.first().size > 0 && it.second().size > 0 }
+    }.filter{ it.first().size > 0 || it.second().size > 0 }
   }
 
   return listOf(Pair(a, b))
