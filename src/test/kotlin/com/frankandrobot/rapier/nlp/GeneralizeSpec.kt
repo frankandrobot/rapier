@@ -26,8 +26,8 @@ class GeneralizeSpec : Spek({
   val anyWordConstraintInAnotherOrder = HashSetContraints(WordConstraint("b"), WordConstraint("a"))
   val anyOtherWordConstraint = HashSetContraints(WordConstraint("c"), WordConstraint("d"))
 
-  val emptyWordConstraint = HashSetContraints<WordConstraint>()
-  val anotherEmptyWordConstraint = HashSetContraints<WordConstraint>()
+  val noWordConstraints = HashSetContraints<WordConstraint>()
+  val anotherNoWordConstraints = HashSetContraints<WordConstraint>()
 
   describe("generalize constraints") {
 
@@ -58,7 +58,7 @@ class GeneralizeSpec : Spek({
 
     it("should return empty when both constraints are empty") {
 
-      val result = generalize(emptyWordConstraint(), anotherEmptyWordConstraint())
+      val result = generalize(noWordConstraints(), anotherNoWordConstraints())
 
       assertEquals(1, result.size)
       assertEquals(hashSetOf<WordConstraint>(), result[0])
@@ -66,10 +66,10 @@ class GeneralizeSpec : Spek({
 
     it("should return empty when one constraint is empty") {
 
-      val result = generalize(emptyWordConstraint(), anyWordConstraint())
+      val result = generalize(noWordConstraints(), anyWordConstraint())
 
       assertEquals(1, result.size)
-      assertEquals(emptyWordConstraint(), result[0])
+      assertEquals(noWordConstraints(), result[0])
     }
 
     it("should return the superset when one is a superset") {
@@ -160,7 +160,7 @@ class GeneralizeSpec : Spek({
         result.forEach { assertEquals(anyBiggerPatternList.length, it.length)}
       }
 
-      it("should produce an empty pattern list") {
+      it("should produce an unconstrained pattern list") {
         assertEquals(true, result.any { it == PatternList(length = anyBiggerPatternList.length) })
       }
 
