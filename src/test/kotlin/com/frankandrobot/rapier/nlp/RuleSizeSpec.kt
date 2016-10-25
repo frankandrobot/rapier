@@ -10,16 +10,16 @@ class RuleSizeSpec : Spek({
 
   describe("RuleSize") {
 
-    it("should equal 2 for empty PatternItem") {
+    it("should equal 2 for unconstrained PatternItem") {
 
       val pattern = Pattern(PatternItem())
 
       assertEquals(2, _ruleSize(pattern))
     }
 
-    it("should equal 3 for empty PatternList") {
+    it("should equal 3 for unconstrained PatternList") {
 
-      val pattern = Pattern(PatternList())
+      val pattern = Pattern(PatternList(length = 1))
 
       assertEquals(3, _ruleSize(pattern))
     }

@@ -67,7 +67,7 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
 data class PatternList(override val wordConstraints: HashSet<out WordConstraint> = hashSetOf(),
                        override val posTagConstraints: HashSet<out PosTagConstraint> = hashSetOf(),
                        override val semanticConstraints: HashSet<out SemanticConstraint> = hashSetOf(),
-                       override val length: Int = 1) : PatternElement {
+                       override val length: Int) : PatternElement {
 
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
   : this(wordConstraint.toHashSet(), length = length)

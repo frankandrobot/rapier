@@ -14,7 +14,7 @@ import org.funktionale.option.toOption
  */
 internal fun caseEqualSize(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
-  if (a().size == b().size) {
+  if (a().size == b().size && a().size > 0) {
 
     val bIter = b().iterator()
     val generalizations = a().map { generalize(it, bIter.next()) }
@@ -38,9 +38,9 @@ internal fun caseEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
 
   if (a().size != b().size && (a().size == 0 || b().size == 0)) {
 
-    val c = if (a().size == 0) a else b
-    val length = c().fold(0) { total, patternElement -> total + patternElement.length }
-    val generalizations = c().fold(listOf(c()[0])) { total, patternElement ->
+    val nonEmpty = if (a().size == 0) b else a
+    val length = nonEmpty().fold(0) { total, patternElement -> total + patternElement.length }
+    val generalizations = nonEmpty().fold(listOf(nonEmpty()[0])) { total, patternElement ->
       total.flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }.distinct()
     }
 
