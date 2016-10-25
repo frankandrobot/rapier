@@ -59,25 +59,6 @@ class GeneralizePatternsCasesSpec : Spek({
         assertEquals(true, result.any{ it == Pattern(PatternItem(), PatternItem("the"), PatternItem()) })
       }
     }
-
-    describe("case handling") {
-
-      it("should return None when a pattern is empty") {
-        assertEquals(Option.None, caseEqualSize(empty, two))
-      }
-
-      it("should return None when both patterns are empty") {
-        assertEquals(Option.None, caseEqualSize(empty, empty))
-      }
-
-      it("should return None when patterns are different lengths and one is length 1") {
-        assertEquals(Option.None, caseEqualSize(one, two))
-      }
-
-      it("should return None when patterns are different lengths") {
-        assertEquals(Option.None, caseEqualSize(two, three))
-      }
-    }
   }
 
   describe("caseEmptyPattern") {
@@ -99,8 +80,53 @@ class GeneralizePatternsCasesSpec : Spek({
       assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
       assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 3))))
     }
+  }
 
-    describe("case handling") {
+  describe("caseSingleElement") {
+
+    it("should return nothing but pattern lists") {
+      val result = caseSingleElement(one, anyPattern).get()
+      assertEquals(true, result.all{ it().all{ it is PatternList }})
+    }
+
+    it("should return the generalization of both patterns for patterns of length 1") {
+      val result = caseSingleElement(one, two).get()
+      assertEquals(2, result.size)
+      assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
+      assertEquals(true, result.contains(Pattern(PatternList("one", "two", length = 3))))
+    }
+
+    it("should generalize the pattern's elements") {
+      val result = caseSingleElement(one, three).get()
+      assertEquals(2, result.size)
+      assertEquals(true, result.contains(Pattern(PatternList(length = 4))))
+      assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 4))))
+    }
+  }
+
+  describe("case handling") {
+
+    describe("caseEqualSize") {
+
+      it("should return None when one of the patterns is empty") {
+        assertEquals(Option.None, caseEqualSize(empty, two))
+      }
+
+      it("should return None when both patterns are empty") {
+        assertEquals(Option.None, caseEqualSize(empty, empty))
+      }
+
+      it("should return None when patterns have different lengths") {
+        assertEquals(Option.None, caseEqualSize(one, two))
+        assertEquals(Option.None, caseEqualSize(two, three))
+      }
+
+      it("should handle case when both patterns have length 1") {
+        assertEquals(false, caseEqualSize(one, one) is Option.None)
+      }
+    }
+
+    describe("caseEmptyPattern") {
 
       it("should return None when both patterns are empty") {
         assertEquals(Option.None, caseEmptyPattern(empty, empty))
@@ -112,6 +138,26 @@ class GeneralizePatternsCasesSpec : Spek({
 
       it("should return None when both patterns are non-empty and equal length") {
         assertEquals(Option.None, caseEmptyPattern(one, one))
+      }
+    }
+
+    describe("caseSingleElement") {
+
+      it("should return None when the other pattern is empty") {
+        assertEquals(Option.None, caseSingleElement(empty, one))
+      }
+
+      it("should return None when both patterns are empty") {
+        assertEquals(Option.None, caseSingleElement(empty, empty))
+      }
+
+      it("should return None when both patterns are length 1") {
+        assertEquals(Option.None, caseSingleElement(one, one))
+      }
+
+      it("should return None when both patterns have length > 1") {
+        assertEquals(Option.None, caseSingleElement(two, two))
+        assertEquals(Option.None, caseSingleElement(two, three))
       }
     }
   }

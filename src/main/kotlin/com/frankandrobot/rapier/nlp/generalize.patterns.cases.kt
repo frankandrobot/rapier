@@ -66,7 +66,7 @@ internal fun caseEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
  */
 internal fun caseSingleElement(a: Pattern, b: Pattern) : Option<List<Pattern>> {
 
-  if (a().size != b().size && (a().size == 1 || b().size == 1)) {
+  if (a().size != b().size && a().size > 0 && b().size > 0 && (a().size == 1 || b().size == 1)) {
 
     val c = if (b().size == 1) a else b
     val d = if (b().size == 1) b else a
