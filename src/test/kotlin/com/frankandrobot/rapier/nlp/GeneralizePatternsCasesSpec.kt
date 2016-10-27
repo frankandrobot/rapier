@@ -16,7 +16,7 @@ class GeneralizePatternsCasesSpec : Spek({
   val three = Pattern("one", "two", "three")
   val anyPattern = Pattern("one", "two", "three")
 
-  describe("casePatternsEqualSize") {
+  describe("caseEqualSizePatterns") {
 
     describe("patterns of length 1") {
 
@@ -24,7 +24,7 @@ class GeneralizePatternsCasesSpec : Spek({
         val a = PatternItem(listOf("man"), listOf("tag"))
         val b = PatternItem(listOf("woman"), listOf("tag"))
         val expected = generalize(a, b)
-        val actual = casePatternsEqualSize(Pattern(a), Pattern(b)).get().flatMap { it() }
+        val actual = caseEqualSizePatterns(Pattern(a), Pattern(b)).get().flatMap { it() }
 
         assertEquals(true, expected.containsAll(actual))
         assertEquals(true, actual.containsAll(expected))
@@ -38,13 +38,13 @@ class GeneralizePatternsCasesSpec : Spek({
       var result = emptyList<Pattern>()
 
       beforeEach{
-        result = casePatternsEqualSize(a, b).get()
+        result = caseEqualSizePatterns(a, b).get()
       }
 
       it("should generalize patterns by pairing corresponding elements") {
         val a = Pattern("a", "x")
         val b = Pattern("b", "x")
-        val result = casePatternsEqualSize(a, b).get()
+        val result = caseEqualSizePatterns(a, b).get()
 
         assertEquals(2, result.size)
         assertEquals(true, result.any{ it == Pattern(PatternItem(), PatternItem("x")) })
@@ -104,25 +104,99 @@ class GeneralizePatternsCasesSpec : Spek({
     }
   }
 
+  describe("caseVeryLongPatterns") {
+
+    describe("max pattern length difference") {
+
+      val length = 5
+      val maxPatternLength = length + maxDifferenceInPatternLength + 1
+      val a = {pattern(1..length)}
+      val b = {pattern(1..maxPatternLength)}
+
+      var result = emptyList<Pattern>()
+
+      beforeEach {
+        result = caseVeryLongPatterns(a(), b()).get()
+      }
+
+      it("should return one pattern") {
+        assertEquals(1, result.size)
+      }
+
+      it("should return one pattern with a single pattern list") {
+        assertEquals(1, result[0].length())
+        assertEquals(true, result[0]()[0] is PatternList)
+      }
+
+      it("should return one pattern with a single unconstrained pattern list") {
+        assertEquals(1, result[0]().size)
+        assertEquals(PatternList(length = b().length()), result[0]()[0])
+      }
+    }
+
+    describe("max unequal pattern length") {
+
+      val maxPatternLength = maxUnequalPatternLength + 1
+      val a = {pattern(1..maxUnequalPatternLength)}
+      val b = {pattern(1..maxPatternLength)}
+
+      var result = emptyList<Pattern>()
+
+      beforeEach {
+        result = caseVeryLongPatterns(a(), b()).get()
+      }
+
+      it("should return one pattern") {
+        assertEquals(1, result.size)
+      }
+
+      it("should return one pattern with a single pattern list") {
+        assertEquals(1, result[0].length())
+        assertEquals(true, result[0]()[0] is PatternList)
+      }
+
+      it("should return one pattern with a single unconstrained pattern list") {
+        assertEquals(1, result[0]().size)
+        assertEquals(PatternList(length = b().length()), result[0]()[0])
+      }
+    }
+
+    describe("longest pattern") {
+
+      val maxPatternLength = maxPatternLength + 1
+
+      it("should return a single unconstrained pattern list if a pattern is too long") {
+
+        val a = pattern(1..2)
+        val b = pattern(1..maxPatternLength)
+        val result = caseVeryLongPatterns(a, b).get()
+
+        assertEquals(1, result.size)
+        assertEquals(true, result[0]()[0] is PatternList)
+        assertEquals(b.length(), result[0]()[0].length)
+      }
+    }
+  }
+
   describe("case handling") {
 
-    describe("casePatternsEqualSize") {
+    describe("caseEqualSizePatterns") {
 
       it("should return None when one of the patterns is empty") {
-        assertEquals(Option.None, casePatternsEqualSize(empty, two))
+        assertEquals(Option.None, caseEqualSizePatterns(empty, two))
       }
 
       it("should return None when both patterns are empty") {
-        assertEquals(Option.None, casePatternsEqualSize(empty, empty))
+        assertEquals(Option.None, caseEqualSizePatterns(empty, empty))
       }
 
       it("should return None when patterns have different lengths") {
-        assertEquals(Option.None, casePatternsEqualSize(one, two))
-        assertEquals(Option.None, casePatternsEqualSize(two, three))
+        assertEquals(Option.None, caseEqualSizePatterns(one, two))
+        assertEquals(Option.None, caseEqualSizePatterns(two, three))
       }
 
       it("should handle case when both patterns have length 1") {
-        assertEquals(false, casePatternsEqualSize(one, one) is Option.None)
+        assertEquals(false, caseEqualSizePatterns(one, one) is Option.None)
       }
     }
 
@@ -162,3 +236,5 @@ class GeneralizePatternsCasesSpec : Spek({
     }
   }
 })
+
+private fun pattern(r : IntRange) = Pattern(r.map { it.toString() }.map{ PatternItem(it) })

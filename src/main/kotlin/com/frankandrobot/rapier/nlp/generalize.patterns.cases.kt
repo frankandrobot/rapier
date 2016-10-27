@@ -3,6 +3,7 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternList
 import com.frankandrobot.rapier.util.combinations
+import com.frankandrobot.rapier.util.sort
 import org.funktionale.option.Option
 import org.funktionale.option.toOption
 
@@ -12,7 +13,7 @@ import org.funktionale.option.toOption
  * Pairs up the pattern elements from first to last and compute the generalizations of
  * each pair. Then combine the generalizations of the pairs of elements in order.
  */
-internal fun casePatternsEqualSize(a : Pattern, b : Pattern) : Option<List<Pattern>> {
+internal fun caseEqualSizePatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
   if (a().size == b().size && a().size > 0) {
 
@@ -89,6 +90,29 @@ internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<P
       }
       .map { Pattern(it) }
       .toOption()
+  }
+
+  return Option.None
+}
+
+internal val maxPatternLength = 15
+internal val maxDifferenceInPatternLength = 5
+internal val maxUnequalPatternLength = 10
+
+internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
+
+  val patterns = sort(a, b)
+  val shorter = patterns.first
+  val longer = patterns.second
+  val diff = longer.length() - shorter.length()
+
+  // original constraints
+  // if (((longer > 2) && (diff > 2)) || ((longer > 5) && (diff > 1)) || (longer > 6)) {
+  if ((longer.length() > 2 && diff > maxDifferenceInPatternLength) ||
+    (longer.length() > maxUnequalPatternLength && diff > 1) ||
+    longer.length() > maxPatternLength) {
+
+    return listOf(Pattern(PatternList(length = longer.length()))).toOption()
   }
 
   return Option.None

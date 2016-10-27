@@ -19,4 +19,6 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
   private val expandedForm = PatternExpandedForm(this)
 
   fun expandedForm() = this.expandedForm.invoke()
+
+  fun length() = invoke().size
 }

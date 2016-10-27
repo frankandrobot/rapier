@@ -1,19 +1,11 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.util.sort
 import java.util.*
 
 
 internal data class MatchIndices(val leftIndex: Int, val rightIndex: Int)
-
-
-internal fun sort(a : Pattern, b : Pattern) : Pair<Pattern, Pattern> {
-
-  val shorter = if (a().size <= b().size) a else b
-  val longer = if (a().size <= b().size) b else a
-
-  return Pair(shorter, longer)
-}
 
 
 /**
@@ -121,7 +113,7 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
 //    result = caseAnEmptyPattern(patterns.first, patterns.second)
 //    if (result.valid) { return result.value }
 //
-//    result = casePatternsEqualSize(patterns.first, patterns.second)
+//    result = caseEqualSizePatterns(patterns.first, patterns.second)
 //    if ( result.valid) { return result.value }
 //
 //
