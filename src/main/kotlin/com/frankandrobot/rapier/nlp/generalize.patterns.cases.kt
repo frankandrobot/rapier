@@ -12,7 +12,7 @@ import org.funktionale.option.toOption
  * Pairs up the pattern elements from first to last and compute the generalizations of
  * each pair. Then combine the generalizations of the pairs of elements in order.
  */
-internal fun caseEqualSize(a : Pattern, b : Pattern) : Option<List<Pattern>> {
+internal fun casePatternsEqualSize(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
   if (a().size == b().size && a().size > 0) {
 
@@ -34,7 +34,7 @@ internal fun caseEqualSize(a : Pattern, b : Pattern) : Option<List<Pattern>> {
  * The length of the pattern lists is the sum of the lengths of the elements of the longer pattern,
  * with pattern items having a length of one.
  */
-internal fun caseEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
+internal fun caseAnEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
 
   if (a().size != b().size && (a().size == 0 || b().size == 0)) {
 
@@ -64,7 +64,7 @@ internal fun caseEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
 /**
  * The case when the shorter pattern has exactly 1 element.
  */
-internal fun caseSingleElement(a: Pattern, b: Pattern) : Option<List<Pattern>> {
+internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<Pattern>> {
 
   if (a().size != b().size && a().size > 0 && b().size > 0 && (a().size == 1 || b().size == 1)) {
 

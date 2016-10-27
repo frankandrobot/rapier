@@ -118,10 +118,10 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
 //
 //    var result : Option<List<Pattern>?>
 //
-//    result = caseEmptyPattern(patterns.first, patterns.second)
+//    result = caseAnEmptyPattern(patterns.first, patterns.second)
 //    if (result.valid) { return result.value }
 //
-//    result = caseEqualSize(patterns.first, patterns.second)
+//    result = casePatternsEqualSize(patterns.first, patterns.second)
 //    if ( result.valid) { return result.value }
 //
 //
