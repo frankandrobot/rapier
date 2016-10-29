@@ -1,7 +1,9 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.util.combinations
 import com.frankandrobot.rapier.util.sort
+import org.funktionale.option.Option
 import java.util.*
 
 
@@ -102,20 +104,39 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
 }
 
 
-//fun generalize(a : Pattern, b : Pattern) : List<List<Pattern>> {
-//
-//  val partitions = partitionByExactMatches(a, b)
-//
-//  return partitions.map{ patterns ->
-//
-//    var result : Option<List<Pattern>?>
-//
-//    result = caseAnEmptyPattern(patterns.first, patterns.second)
-//    if (result.valid) { return result.value }
-//
-//    result = caseEqualSizePatterns(patterns.first, patterns.second)
-//    if ( result.valid) { return result.value }
-//
-//
-//  }
-//}
+fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
+
+  val segments : List<Pair<Pattern,Pattern>> = partitionByExactMatches(a, b)
+  // find the generalized patterns for the partitions
+  val partitionPatterns : List<List<Pattern>> = segments.map{ patterns ->
+
+    val veryLongPatterns = caseVeryLongPatterns(patterns.first, patterns.second)
+    val equalSizePatterns = caseEqualSizePatterns(patterns.first, patterns.second)
+    val hasSingleElementPattern = casePatternHasSingleElement(patterns.first, patterns.second)
+    val hasEmptyPattern = caseAnEmptyPattern(patterns.first, patterns.second)
+
+    return when(veryLongPatterns) {
+      is Option.Some<List<Pattern>> -> veryLongPatterns.get()
+      else -> when (equalSizePatterns) {
+        is Option.Some<List<Pattern>> -> equalSizePatterns.get()
+        else -> when (hasSingleElementPattern) {
+          is Option.Some<List<Pattern>> -> hasSingleElementPattern.get()
+          else -> when (hasEmptyPattern) {
+            is Option.Some<List<Pattern>> -> hasEmptyPattern.get()
+            else -> emptyList()
+          }
+
+        }
+      }
+    }
+  }
+  //now combine the partition patterns
+  return partitionPatterns.foldIndexed(emptyList()){ i, total, curPatternListForSegment ->
+    if (i == 0) {
+      curPatternListForSegment
+    }
+    else {
+      combinations(total, curPatternListForSegment) { a : Pattern, b : Pattern -> a + b }
+    }
+  }
+}

@@ -96,9 +96,30 @@ internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<P
 }
 
 internal val maxPatternLength = 15
-internal val maxDifferenceInPatternLength = 5
 internal val maxUnequalPatternLength = 10
+internal val maxDifferenceInPatternLength = 5
 
+
+/**
+ * Handle the case when
+ *
+ * -   difference in pattern lengths is more than `maxDifferenceInPatternLength`.
+ *     Any pattern length
+ * -   longer pattern is more than `maxUnequalPatternLength` and patterns have different
+ *     lengths
+ * -   longer pattern is more than `maxPatternLength`
+ *
+ * With these settings
+ *
+ *     maxPatternLength = 15
+ *     maxUnequalPatternLength = 10
+ *     maxDifferenceInPatternLength = 5
+ *
+ * this will NOT handle the following scenarios:
+ *
+ * -   the longest pattern is less than 10 and the difference in lengths is less than 5
+ * -   the two patterns have the same length and are less than 15
+ */
 internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
   val patterns = sort(a, b)

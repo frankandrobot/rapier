@@ -21,24 +21,28 @@ fun <In,Out> combinations(
 }
 
 /**
- * Ex: a = [[x,y], [1,2], [3,4]]
+ * Ex: list = [[x,y], [1,2], [3,4]]
  * result => [[x,1,3], [x,1,4], [x,2,3], [x,2,4], [y,1,3], [y,1,4], ...]
+ *
+ * @param list - the input
+ * @param _curIndex - used by tail recursion, no need to set
+ * @param _acc - used by tail recursion, no need to set
  */
-internal fun <In> combinations(
+fun <In> combinations(
   list : List<List<In>>,
-  curIndex: Int = 0,
-  acc : List<In> = listOf()
+  _curIndex: Int = 0,
+  _acc: List<In> = listOf()
 ) : List<List<In>> {
 
-  val iterator = list.listIterator(curIndex)
+  val iterator = list.listIterator(_curIndex)
 
   if (iterator.hasNext()) {
 
-    return iterator.next().flatMap{ combinations(list, curIndex + 1, acc + it) }
+    return iterator.next().flatMap{ combinations(list, _curIndex + 1, _acc + it) }
   }
   else {
 
-    return listOf(acc)
+    return listOf(_acc)
   }
 }
 
@@ -48,13 +52,13 @@ internal fun <In> combinations(
  * where (x,y) = pair(x,y)
  */
 fun <In,Out> combinations2(
-  a : List<Collection<out In>>,
-  b : List<Collection<out In>>,
+  x: List<Collection<out In>>,
+  y: List<Collection<out In>>,
   pair: (In, In) -> Out
 ) : List<List<Out>> {
 
-  val iter = b.iterator()
-  val result = a.map { aItems -> combinations(aItems, iter.next(), pair) }
+  val iter = y.iterator()
+  val result = x.map { aItems -> combinations(aItems, iter.next(), pair) }
 
   return combinations(result)
 }
