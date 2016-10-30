@@ -61,6 +61,7 @@ class GeneralizePatternsCasesSpec : Spek({
     }
   }
 
+
   describe("caseAnEmptyPattern") {
 
     it("should return nothing but pattern lists") {
@@ -81,6 +82,7 @@ class GeneralizePatternsCasesSpec : Spek({
       assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 3))))
     }
   }
+
 
   describe("casePatternHasSingleElement") {
 
@@ -103,6 +105,7 @@ class GeneralizePatternsCasesSpec : Spek({
       assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 4))))
     }
   }
+
 
   describe("caseVeryLongPatterns") {
 
@@ -136,7 +139,7 @@ class GeneralizePatternsCasesSpec : Spek({
 
     describe("max unequal pattern length") {
 
-      val maxPatternLength = maxUnequalPatternLength + 1
+      val maxPatternLength = maxUnequalPatternLength + 2
       val a = {pattern(1..maxUnequalPatternLength)}
       val b = {pattern(1..maxPatternLength)}
 

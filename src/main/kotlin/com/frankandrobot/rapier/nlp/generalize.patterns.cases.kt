@@ -103,10 +103,10 @@ internal val maxDifferenceInPatternLength = 5
 /**
  * Handle the case when
  *
- * -   difference in pattern lengths is more than `maxDifferenceInPatternLength`.
- *     Any pattern length
- * -   longer pattern is more than `maxUnequalPatternLength` and patterns have different
- *     lengths
+ * -   pattern lengths difference is more than `maxDifferenceInPatternLength`
+ *     for any pattern length, OR
+ * -   longer pattern is more than `maxUnequalPatternLength` and patterns length difference
+ *     is at least 2, OR
  * -   longer pattern is more than `maxPatternLength`
  *
  * With these settings
@@ -129,8 +129,8 @@ internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Patter
 
   // original constraints
   // if (((longer > 2) && (diff > 2)) || ((longer > 5) && (diff > 1)) || (longer > 6)) {
-  if ((longer.length() > 2 && diff > maxDifferenceInPatternLength) ||
-    (longer.length() > maxUnequalPatternLength && diff > 1) ||
+  if ((longer.length() >= 3 && diff > maxDifferenceInPatternLength) ||
+    (longer.length() > maxUnequalPatternLength && diff >= 2) ||
     longer.length() > maxPatternLength) {
 
     return listOf(Pattern(PatternList(length = longer.length()))).toOption()
