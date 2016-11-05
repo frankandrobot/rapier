@@ -111,7 +111,7 @@ fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
   val partitionPatterns : List<List<Pattern>> = segments.map{ patterns ->
 
     val veryLongPatterns = caseVeryLongPatterns(patterns.first, patterns.second)
-    val equalSizePatterns = caseEqualSizePatterns(patterns.first, patterns.second)
+    val equalSizePatterns = caseEqualLengthPatterns(patterns.first, patterns.second)
     val hasSingleElementPattern = casePatternHasSingleElement(patterns.first, patterns.second)
     val hasEmptyPattern = caseAnEmptyPattern(patterns.first, patterns.second)
 

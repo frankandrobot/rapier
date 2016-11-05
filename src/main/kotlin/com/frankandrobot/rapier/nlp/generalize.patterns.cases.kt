@@ -1,11 +1,36 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.pattern.PatternElement
 import com.frankandrobot.rapier.pattern.PatternList
 import com.frankandrobot.rapier.util.combinations
 import com.frankandrobot.rapier.util.sort
+import com.frankandrobot.rapier.util.fillCopy
 import org.funktionale.option.Option
 import org.funktionale.option.toOption
+import java.util.*
+
+
+internal fun areEqualLengths(a : Pattern, b : Pattern) =
+  a().size == b().size && a().size > 0
+
+internal fun oneIsEmpty(a : Pattern, b : Pattern) =
+  a().size != b().size && (a().size == 0 || b().size == 0)
+
+internal fun oneHasOneElement(a : Pattern, b : Pattern) =
+  (a().size > b().size || b().size > a().size) && (a().size == 1 || b().size == 1)
+
+internal fun areVeryLong(a : Pattern, b : Pattern) : Boolean {
+  val patterns = sort(a, b)
+  val shorter = patterns.first
+  val longer = patterns.second
+  val diff = longer.length() - shorter.length()
+
+  return (longer.length() >= 3 && diff > maxDifferenceInPatternLength) ||
+    (longer.length() > maxUnequalPatternLength && diff >= 2) ||
+    longer.length() > maxPatternLength
+}
+
 
 /**
  * The case when the two patterns have the same length.
@@ -13,9 +38,9 @@ import org.funktionale.option.toOption
  * Pairs up the pattern elements from first to last and compute the generalizations of
  * each pair. Then combine the generalizations of the pairs of elements in order.
  */
-internal fun caseEqualSizePatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
+internal fun caseEqualLengthPatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
-  if (a().size == b().size && a().size > 0) {
+  if (areEqualLengths(a, b)) {
 
     val bIter = b().iterator()
     val generalizations = a().map { generalize(it, bIter.next()) }
@@ -30,14 +55,14 @@ internal fun caseEqualSizePatterns(a : Pattern, b : Pattern) : Option<List<Patte
 /**
  * The case when the shorter pattern has 0 elements.
  *
- * The pattern elements in the longer pattern are generalized into a set of pattern lists,
- * one pattern list for each alternative generalization of the constraints of the pattern elements.
- * The length of the pattern lists is the sum of the lengths of the elements of the longer pattern,
- * with pattern items having a length of one.
+ * The pattern elements in the longer pattern are generalized into a set of pattern
+ * lists, one pattern list for each alternative generalization of the constraints of
+ * the pattern elements. The length of the pattern lists is the sum of the lengths of
+ * the elements of the longer pattern, with pattern items having a length of one.
  */
 internal fun caseAnEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
 
-  if (a().size != b().size && (a().size == 0 || b().size == 0)) {
+  if (oneIsEmpty(a, b)) {
 
     val nonEmpty = if (a().size == 0) b else a
     val length = nonEmpty().fold(0) { total, patternElement -> total + patternElement.length }
@@ -67,7 +92,7 @@ internal fun caseAnEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>>
  */
 internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<Pattern>> {
 
-  if (a().size != b().size && a().size > 0 && b().size > 0 && (a().size == 1 || b().size == 1)) {
+  if (oneHasOneElement(a, b)) {
 
     val c = if (b().size == 1) a else b
     val d = if (b().size == 1) b else a
@@ -94,6 +119,7 @@ internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<P
 
   return Option.None
 }
+
 
 internal val maxPatternLength = 15
 internal val maxUnequalPatternLength = 10
@@ -122,19 +148,75 @@ internal val maxDifferenceInPatternLength = 5
  */
 internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
-  val patterns = sort(a, b)
-  val shorter = patterns.first
-  val longer = patterns.second
-  val diff = longer.length() - shorter.length()
-
-  // original constraints
-  // if (((longer > 2) && (diff > 2)) || ((longer > 5) && (diff > 1)) || (longer > 6)) {
-  if ((longer.length() >= 3 && diff > maxDifferenceInPatternLength) ||
-    (longer.length() > maxUnequalPatternLength && diff >= 2) ||
-    longer.length() > maxPatternLength) {
-
+  if (areVeryLong(a, b)) {
+    val longer = sort(a, b).second
     return listOf(Pattern(PatternList(length = longer.length()))).toOption()
   }
 
   return Option.None
+}
+
+
+internal fun caseGeneral(a : Pattern, b : Pattern) : Option<List<Pattern>> {
+
+  val patterns = sort(a, b)
+  val shorter = patterns.first
+  val longer = patterns.second
+
+  val newPatterns = extend(shorter().listIterator(), shorter.length(), longer.length())
+
+  return newPatterns.flatMap{ caseEqualLengthPatterns(it, b).get() }.toOption()
+}
+
+
+/**
+ * Extends the shorter list to longerLength by duplicating elements. However, it must
+ * satisfy the following constraints:
+ *
+ * 1. every original element must appear in the extended lists
+ * 2. elements must appear in the same order as the original list
+ *
+ * Example: suppose the original list is [a,b,c] and longerLength = 4.
+ * Then [a,a,a,a] and [a,c,c,b] will NOT be generated. There are only three possible
+ * lists:
+ *
+ * - [a,a,b,c]
+ * - [a,b,b,c]
+ * - [a,b,c,c]
+ */
+internal tailrec fun extend(shorter: ListIterator<PatternElement>,
+                            shorterLength: Int,
+                            longerLength: Int,
+                            _extended: ArrayList<Pattern> = arrayListOf(Pattern()))
+  : List<Pattern> {
+
+  if (!shorter.hasNext()) { return _extended }
+
+  val curElemIndex = shorter.nextIndex()
+  val curElem = shorter.next()
+
+  var nexExtended = _extended.fold(ArrayList<Pattern>()) { total, pattern ->
+
+    // Here's how we satisfy the constraint that every element in the shorter list
+    // must match with at least one element in the longer list:
+    // we can add at most maxIndex-minIndex+1 copies of the current element.
+    // And that's exactly what we do---we create new Patterns with the current elem
+    // added 1 to maxIndex-minIndex+1 times.
+    val prevIndex = pattern.length()
+    val minIndex = Math.max(prevIndex, curElemIndex)
+    val maxIndex = longerLength - shorterLength + curElemIndex
+    val newPatterns = ArrayList<Pattern>()
+
+    var i = minIndex
+
+    while(i < maxIndex) {
+      newPatterns.add(pattern + Pattern(fillCopy(i - minIndex + 1, curElem)))
+      ++i
+    }
+
+    total.addAll(newPatterns)
+    total
+  }
+
+  return extend(shorter, shorterLength, longerLength, nexExtended)
 }

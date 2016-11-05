@@ -16,7 +16,7 @@ class GeneralizePatternsCasesSpec : Spek({
   val three = Pattern("one", "two", "three")
   val anyPattern = Pattern("one", "two", "three")
 
-  describe("caseEqualSizePatterns") {
+  describe("caseEqualLengthPatterns") {
 
     describe("patterns of length 1") {
 
@@ -24,7 +24,7 @@ class GeneralizePatternsCasesSpec : Spek({
         val a = PatternItem(listOf("man"), listOf("tag"))
         val b = PatternItem(listOf("woman"), listOf("tag"))
         val expected = generalize(a, b)
-        val actual = caseEqualSizePatterns(Pattern(a), Pattern(b)).get().flatMap { it() }
+        val actual = caseEqualLengthPatterns(Pattern(a), Pattern(b)).get().flatMap { it() }
 
         assertEquals(true, expected.containsAll(actual))
         assertEquals(true, actual.containsAll(expected))
@@ -38,13 +38,13 @@ class GeneralizePatternsCasesSpec : Spek({
       var result = emptyList<Pattern>()
 
       beforeEach{
-        result = caseEqualSizePatterns(a, b).get()
+        result = caseEqualLengthPatterns(a, b).get()
       }
 
       it("should generalize patterns by pairing corresponding elements") {
         val a = Pattern("a", "x")
         val b = Pattern("b", "x")
-        val result = caseEqualSizePatterns(a, b).get()
+        val result = caseEqualLengthPatterns(a, b).get()
 
         assertEquals(2, result.size)
         assertEquals(true, result.any{ it == Pattern(PatternItem(), PatternItem("x")) })
@@ -183,23 +183,23 @@ class GeneralizePatternsCasesSpec : Spek({
 
   describe("case handling") {
 
-    describe("caseEqualSizePatterns") {
+    describe("caseEqualLengthPatterns") {
 
       it("should return None when one of the patterns is empty") {
-        assertEquals(Option.None, caseEqualSizePatterns(empty, two))
+        assertEquals(Option.None, caseEqualLengthPatterns(empty, two))
       }
 
       it("should return None when both patterns are empty") {
-        assertEquals(Option.None, caseEqualSizePatterns(empty, empty))
+        assertEquals(Option.None, caseEqualLengthPatterns(empty, empty))
       }
 
       it("should return None when patterns have different lengths") {
-        assertEquals(Option.None, caseEqualSizePatterns(one, two))
-        assertEquals(Option.None, caseEqualSizePatterns(two, three))
+        assertEquals(Option.None, caseEqualLengthPatterns(one, two))
+        assertEquals(Option.None, caseEqualLengthPatterns(two, three))
       }
 
       it("should handle case when both patterns have length 1") {
-        assertEquals(false, caseEqualSizePatterns(one, one) is Option.None)
+        assertEquals(false, caseEqualLengthPatterns(one, one) is Option.None)
       }
     }
 
