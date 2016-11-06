@@ -16,6 +16,10 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
 
   : this(patternItems.map{ PatternItem(it) })
 
+  internal constructor(vararg patternItems : Int)
+
+  : this(patternItems.map{ PatternItem(it.toString()) })
+
 
   operator fun invoke() = patternElements
 

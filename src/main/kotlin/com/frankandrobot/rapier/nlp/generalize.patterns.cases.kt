@@ -4,8 +4,8 @@ import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternElement
 import com.frankandrobot.rapier.pattern.PatternList
 import com.frankandrobot.rapier.util.combinations
-import com.frankandrobot.rapier.util.sort
 import com.frankandrobot.rapier.util.fillCopy
+import com.frankandrobot.rapier.util.sort
 import org.funktionale.option.Option
 import org.funktionale.option.toOption
 import java.util.*
@@ -14,11 +14,11 @@ import java.util.*
 internal fun areEqualLengths(a : Pattern, b : Pattern) =
   a().size == b().size && a().size > 0
 
-internal fun oneIsEmpty(a : Pattern, b : Pattern) =
+internal fun exactlyOneIsEmpty(a : Pattern, b : Pattern) =
   a().size != b().size && (a().size == 0 || b().size == 0)
 
-internal fun oneHasOneElement(a : Pattern, b : Pattern) =
-  (a().size > b().size || b().size > a().size) && (a().size == 1 || b().size == 1)
+internal fun exactlyOneHasOneElement(a : Pattern, b : Pattern) =
+  (a().size > b().size && b().size == 1) || (b().size > a().size && a().size == 1)
 
 internal fun areVeryLong(a : Pattern, b : Pattern) : Boolean {
   val patterns = sort(a, b)
@@ -62,7 +62,7 @@ internal fun caseEqualLengthPatterns(a : Pattern, b : Pattern) : Option<List<Pat
  */
 internal fun caseAnEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>> {
 
-  if (oneIsEmpty(a, b)) {
+  if (exactlyOneIsEmpty(a, b)) {
 
     val nonEmpty = if (a().size == 0) b else a
     val length = nonEmpty().fold(0) { total, patternElement -> total + patternElement.length }
@@ -92,7 +92,7 @@ internal fun caseAnEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>>
  */
 internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<Pattern>> {
 
-  if (oneHasOneElement(a, b)) {
+  if (exactlyOneHasOneElement(a, b)) {
 
     val c = if (b().size == 1) a else b
     val d = if (b().size == 1) b else a
@@ -207,11 +207,16 @@ internal tailrec fun extend(shorter: ListIterator<PatternElement>,
     val maxIndex = longerLength - shorterLength + curElemIndex
     val newPatterns = ArrayList<Pattern>()
 
-    var i = minIndex
+    if (shorter.hasNext()) {
+      var i = minIndex
 
-    while(i < maxIndex) {
-      newPatterns.add(pattern + Pattern(fillCopy(i - minIndex + 1, curElem)))
-      ++i
+      while (i <= maxIndex) {
+        newPatterns.add(pattern + Pattern(fillCopy(i - minIndex + 1, curElem)))
+        ++i
+      }
+    }
+    else { // we reached the end so just fill the rest of the list with the last elem
+      newPatterns.add(pattern + Pattern(fillCopy(maxIndex - minIndex + 1, curElem)))
     }
 
     total.addAll(newPatterns)

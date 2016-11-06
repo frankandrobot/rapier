@@ -3,7 +3,6 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
-import org.funktionale.option.Option
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -183,61 +182,106 @@ class GeneralizePatternsCasesSpec : Spek({
 
   describe("case handling") {
 
-    describe("caseEqualLengthPatterns") {
+    describe("areEqualLengths") {
 
-      it("should return None when one of the patterns is empty") {
-        assertEquals(Option.None, caseEqualLengthPatterns(empty, two))
+      it("should not handle the case when a pattern is empty") {
+        assertEquals(false, areEqualLengths(empty, two))
+        assertEquals(false, areEqualLengths(empty, empty))
       }
 
-      it("should return None when both patterns are empty") {
-        assertEquals(Option.None, caseEqualLengthPatterns(empty, empty))
-      }
-
-      it("should return None when patterns have different lengths") {
-        assertEquals(Option.None, caseEqualLengthPatterns(one, two))
-        assertEquals(Option.None, caseEqualLengthPatterns(two, three))
-      }
-
-      it("should handle case when both patterns have length 1") {
-        assertEquals(false, caseEqualLengthPatterns(one, one) is Option.None)
+      it("should return true only when both patterns are equal and non-empty") {
+        assertEquals(true, areEqualLengths(one, one))
+        assertEquals(true, areEqualLengths(two, two))
+        assertEquals(false, areEqualLengths(empty, empty))
+        assertEquals(false, areEqualLengths(one, two))
+        assertEquals(false, areEqualLengths(two, three))
       }
     }
 
-    describe("caseAnEmptyPattern") {
+    describe("exactlyOneIsEmpty") {
 
-      it("should return None when both patterns are empty") {
-        assertEquals(Option.None, caseAnEmptyPattern(empty, empty))
-      }
-
-      it("should return None when both patterns are non-empty") {
-        assertEquals(Option.None, caseAnEmptyPattern(one, two))
-      }
-
-      it("should return None when both patterns are non-empty and equal length") {
-        assertEquals(Option.None, caseAnEmptyPattern(one, one))
+      it("should return true only when exactly one pattern is empty") {
+        assertEquals(true, exactlyOneIsEmpty(empty, one))
+        assertEquals(true, exactlyOneIsEmpty(two, empty))
+        assertEquals(false, exactlyOneIsEmpty(one, two))
+        assertEquals(false, exactlyOneIsEmpty(one, one))
+        assertEquals(false, exactlyOneIsEmpty(empty, empty))
       }
     }
 
-    describe("casePatternHasSingleElement") {
+    describe("exactlyOneHasOneElement") {
 
-      it("should return None when the other pattern is empty") {
-        assertEquals(Option.None, casePatternHasSingleElement(empty, one))
+      it("should return true only when exactly one pattern has length 1") {
+        assertEquals(true, exactlyOneHasOneElement(one, two))
+        assertEquals(true, exactlyOneHasOneElement(two, one))
+        assertEquals(false, exactlyOneHasOneElement(one, one))
+        assertEquals(false, exactlyOneHasOneElement(two, three))
+        assertEquals(false, exactlyOneHasOneElement(empty, empty))
       }
 
-      it("should return None when both patterns are empty") {
-        assertEquals(Option.None, casePatternHasSingleElement(empty, empty))
+      it("should not handle the case when one pattern is empty") {
+        assertEquals(false, exactlyOneHasOneElement(empty, one))
+      }
+    }
+
+    describe("areVeryLong") {
+      //(longer.length() >= 3 && diff > maxDifferenceInPatternLength) ||
+      //(longer.length() > maxUnequalPatternLength && diff >= 2) ||
+      //longer.length() > maxPatternLength
+      //(length<=2 || diff<maxDiff) && (length <= maxUn || diff <= 1) && length <= maxPattern)
+      it("should not handle the case when the pattern lengths are less than 3") {
+        assertEquals(false, areVeryLong(empty, empty))
+        assertEquals(false, areVeryLong(empty, one))
+        assertEquals(false, areVeryLong(one, one))
+        assertEquals(false, areVeryLong(two, one))
+        assertEquals(false, areVeryLong(two, two))
       }
 
-      it("should return None when both patterns are length 1") {
-        assertEquals(Option.None, casePatternHasSingleElement(one, one))
+      it("should return false then the diff is <= maxDifferenceInPatternLength and the" +
+        " pattern lengths are <= maxUnequalPatternLegnth ") {
+        val a = pattern(1)
+        val b = pattern(maxDifferenceInPatternLength)
+        assertEquals(false, areVeryLong(a, b))
       }
 
-      it("should return None when both patterns have length > 1") {
-        assertEquals(Option.None, casePatternHasSingleElement(two, two))
-        assertEquals(Option.None, casePatternHasSingleElement(two, three))
+      it("should return false then the diff is <= 1 and pattern lengths are <= " +
+        "maxPatternLength") {
+        val a = pattern(maxPatternLength)
+        val b = pattern(maxPatternLength - 1)
+        assertEquals(false, areVeryLong(a, b))
       }
+    }
+  }
+
+  describe("extend") {
+    var a : Pattern = Pattern()
+    var result : List<Pattern> = emptyList()
+
+    beforeEach {
+      a = pattern(3)
+      result = extend(a().listIterator(), a.length(), 5)
+    }
+
+    it("should return 6 patterns") {
+      println(a.length())
+      println(result)
+      assertEquals(6, result.size)
+    }
+
+    it("should extend pattern to length 5") {
+      result.forEach { assertEquals(5, it.length()) }
+    }
+
+    it("should satisfy constraints") {
+      assertEquals(true, result.contains(Pattern(1,1,1,2,3)))
+      assertEquals(true, result.contains(Pattern(1,1,2,2,3)))
+      assertEquals(true, result.contains(Pattern(1,2,2,2,3)))
+      assertEquals(true, result.contains(Pattern(1,2,2,3,3)))
+      assertEquals(true, result.contains(Pattern(1,2,3,3,3)))
+      assertEquals(true, result.contains(Pattern(1,1,2,3,3)))
     }
   }
 })
 
 private fun pattern(r : IntRange) = Pattern(r.map { it.toString() }.map{ PatternItem(it) })
+private fun pattern(x : Int) = Pattern((1..x).map { it.toString() }.map{ PatternItem(it) })
