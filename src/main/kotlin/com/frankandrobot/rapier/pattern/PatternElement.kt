@@ -36,6 +36,10 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
   internal constructor(words: List<String>, tags: List<String>)
   : this(words.map{WordConstraint(it)}.toHashSet(), tags.map{PosTagConstraint(it)}.toHashSet())
 
+  internal constructor(words : WordConstraint, tags : PosTagConstraint)
+  : this(hashSetOf(words), hashSetOf(tags))
+
+
   /**
    * Does the token satisfy all the constraints?
    */

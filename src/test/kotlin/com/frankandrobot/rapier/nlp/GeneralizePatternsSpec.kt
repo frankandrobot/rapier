@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.pattern.PatternList
 import org.jetbrains.spek.api.Spek
 import java.util.*
 import kotlin.test.assertEquals
@@ -147,6 +148,43 @@ class GeneralizePatternsSpec : Spek ({
 
       it("should match 4 to an empty patten") {
         assertEquals(Pair(Pattern(), Pattern("4")), result[4])
+      }
+    }
+  }
+
+  describe("generalize") {
+
+    describe("example 2") {
+      var a : Pattern
+      var b : Pattern
+      var result = emptyList<Pattern>()
+
+      beforeEach{
+        a = Pattern("kansas", "city")
+        b = Pattern("atlanta")
+        result = generalize(a, b)
+      }
+
+      it("should produce two patterns") {
+        assertEquals(2, result.size)
+      }
+
+      it("should produce two patterns each with one pattern list of length 2") {
+        result.forEach{ pattern ->
+          assertEquals(1, pattern.length())
+          assertEquals(true, pattern()[0] is PatternList)
+          assertEquals(2, pattern()[0].length)
+        }
+      }
+
+      it("should produce two pattern lists, one that is the union and the other an " +
+        "unconstrained pattern list") {
+
+        val union = Pattern(PatternList("kansas", "city", "atlanta", length = 2))
+        val unconstrained = Pattern(PatternList(length = 2))
+        val patterns = listOf(result[0]) + result[1]
+        assertEquals(true, patterns.contains(union))
+        assertEquals(true, patterns.contains(unconstrained))
       }
     }
   }

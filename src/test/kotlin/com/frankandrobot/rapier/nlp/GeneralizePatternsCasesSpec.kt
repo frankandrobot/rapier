@@ -1,8 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.PatternList
+import com.frankandrobot.rapier.pattern.*
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -93,15 +91,54 @@ class GeneralizePatternsCasesSpec : Spek({
     it("should return the generalization of both patterns for patterns of length 1") {
       val result = casePatternHasSingleElement(one, two).get()
       assertEquals(2, result.size)
-      assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
-      assertEquals(true, result.contains(Pattern(PatternList("one", "two", length = 3))))
+      assertEquals(true, result.contains(Pattern(PatternList(length = 2))))
+      assertEquals(true, result.contains(Pattern(PatternList("one", "two", length = 2))))
     }
 
     it("should generalize the pattern's elements") {
       val result = casePatternHasSingleElement(one, three).get()
       assertEquals(2, result.size)
-      assertEquals(true, result.contains(Pattern(PatternList(length = 4))))
-      assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 4))))
+      assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
+      assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 3))))
+    }
+
+    describe("example") {
+      var a : Pattern
+      var b : Pattern
+      var result = emptyList<Pattern>()
+
+      beforeEach{
+        a = Pattern(
+          PatternItem(WordConstraint("bank"), PosTagConstraint("nn")),
+          PatternItem(WordConstraint("vault"), PosTagConstraint("nn"))
+        )
+        b = Pattern(
+          PatternList(posTagConstraints = hashSetOf(PosTagConstraint("nnp")), length = 3)
+        )
+        result = casePatternHasSingleElement(a, b).get()
+      }
+
+      it("should have two generalizations") {
+        assertEquals(2, result.size)
+      }
+
+      it("should have one pattern list with unconstrained words of length 3") {
+        assertEquals(true, result.contains(
+          Pattern(
+            PatternList(
+              posTagConstraints = hashSetOf(
+                PosTagConstraint("nnp"),
+                PosTagConstraint("nn")
+              ),
+              length = 3
+            )
+          )
+        ))
+      }
+
+      it("should have unconstrained pattern list of length 3") {
+        assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
+      }
     }
   }
 
@@ -254,7 +291,7 @@ class GeneralizePatternsCasesSpec : Spek({
   }
 
   describe("extend") {
-    var a : Pattern = Pattern()
+    var a : Pattern
     var result : List<Pattern> = emptyList()
 
     beforeEach {
@@ -263,8 +300,6 @@ class GeneralizePatternsCasesSpec : Spek({
     }
 
     it("should return 6 patterns") {
-      println(a.length())
-      println(result)
       assertEquals(6, result.size)
     }
 
