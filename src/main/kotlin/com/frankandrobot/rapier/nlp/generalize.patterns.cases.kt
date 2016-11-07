@@ -97,8 +97,10 @@ internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<P
     val c = if (b().size == 1) a else b
     val d = if (b().size == 1) b else a
 
-    val length = c().fold(d()[0].length) { total, patternElement -> total + patternElement.length }
-
+    val length = Math.max(
+      d()[0].length,
+      c().fold(0) { total, patternElement -> total + patternElement.length }
+    )
     val generalizations = c().fold(listOf(d()[0])) { total, patternElement ->
 
       total.flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }.distinct()
