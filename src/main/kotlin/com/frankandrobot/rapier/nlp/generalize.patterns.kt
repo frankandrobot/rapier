@@ -123,9 +123,8 @@ fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
           is Option.Some<List<Pattern>> -> hasSingleElementPattern.get()
           else -> when (hasEmptyPattern) {
             is Option.Some<List<Pattern>> -> hasEmptyPattern.get()
-            else -> emptyList()
+            else -> caseGeneral(patterns.first, patterns.second).get()
           }
-
         }
       }
     }
