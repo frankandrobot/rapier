@@ -3,7 +3,7 @@ package com.frankandrobot.rapier.parse
 import com.frankandrobot.rapier.document.Document
 import com.frankandrobot.rapier.nlp.EmptyToken
 import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.pattern.Rule
+import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.template.SlotFiller
 import com.frankandrobot.rapier.util.BetterIterator
 import java.util.*
@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Returns matched fillers *anywhere* in the Document
  */
-fun Rule.fillerMatch(doc : Document) : List<SlotFiller> {
+fun IRule.fillerMatch(doc : Document) : List<SlotFiller> {
 
   return _fillerMatch(BetterIterator(doc.tokens as ArrayList<Token>)).map{SlotFiller(it.word)}
 }
@@ -22,7 +22,7 @@ fun Rule.fillerMatch(doc : Document) : List<SlotFiller> {
  * It traverses all of the globs that didn't find matches anyway,
  * so it ends up visiting all of the possible combinations of prefillers, fillers, postfillers
  */
-internal fun Rule._fillerMatch(tokens : BetterIterator<Token>) : List<Token> {
+internal fun IRule._fillerMatch(tokens : BetterIterator<Token>) : List<Token> {
 
   return (tokens.curIndex..tokens.lastIndex)
     .map{ tokens.clone().overrideIndex(it) }
@@ -46,12 +46,12 @@ internal fun Rule._fillerMatch(tokens : BetterIterator<Token>) : List<Token> {
     .map { it.matches[1] }
 }
 
-fun Rule.exactFillerMatch(documentTokens : ArrayList<Token>) : List<SlotFiller> {
+fun IRule.exactFillerMatch(documentTokens : ArrayList<Token>) : List<SlotFiller> {
 
   return _fillerMatch(BetterIterator(documentTokens)).map{SlotFiller(it.word)}
 }
 
-internal fun Rule._exactFillerMatch(tokens : BetterIterator<Token>) : List<Token> {
+internal fun IRule._exactFillerMatch(tokens : BetterIterator<Token>) : List<Token> {
 
   return preFiller.expandedForm()
     .map { it.parse(tokens) }

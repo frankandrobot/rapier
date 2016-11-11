@@ -25,9 +25,14 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
 
   operator fun plus(pat : Pattern) = Pattern(patternElements + pat.patternElements)
 
+  fun croppedSubPattern(fromIndex : Int, toIndex : Int) =
+    Pattern(patternElements.subList(
+      Math.max(0, fromIndex),
+      Math.min(patternElements.size, toIndex)
+    ))
+
 
   private val expandedForm = PatternExpandedForm(this)
-
 
   fun expandedForm() = this.expandedForm.invoke()
 

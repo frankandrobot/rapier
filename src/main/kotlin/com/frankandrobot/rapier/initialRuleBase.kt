@@ -11,7 +11,7 @@ import com.frankandrobot.rapier.template.SlotFiller
 /**
  * Create a rule list for the Document for the given slot.
  */
-fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule> {
+fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<IRule> {
 
   val doc = document.value
   val slotName = slot.first
@@ -21,7 +21,7 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule
   var _index = { doc.indexOf(filler.value, startIndex) }
   var index = _index()
 
-  val rules = mutableListOf<Rule>()
+  val rules = mutableListOf<IRule>()
 
   while (index >= 0) {
 
@@ -40,7 +40,7 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<Rule
 /**
  * Initial rule list has no semantic constraints and no pattern lists.
  */
-internal fun _initialRule(preFiller: String, filler: String, postFiller: String, slot : Slot): Rule {
+internal fun _initialRule(preFiller: String, filler: String, postFiller: String, slot : Slot): IRule {
 
   val preFillerTokens = tokenize(preFiller)
   val fillerTokens = tokenize(filler)
@@ -50,7 +50,7 @@ internal fun _initialRule(preFiller: String, filler: String, postFiller: String,
   val fillerPatterns = fillerTokens.map { _pattern(it) }
   val postFillerPatterns = postFillerTokens.map { _pattern(it) }
 
-  return Rule(
+  return BaseRule(
     preFiller = Pattern(preFillerPatterns),
     filler = Pattern(fillerPatterns),
     postFiller = Pattern(postFillerPatterns),

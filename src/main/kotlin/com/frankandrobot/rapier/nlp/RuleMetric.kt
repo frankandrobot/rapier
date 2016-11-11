@@ -1,11 +1,8 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.parse.exactFillerMatch
-import com.frankandrobot.rapier.parse.fillerMatch
-import com.frankandrobot.rapier.pattern.Rule
+import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.template.Examples
-import com.frankandrobot.rapier.template.FilledTemplate
-import com.frankandrobot.rapier.template.Slot
 import com.frankandrobot.rapier.template.SlotFiller
 import java.util.*
 
@@ -14,7 +11,7 @@ internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
 internal fun metric(p : Int, n : Int, ruleSize : Double) =
   -log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
-class RuleMetric(private val rule : Rule) {
+class RuleMetric(private val rule : IRule) {
 
   private val ruleSize : Double by lazy { rule.ruleSize() }
 

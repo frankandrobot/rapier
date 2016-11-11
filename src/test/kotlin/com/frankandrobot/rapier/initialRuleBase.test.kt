@@ -1,8 +1,8 @@
 package com.frankandrobot.rapier
 
 import com.frankandrobot.rapier.document.Document
+import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.Rule
 import com.frankandrobot.rapier.template.Slot
 import com.frankandrobot.rapier.template.SlotFiller
 import org.jetbrains.spek.api.Spek
@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 class InitialRuleBaseTest : Spek({
 
   data class SimplifiedRule(val preFiller : List<String>, val filler : List<String>, val postFiller : List<String>) {
-    constructor(rule : Rule) : this(
+    constructor(rule : IRule) : this(
       rule.preFiller().flatMap{ it.wordConstraints }.map{ it.value },
       rule.filler().flatMap{ it.wordConstraints }.map{ it.value },
       rule.postFiller().flatMap{ it.wordConstraints }.map{ it.value }
@@ -61,7 +61,7 @@ class InitialRuleBaseTest : Spek({
 
     val anySlot = {Slot("any slot")}
 
-    describe("create initial Rule from prefiller, filler, postfiller strings") {
+    describe("create initial IRule from prefiller, filler, postfiller strings") {
 
       val prefiller = "one"
       val filler = "two three"
@@ -81,7 +81,7 @@ class InitialRuleBaseTest : Spek({
         patternElements.forEach{ assert(it is PatternItem) }
       }
 
-      it("should create a correct Rule") {
+      it("should create a correct IRule") {
 
         assertEquals(
           SimplifiedRule(result),
@@ -89,7 +89,7 @@ class InitialRuleBaseTest : Spek({
         )
       }
 
-      it("should create a correct Rule when no prefiller") {
+      it("should create a correct IRule when no prefiller") {
 
         val result = _initialRule("", "one", "two", anySlot())
 
@@ -99,7 +99,7 @@ class InitialRuleBaseTest : Spek({
         )
       }
 
-      it("should create a correct Rule when no postfiller") {
+      it("should create a correct IRule when no postfiller") {
 
         val result = _initialRule("one", "two", "", anySlot())
 

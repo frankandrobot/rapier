@@ -1,9 +1,12 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.pattern.IRule
+import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.pattern.PatternList
 
 
-fun Rule.ruleSize() : Double {
+fun IRule.ruleSize() : Double {
 
   return preFiller.ruleSize() + filler.ruleSize() + postFiller.ruleSize()
 }

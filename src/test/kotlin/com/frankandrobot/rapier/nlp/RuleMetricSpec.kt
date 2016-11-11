@@ -1,9 +1,9 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.document.Document
+import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.Rule
 import com.frankandrobot.rapier.template.*
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
@@ -16,8 +16,8 @@ class RuleMetricSpec : Spek({
   var anyOtherFiller = SlotFiller("none")
   var yetAnotherFiller = SlotFiller("none")
 
-  var anySimpleRule = Rule(slot = Slot("none"))
-  var anyRuleMatchingTwoFillers = Rule(slot = Slot("none"))
+  var anySimpleRule = BaseRule(slot = Slot("none"))
+  var anyRuleMatchingTwoFillers = BaseRule(slot = Slot("none"))
 
   var anyDocument = Document("none")
   var anyOtherDocument = Document("none")
@@ -32,13 +32,13 @@ class RuleMetricSpec : Spek({
     anyOtherFiller = SlotFiller("c#")
     yetAnotherFiller = SlotFiller("python")
 
-    anySimpleRule = Rule(
+    anySimpleRule = BaseRule(
       preFiller = Pattern(PatternItem("preFiller")),
       filler = Pattern(PatternItem(anyFiller.value)),
       postFiller = Pattern(PatternItem("postFiller")),
       slot = anySlot
     )
-    anyRuleMatchingTwoFillers = Rule(
+    anyRuleMatchingTwoFillers = BaseRule(
       preFiller = Pattern(PatternItem("preFiller")),
       filler = Pattern(PatternItem(anyFiller.value, anyOtherFiller.value)),
       postFiller = Pattern(PatternItem("postFiller")),
