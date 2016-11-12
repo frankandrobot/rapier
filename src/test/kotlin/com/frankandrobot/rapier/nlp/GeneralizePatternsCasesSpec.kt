@@ -44,16 +44,44 @@ class GeneralizePatternsCasesSpec : Spek({
         val result = caseEqualLengthPatterns(a, b).get()
 
         assertEquals(2, result.size)
-        assertEquals(true, result.any{ it == Pattern(PatternItem(), PatternItem("x")) })
-        assertEquals(true, result.any{ it == Pattern(PatternItem("a", "b"), PatternItem("x")) })
+        assertEquals(true, result.any{ it ==
+          Pattern(
+            PatternItem(),
+            PatternItem(words("x"))
+          )})
+        assertEquals(true, result.any{ it ==
+          Pattern(
+            PatternItem(words("a", "b")),
+            PatternItem(words("x"))
+          )})
       }
 
       it("should have 2 x 2 or 4 generalizations") {
         assertEquals(4, result.size)
-        assertEquals(true, result.any{ it == Pattern(PatternItem("ate", "hit"), PatternItem("the"), PatternItem("pasta", "ball")) })
-        assertEquals(true, result.any{ it == Pattern(PatternItem(), PatternItem("the"), PatternItem("pasta", "ball")) })
-        assertEquals(true, result.any{ it == Pattern(PatternItem("ate", "hit"), PatternItem("the"), PatternItem()) })
-        assertEquals(true, result.any{ it == Pattern(PatternItem(), PatternItem("the"), PatternItem()) })
+        assertEquals(true, result.any{ it ==
+          Pattern(
+            PatternItem(words("ate", "hit")),
+            PatternItem(words("the")),
+            PatternItem(words("pasta", "ball"))
+          )})
+        assertEquals(true, result.any{ it ==
+          Pattern(
+            PatternItem(),
+            PatternItem(words("the")),
+            PatternItem(words("pasta", "ball"))
+          )})
+        assertEquals(true, result.any{ it ==
+          Pattern(
+            PatternItem(words("ate", "hit")),
+            PatternItem(words("the")),
+            PatternItem()
+          )})
+        assertEquals(true, result.any{ it ==
+          Pattern(
+            PatternItem(),
+            PatternItem(words("the")),
+            PatternItem()
+          )})
       }
     }
   }
@@ -318,5 +346,7 @@ class GeneralizePatternsCasesSpec : Spek({
   }
 })
 
-private fun pattern(r : IntRange) = Pattern(r.map { it.toString() }.map{ PatternItem(it) })
-private fun pattern(x : Int) = Pattern((1..x).map { it.toString() }.map{ PatternItem(it) })
+private fun pattern(r : IntRange) =
+  Pattern(r.map { it.toString() }.map{ PatternItem(words(it)) })
+private fun pattern(x : Int) =
+  Pattern((1..x).map { it.toString() }.map{ PatternItem(words(it)) })

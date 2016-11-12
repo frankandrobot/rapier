@@ -57,7 +57,7 @@ class InitialRuleBaseTest : Spek({
     }
   }
 
-  describe("#_initialRule") {
+  describe("#mostSpecificRule") {
 
     val anySlot = {Slot("any slot")}
 
@@ -67,7 +67,7 @@ class InitialRuleBaseTest : Spek({
       val filler = "two three"
       val postfiller = "four"
 
-      val result = _initialRule(prefiller, filler, postfiller, anySlot())
+      val result = mostSpecificRule(prefiller, filler, postfiller, anySlot())
 
       val patternElements = result.preFiller() + result.filler() + result.postFiller()
 
@@ -91,7 +91,7 @@ class InitialRuleBaseTest : Spek({
 
       it("should create a correct IRule when no prefiller") {
 
-        val result = _initialRule("", "one", "two", anySlot())
+        val result = mostSpecificRule("", "one", "two", anySlot())
 
         assertEquals(
           SimplifiedRule(result),
@@ -101,7 +101,7 @@ class InitialRuleBaseTest : Spek({
 
       it("should create a correct IRule when no postfiller") {
 
-        val result = _initialRule("one", "two", "", anySlot())
+        val result = mostSpecificRule("one", "two", "", anySlot())
 
         assertEquals(
           SimplifiedRule(result),

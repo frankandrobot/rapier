@@ -1,13 +1,14 @@
 package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.pattern.words
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
 class parseTest : Spek({
 
-  val anyItem = { PatternItem("one") }
+  val anyItem = { PatternItem(words("one")) }
   val anyItemList = { ParsePatternItemList("one", "two") }
 
   val tokens = { start : Int -> textToTokenIterator("one two three four", start) }

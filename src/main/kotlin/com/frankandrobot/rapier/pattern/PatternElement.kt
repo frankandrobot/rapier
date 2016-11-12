@@ -5,6 +5,11 @@ import com.frankandrobot.rapier.parse.PatternListExpandedForm
 import java.util.*
 
 
+fun words(vararg words : String) = words.map { WordConstraint(it) }.toHashSet()
+
+fun tags(vararg tags : String) = tags.map{ PosTagConstraint(it) }.toHashSet()
+
+
 /**
  * Rapier allows 3 kinds of constraints:
  * - words the element can match,
@@ -30,9 +35,6 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
   internal constructor(vararg wordConstraint: WordConstraint)
   : this(HashSet<WordConstraint>().plus(wordConstraint) as HashSet<out WordConstraint>)
 
-  internal constructor(vararg words : String)
-  : this(HashSet<WordConstraint>().plus(words.map { WordConstraint(it) }) as HashSet<out WordConstraint>)
-
   internal constructor(words: List<String>, tags: List<String>)
   : this(words.map{WordConstraint(it)}.toHashSet(), tags.map{PosTagConstraint(it)}.toHashSet())
 
@@ -50,6 +52,7 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
       (semanticConstraints.size === 0 || semanticConstraints.any{ it.satisfies(token) })
   }
 }
+
 
 /**
  * A PatternList is a PatternItem that can repeat 0 or more times.

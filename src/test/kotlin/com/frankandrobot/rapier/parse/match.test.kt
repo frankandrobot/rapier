@@ -1,10 +1,7 @@
 package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.pattern.BaseRule
-import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.PatternList
+import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.template.Slot
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
@@ -19,9 +16,9 @@ class MatchTest : Spek({
 
     describe("pattern items") {
 
-      val anyPreFiller = {PatternItem("prefiller")}
-      val anyFiller = {PatternItem("filler")}
-      val anyPostFiller = {PatternItem("postfiller")}
+      val anyPreFiller = {PatternItem(words("prefiller"))}
+      val anyFiller = {PatternItem(words("filler"))}
+      val anyPostFiller = {PatternItem(words("postfiller"))}
 
       val patternItemRule = { BaseRule(
         preFiller = Pattern(anyPreFiller()),
@@ -88,7 +85,7 @@ class MatchTest : Spek({
        */
       val patternListRule = { BaseRule(
         preFiller = Pattern(PatternList("prefiller")),
-        filler = Pattern(PatternItem("filler")),
+        filler = Pattern(PatternItem(words("filler"))),
         postFiller = Pattern(PatternList("postfiller")),
         slot = anySlot()
       )}

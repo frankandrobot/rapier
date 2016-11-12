@@ -2,7 +2,6 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.*
 import org.jetbrains.spek.api.Spek
-import java.util.*
 import kotlin.test.assertEquals
 
 
@@ -26,7 +25,7 @@ class RuleSizeSpec : Spek({
 
     it("should add 2 for each word constraint disjunct") {
 
-      val pattern = Pattern(PatternItem("one", "two", "three"))
+      val pattern = Pattern(PatternItem(words("one", "two", "three")))
 
       assertEquals(2 + 2 * 2, _ruleSize(pattern))
     }

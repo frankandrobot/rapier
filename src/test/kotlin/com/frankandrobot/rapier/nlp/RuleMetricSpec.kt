@@ -4,6 +4,7 @@ import com.frankandrobot.rapier.document.Document
 import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.pattern.words
 import com.frankandrobot.rapier.template.*
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
@@ -33,15 +34,15 @@ class RuleMetricSpec : Spek({
     yetAnotherFiller = SlotFiller("python")
 
     anySimpleRule = BaseRule(
-      preFiller = Pattern(PatternItem("preFiller")),
-      filler = Pattern(PatternItem(anyFiller.value)),
-      postFiller = Pattern(PatternItem("postFiller")),
+      preFiller = Pattern(PatternItem(words("preFiller"))),
+      filler = Pattern(PatternItem(words(anyFiller.value))),
+      postFiller = Pattern(PatternItem(words("postFiller"))),
       slot = anySlot
     )
     anyRuleMatchingTwoFillers = BaseRule(
-      preFiller = Pattern(PatternItem("preFiller")),
-      filler = Pattern(PatternItem(anyFiller.value, anyOtherFiller.value)),
-      postFiller = Pattern(PatternItem("postFiller")),
+      preFiller = Pattern(PatternItem(words("preFiller"))),
+      filler = Pattern(PatternItem(words(anyFiller.value, anyOtherFiller.value))),
+      postFiller = Pattern(PatternItem(words("postFiller"))),
       slot = anySlot
     )
 

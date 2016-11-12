@@ -1,9 +1,6 @@
 package com.frankandrobot.rapier.parse
 
-import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.PatternList
-import com.frankandrobot.rapier.pattern.WordConstraint
+import com.frankandrobot.rapier.pattern.*
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -12,8 +9,8 @@ class PatternExpandedFormTest : Spek ({
 
   describe("ExpandedPattern") {
 
-    val anyItem = { PatternItem("one") }
-    val anyOtherItem = { PatternItem("two") }
+    val anyItem = { PatternItem(words("one")) }
+    val anyOtherItem = { PatternItem(words("two")) }
 
     val anyList = { PatternList(WordConstraint("one")) }
     val anyOtherList = { PatternList(WordConstraint("two")) }

@@ -28,7 +28,7 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<IRul
     val preFiller = doc.substring(0, index)
     val postFiller = doc.substring(index + filler.value.length)
 
-    rules.add(_initialRule(preFiller, filler.value, postFiller, slotName))
+    rules.add(mostSpecificRule(preFiller, filler.value, postFiller, slotName))
 
     startIndex = index + 1
     index = _index()
@@ -40,7 +40,7 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<IRul
 /**
  * Initial rule list has no semantic constraints and no pattern lists.
  */
-internal fun _initialRule(preFiller: String, filler: String, postFiller: String, slot : Slot): IRule {
+internal fun mostSpecificRule(preFiller: String, filler: String, postFiller: String, slot : Slot): IRule {
 
   val preFillerTokens = tokenize(preFiller)
   val fillerTokens = tokenize(filler)
