@@ -1,29 +1,35 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.DerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
 
 
-data class FillerIndexInfo(val numUsed1 : Int, val numUsed2 : Int)
+data class FillerIndexInfo(val numUsed1 : Int = 0, val numUsed2 : Int = 0)
 
 data class RuleWithPositionInfo(
   private val rule : DerivedRule,
-  val preFillerInfo: FillerIndexInfo,
-  val postFillerInfo: FillerIndexInfo) {
+  val preFillerInfo: FillerIndexInfo = FillerIndexInfo(),
+  val postFillerInfo: FillerIndexInfo = FillerIndexInfo()) {
 
   operator fun invoke() = rule
 }
 
 
-fun DerivedRule.initialRule() =
-  DerivedRule(
+fun initialRule(pattern : Pattern, baseRule1 : BaseRule, baseRule2 : BaseRule)
+  : DerivedRule {
+
+  assert(baseRule1.slot == baseRule2.slot)
+
+  return DerivedRule(
     preFiller = Pattern(),
-    filler = filler,
+    filler = pattern,
     postFiller = Pattern(),
-    slot = slot,
+    slot = baseRule1.slot,
     baseRule1 = baseRule1,
     baseRule2 = baseRule2
   )
+}
 
 
 fun specializePrefiller(rule : RuleWithPositionInfo, n : Int) :
