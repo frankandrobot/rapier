@@ -3,6 +3,7 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
+import com.frankandrobot.rapier.pattern.words
 import org.jetbrains.spek.api.Spek
 import java.util.*
 import kotlin.test.assertEquals
@@ -180,7 +181,7 @@ class GeneralizePatternsSpec : Spek ({
       it("should produce two pattern lists, one that is the union and the other an " +
         "unconstrained pattern list") {
 
-        val union = Pattern(PatternList("kansas", "city", "atlanta", length = 2))
+        val union = Pattern(PatternList(words("kansas", "city", "atlanta"), length = 2))
         val unconstrained = Pattern(PatternList(length = 2))
         val patterns = listOf(result[0]) + result[1]
         assertEquals(true, patterns.contains(union))

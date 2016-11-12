@@ -97,14 +97,17 @@ class GeneralizePatternsCasesSpec : Spek({
     it("should return the same pattern element transformed to a list for patterns of length 1") {
       val result = caseAnEmptyPattern(empty, Pattern("one")).get()
       assertEquals(1, result.size)
-      assertEquals(Pattern(PatternList("one", length = 1)), result[0])
+      assertEquals(Pattern(PatternList(words("one"), length = 1)), result[0])
     }
 
     it("should generalize the pattern's elements") {
       val result = caseAnEmptyPattern(empty, three).get()
       assertEquals(2, result.size)
       assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
-      assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 3))))
+      assertEquals(
+        true,
+        result.contains(Pattern(PatternList(words("one", "two", "three"), length = 3)))
+      )
     }
   }
 
@@ -120,14 +123,20 @@ class GeneralizePatternsCasesSpec : Spek({
       val result = casePatternHasSingleElement(one, two).get()
       assertEquals(2, result.size)
       assertEquals(true, result.contains(Pattern(PatternList(length = 2))))
-      assertEquals(true, result.contains(Pattern(PatternList("one", "two", length = 2))))
+      assertEquals(
+        true,
+        result.contains(Pattern(PatternList(words("one", "two"), length = 2)))
+      )
     }
 
     it("should generalize the pattern's elements") {
       val result = casePatternHasSingleElement(one, three).get()
       assertEquals(2, result.size)
       assertEquals(true, result.contains(Pattern(PatternList(length = 3))))
-      assertEquals(true, result.contains(Pattern(PatternList("one", "two", "three", length = 3))))
+      assertEquals(
+        true,
+        result.contains(Pattern(PatternList(words("one", "two", "three"), length = 3)))
+      )
     }
 
     describe("example") {
@@ -137,8 +146,8 @@ class GeneralizePatternsCasesSpec : Spek({
 
       beforeEach{
         a = Pattern(
-          PatternItem(WordConstraint("bank"), PosTagConstraint("nn")),
-          PatternItem(WordConstraint("vault"), PosTagConstraint("nn"))
+          PatternItem(words("bank"), tags("nn")),
+          PatternItem(words("vault"), tags("nn"))
         )
         b = Pattern(
           PatternList(posTagConstraints = hashSetOf(PosTagConstraint("nnp")), length = 3)

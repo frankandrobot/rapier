@@ -38,9 +38,6 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
   internal constructor(words: List<String>, tags: List<String>)
   : this(words.map{WordConstraint(it)}.toHashSet(), tags.map{PosTagConstraint(it)}.toHashSet())
 
-  internal constructor(words : WordConstraint, tags : PosTagConstraint)
-  : this(hashSetOf(words), hashSetOf(tags))
-
 
   /**
    * Does the token satisfy all the constraints?
@@ -79,8 +76,6 @@ data class PatternList(override val wordConstraints: HashSet<out WordConstraint>
   internal constructor(vararg wordConstraint: WordConstraint, length : Int = 1)
   : this(wordConstraint.toHashSet(), length = length)
 
-  internal constructor(vararg words: String, length : Int = 1)
-  : this(words.map{WordConstraint(it)}.toHashSet(), length = length)
 
   private val expandedForm = PatternListExpandedForm(this)
 

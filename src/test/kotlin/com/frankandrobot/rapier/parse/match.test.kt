@@ -84,9 +84,9 @@ class MatchTest : Spek({
        * - filler
        */
       val patternListRule = { BaseRule(
-        preFiller = Pattern(PatternList("prefiller")),
+        preFiller = Pattern(PatternList(words("prefiller"), length = 1)),
         filler = Pattern(PatternItem(words("filler"))),
-        postFiller = Pattern(PatternList("postfiller")),
+        postFiller = Pattern(PatternList(words("postfiller"), length = 1)),
         slot = anySlot()
       )}
 
