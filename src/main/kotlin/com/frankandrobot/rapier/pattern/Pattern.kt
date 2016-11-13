@@ -37,4 +37,6 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
   fun expandedForm() = this.expandedForm.invoke()
 
   fun length() = invoke().size
+
+  override fun toString() = patternElements.joinToString("\n")
 }

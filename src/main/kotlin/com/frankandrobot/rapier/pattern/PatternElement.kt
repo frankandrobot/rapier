@@ -48,6 +48,9 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
       (posTagConstraints.size === 0 || posTagConstraints.any{ it.satisfies(token) }) &&
       (semanticConstraints.size === 0 || semanticConstraints.any{ it.satisfies(token) })
   }
+
+  override fun toString() = "word: $wordConstraints, tag: $posTagConstraints, " +
+    "semantic: $semanticConstraints"
 }
 
 
@@ -80,4 +83,7 @@ data class PatternList(override val wordConstraints: HashSet<out WordConstraint>
   private val expandedForm = PatternListExpandedForm(this)
 
   fun expandedForm() = this.expandedForm.invoke()
+
+  override fun toString() = "list: max length: $length, word: $wordConstraints, tag: " +
+    "$posTagConstraints, semantic: $semanticConstraints"
 }

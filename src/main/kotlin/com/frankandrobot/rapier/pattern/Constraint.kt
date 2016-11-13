@@ -14,18 +14,24 @@ interface Constraint {
 data class PosTagConstraint(override val value: String = "") : Constraint {
 
   override fun satisfies(token: Token) = token.posTag.equals(value)
+
+  override fun toString() = value
 }
 
 
 data class WordConstraint(override val value: String = "") : Constraint {
 
   override fun satisfies(token: Token) = token.word.equals(value)
+
+  override fun toString() = value
 }
 
 
 data class SemanticConstraint(override val value: String = "") : Constraint {
 
   override fun satisfies(token: Token) = token.semanticClass.equals(value)
+
+  override fun toString() = value
 }
 
 
