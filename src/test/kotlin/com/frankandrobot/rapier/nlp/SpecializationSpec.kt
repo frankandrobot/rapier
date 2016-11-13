@@ -14,9 +14,11 @@ class SpecializationSpec : Spek({
 
       var baseRule1 = emptyBaseRule
       var baseRule2 = emptyBaseRule
-      var fillerGeneralizations: List<Pattern> = emptyList()
-      var fillerRules: List<DerivedRule> = emptyList()
-      var result : List<DerivedRule> = emptyList()
+      var fillerGeneralizations : List<Pattern> = emptyList()
+      var fillerRules : List<RuleWithPositionInfo> = emptyList()
+      var iteration1 : List<RuleWithPositionInfo> = emptyList()
+      var iteration2 : List<RuleWithPositionInfo> = emptyList()
+
 
       beforeEach {
 
@@ -54,45 +56,95 @@ class SpecializationSpec : Spek({
         )
 
         fillerGeneralizations = generalize(baseRule1.filler, baseRule2.filler)
-        fillerRules = fillerGeneralizations.map { initialRule(it, baseRule1, baseRule2) }
+        fillerRules = fillerGeneralizations
+          .map { initialRule(it, baseRule1, baseRule2) }
+          .map { RuleWithPositionInfo(it) }
 
-        result = fillerRules.flatMap {
-          specializePrefiller(RuleWithPositionInfo(it), n = 1)
-            .flatMap { specializePostFiller(it, n = 1) }
-            .map{ it() }
+        iteration1 = fillerRules
+          .flatMap { specializePrefiller(it, n = 1) }
+          .flatMap { specializePostFiller(it, n = 1) }
+        iteration2 = iteration1
+          .filter { it().preFiller().any{ it is PatternItem } }
+          .filter { it().postFiller().any{ it is PatternItem } }
+          .flatMap { specializePrefiller(it, n = 2)}
+          .flatMap { specializePostFiller(it, n = 2) }
+      }
+
+
+      describe("iteration1") {
+
+        var result = emptyList<DerivedRule>()
+
+        beforeEach { result = iteration1.map{ it() } }
+
+        it("should contain rule 1") {
+
+          assertEquals(true, result.any {
+            it == DerivedRule(
+              preFiller = Pattern(PatternItem(words("in"), tags("in"))),
+              filler = Pattern(
+                PatternList(words("atlanta", "kansas", "city"), tags("nnp"), length = 2)
+              ),
+              postFiller = Pattern(PatternItem(words(","), tags(","))),
+              slot = Slot("any"),
+              baseRule1 = baseRule1,
+              baseRule2 = baseRule2
+            )
+          })
+        }
+
+        it("should contain rule 2") {
+
+          assertEquals(true, result.any {
+            it == DerivedRule(
+              preFiller = Pattern(PatternItem(words("in"), tags("in"))),
+              filler = Pattern(
+                PatternList(posTagConstraints = tags("nnp"), length = 2)
+              ),
+              postFiller = Pattern(PatternItem(words(","), tags(","))),
+              slot = Slot("any"),
+              baseRule1 = baseRule1,
+              baseRule2 = baseRule2
+            )
+          })
         }
       }
 
-      it("should contain rule 1") {
+      describe("iteration2") {
 
-        assertEquals(true, result.any {
-          it == DerivedRule(
-            preFiller = Pattern(PatternItem(words("in"), tags("in"))),
-            filler = Pattern(
-              PatternList(words("atlanta", "kansas", "city"), tags("nnp"), length = 2)
-            ),
-            postFiller = Pattern(PatternItem(words(","), tags(","))),
-            slot = Slot("any"),
-            baseRule1 = baseRule1,
-            baseRule2 = baseRule2
-          )
-        })
-      }
+        var result = emptyList<DerivedRule>()
 
-      it("should contain rule 2") {
+        beforeEach { result = iteration2.map{ it() } }
 
-        assertEquals(true, result.any {
-          it == DerivedRule(
-            preFiller = Pattern(PatternItem(words("in"), tags("in"))),
-            filler = Pattern(
-              PatternList(posTagConstraints = tags("nnp"), length = 2)
-            ),
-            postFiller = Pattern(PatternItem(words(","), tags(","))),
-            slot = Slot("any"),
-            baseRule1 = baseRule1,
-            baseRule2 = baseRule2
-          )
-        })
+        it("should contain prefiller 1") {
+          val elem = PatternList(words("located"), tags("vbn"), length = 1)
+          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        }
+
+        it("should contain prefiller 2") {
+          val elem = PatternItem(words(), tags("vbn", "nns"))
+          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        }
+
+        it("should contain prefiller 3") {
+          val elem = PatternList(words("offices"), tags("nns"), length = 1)
+          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        }
+
+        it("should contain prefiller 4") {
+          val elem = PatternItem()
+          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        }
+
+        it("should contain prefiller 5") {
+          val elem = PatternItem(words("located", "offices"), tags("vbn", "nns"))
+          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        }
+
+        it("should contain prefiller 6") {
+          val elem = PatternItem(words("located", "offices"))
+          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        }
       }
     }
   }
