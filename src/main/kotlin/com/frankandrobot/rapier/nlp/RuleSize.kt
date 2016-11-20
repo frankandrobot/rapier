@@ -6,14 +6,16 @@ import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
 
 
-fun IRule.ruleSize() : Double {
+fun IRule.ruleSize(kRuleSizeWeight: Double) : Double {
 
-  return preFiller.ruleSize() + filler.ruleSize() + postFiller.ruleSize()
+  return preFiller.ruleSize(kRuleSizeWeight) +
+    filler.ruleSize(kRuleSizeWeight) +
+    postFiller.ruleSize(kRuleSizeWeight)
 }
 
-fun Pattern.ruleSize() : Double {
+fun Pattern.ruleSize(kRuleSizeWeight: Double) : Double {
 
-  return _ruleSize(this) / 100.0
+  return _ruleSize(this) * kRuleSizeWeight
 }
 
 /**

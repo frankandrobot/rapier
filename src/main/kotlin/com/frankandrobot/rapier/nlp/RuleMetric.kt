@@ -6,14 +6,37 @@ import com.frankandrobot.rapier.template.Examples
 import com.frankandrobot.rapier.template.SlotFiller
 import java.util.*
 
+
 internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
 
-internal fun metric(p : Int, n : Int, ruleSize : Double) =
-  -log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
-class RuleMetric(private val rule : IRule) {
+/**
+ * If a rule covers less than this number of positive matches, then this rule evaluates
+ * to infinity.
+ *
+ * Don't ask me where "1.442695" comes from...that was in the original source code and
+ * not mentioned in the research paper.
+ */
+internal fun metric(p : Int, n : Int, ruleSize : Double, kMinCov : Int) : Double =
+  if (p < kMinCov) Double.POSITIVE_INFINITY
+  else -1.442695*log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
-  private val ruleSize : Double by lazy { rule.ruleSize() }
+
+internal class MetricResults(val positives : List<SlotFiller>,
+                             val negatives : List<SlotFiller>)
+
+
+/**
+ * @param rule
+ * @param kMinCov if a rule covers less than this number of positive matches, then it
+ * evaluates to infinity.
+ * @param kRuleSizeWeight the weight used to scale the rule size
+ */
+class RuleMetric(private val rule : IRule,
+                 private val kMinCov : Int,
+                 private val kRuleSizeWeight: Double) {
+
+  private val ruleSize : Double by lazy { rule.ruleSize(kRuleSizeWeight) }
 
   /**
    * For each example, find the filler matches.
@@ -27,7 +50,7 @@ class RuleMetric(private val rule : IRule) {
    */
   internal fun evaluate(
     examples : Examples,
-    exampleDocumentTokens: List<List<Token>>) : Pair<List<SlotFiller>, List<SlotFiller>> {
+    exampleDocumentTokens: List<List<Token>>) : MetricResults {
 
     val ruleFillers = examples.slotFillers(rule.slot)
     val matches = exampleDocumentTokens.flatMap{ rule.exactFillerMatch((ArrayList<Token>() + it) as ArrayList<Token>) }
@@ -35,7 +58,7 @@ class RuleMetric(private val rule : IRule) {
     val positives = matches.filter{ ruleFillers.contains(it) }
     val negatives = matches.filter { !ruleFillers.contains(it) }
 
-    return Pair(positives, negatives)
+    return MetricResults(positives = positives, negatives = negatives)
   }
 
   /**
@@ -49,9 +72,9 @@ class RuleMetric(private val rule : IRule) {
       examples.documents.map{it.tokens}
     )
 
-    val p = metrics.first.size
-    val n = metrics.second.size
+    val p = metrics.positives.size
+    val n = metrics.negatives.size
 
-    return metric(p, n, ruleSize)
+    return metric(p = p, n = n, ruleSize = ruleSize, kMinCov = kMinCov)
   }
 }

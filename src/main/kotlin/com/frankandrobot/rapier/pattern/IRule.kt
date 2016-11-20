@@ -32,11 +32,11 @@ data class DerivedRule(
 
     return """Pattern
   PreFiller:
-${indent(pre,4)}
+${pre.indent(4)}
   Filler:
-${indent(filler,4)}
+${filler.indent(4)}
   PostFiller:
-${indent(post,4)}
+${post.indent(4)}
 """
   }
 }
