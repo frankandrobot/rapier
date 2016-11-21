@@ -10,20 +10,20 @@ class BoundedBinaryMinHeap<T : Comparable<T>> protected constructor(private val 
 
   companion object {
 
-    fun <T : Comparable<T>> invoke(size: Int) : BoundedBinaryMinHeap<T> {
+    fun <T : Comparable<T>> invoke(capacity: Int) : BoundedBinaryMinHeap<T> {
 
-      val array = ArrayList<T?>(size + 1)
-      (0..size).forEach{ array.add(null) }
+      val array = ArrayList<T?>(capacity + 1)
+      (0..capacity).forEach{ array.add(null) }
 
       return BoundedBinaryMinHeap(array)
     }
 
     internal fun<T : Comparable<T>> invoke(
       initialValues : ArrayList<T?>,
-      size : Int = initialValues.size
+      capacity: Int = initialValues.size
     ) : BoundedBinaryMinHeap<T> {
 
-      val heap = invoke<T>(size)
+      val heap = invoke<T>(capacity)
 
       (0..initialValues.size - 1).forEach{ heap.array[it + 1] = initialValues[it] }
 
@@ -34,15 +34,18 @@ class BoundedBinaryMinHeap<T : Comparable<T>> protected constructor(private val 
   }
 
   /**
-   * This is actually really inefficient in scala but it's mainly for debugging purposes.
+   * This is actually really inefficient but it's for debugging purposes.
    */
   internal fun heap() = array.withIndex().filter { it.index <= lastItemIndex }.map{ it.value }.drop(1)
 
-  fun elementCount() = array.size - 1
 
-  fun findMin() = array[1]
+  fun capacity() = array.size - 1
 
-  fun deleteMin(): T? {
+
+  fun minimum() = array[1]
+
+
+  fun removeMinimum(): T? {
 
     if (lastItemIndex > 0) {
 
@@ -72,6 +75,9 @@ class BoundedBinaryMinHeap<T : Comparable<T>> protected constructor(private val 
     return false
   }
 
+  /**
+   * Used to remove items
+   */
   internal fun percolateDown(i: Int, value: T?) {
 
     val leftChildIndex = 2 * i
@@ -114,6 +120,9 @@ class BoundedBinaryMinHeap<T : Comparable<T>> protected constructor(private val 
     }
   }
 
+  /**
+   * Used to insert items
+   */
   internal fun percolateUp(value: T) {
 
     ++lastItemIndex

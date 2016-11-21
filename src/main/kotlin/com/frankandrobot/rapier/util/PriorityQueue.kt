@@ -7,8 +7,8 @@ class PriorityQueue<T : Comparable<T>>(val size : Int) {
 
   fun add(value : T) : PriorityQueue<T> {
 
-    if (heap.elementCount() === size) {
-      heap.deleteMin()
+    if (heap.capacity() === size) {
+      heap.removeMinimum()
     }
 
     heap.insert(value)

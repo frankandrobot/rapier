@@ -27,6 +27,8 @@ internal class MetricResults(val positives : List<SlotFiller>,
 
 
 /**
+ * The only reason this class exists is to store the calculation of rule size.
+ *
  * @param rule
  * @param kMinCov if a rule covers less than this number of positive matches, then it
  * evaluates to infinity.
