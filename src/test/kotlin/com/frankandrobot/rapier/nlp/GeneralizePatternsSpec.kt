@@ -172,7 +172,7 @@ class GeneralizePatternsSpec : Spek ({
 
       it("should produce two patterns each with one pattern list of length 2") {
         result.forEach{ pattern ->
-          assertEquals(1, pattern.length())
+          assertEquals(1, pattern.length)
           assertEquals(true, pattern()[0] is PatternList)
           assertEquals(2, pattern()[0].length)
         }

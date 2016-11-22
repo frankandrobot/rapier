@@ -17,9 +17,12 @@ data class BetterIterator<T>(val array : ArrayList<T>) : Iterator<T>, Iterable<T
 
   private var len = 0
 
+
   override fun hasNext() = len <= array.lastIndex
 
+
   override fun next() : T = array[len++]
+
 
   fun peek(count : Int) : ArrayList<T> {
 
@@ -30,7 +33,9 @@ data class BetterIterator<T>(val array : ArrayList<T>) : Iterator<T>, Iterable<T
 
   fun peek() = array[len]
 
+
   fun clone() = BetterIterator(array, len)
+
 
   /**
    * data#equals fails, so write our own

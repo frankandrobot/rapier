@@ -24,11 +24,11 @@ internal fun areVeryLong(a : Pattern, b : Pattern) : Boolean {
   val patterns = sort(a, b)
   val shorter = patterns.first
   val longer = patterns.second
-  val diff = longer.length() - shorter.length()
+  val diff = longer.length - shorter.length
 
-  return (longer.length() >= 3 && diff > maxDifferenceInPatternLength) ||
-    (longer.length() > maxUnequalPatternLength && diff >= 2) ||
-    longer.length() > maxPatternLength
+  return (longer.length >= 3 && diff > maxDifferenceInPatternLength) ||
+    (longer.length > maxUnequalPatternLength && diff >= 2) ||
+    longer.length > maxPatternLength
 }
 
 
@@ -152,7 +152,7 @@ internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Patter
 
   if (areVeryLong(a, b)) {
     val longer = sort(a, b).second
-    return listOf(Pattern(PatternList(length = longer.length()))).toOption()
+    return listOf(Pattern(PatternList(length = longer.length))).toOption()
   }
 
   return Option.None
@@ -165,7 +165,7 @@ internal fun caseGeneral(a : Pattern, b : Pattern) : Option<List<Pattern>> {
   val shorter = patterns.first
   val longer = patterns.second
 
-  val newPatterns = extend(shorter().listIterator(), shorter.length(), longer.length())
+  val newPatterns = extend(shorter().listIterator(), shorter.length, longer.length)
 
   return newPatterns.flatMap{ caseEqualLengthPatterns(it, b).get() }.toOption()
 }
@@ -204,7 +204,7 @@ internal tailrec fun extend(shorter: ListIterator<PatternElement>,
     // we can add at most maxIndex-minIndex+1 copies of the current element.
     // And that's exactly what we do---we create new Patterns with the current elem
     // added 1 to maxIndex-minIndex+1 times.
-    val prevIndex = pattern.length()
+    val prevIndex = pattern.length
     val minIndex = Math.max(prevIndex, curElemIndex)
     val maxIndex = longerLength - shorterLength + curElemIndex
     val newPatterns = ArrayList<Pattern>()

@@ -200,13 +200,13 @@ class GeneralizePatternsCasesSpec : Spek({
       }
 
       it("should return one pattern with a single pattern list") {
-        assertEquals(1, result[0].length())
+        assertEquals(1, result[0].length)
         assertEquals(true, result[0]()[0] is PatternList)
       }
 
       it("should return one pattern with a single unconstrained pattern list") {
         assertEquals(1, result[0]().size)
-        assertEquals(PatternList(length = b().length()), result[0]()[0])
+        assertEquals(PatternList(length = b().length), result[0]()[0])
       }
     }
 
@@ -227,13 +227,13 @@ class GeneralizePatternsCasesSpec : Spek({
       }
 
       it("should return one pattern with a single pattern list") {
-        assertEquals(1, result[0].length())
+        assertEquals(1, result[0].length)
         assertEquals(true, result[0]()[0] is PatternList)
       }
 
       it("should return one pattern with a single unconstrained pattern list") {
         assertEquals(1, result[0]().size)
-        assertEquals(PatternList(length = b().length()), result[0]()[0])
+        assertEquals(PatternList(length = b().length), result[0]()[0])
       }
     }
 
@@ -249,7 +249,7 @@ class GeneralizePatternsCasesSpec : Spek({
 
         assertEquals(1, result.size)
         assertEquals(true, result[0]()[0] is PatternList)
-        assertEquals(b.length(), result[0]()[0].length)
+        assertEquals(b.length, result[0]()[0].length)
       }
     }
   }
@@ -333,7 +333,7 @@ class GeneralizePatternsCasesSpec : Spek({
 
     beforeEach {
       a = pattern(3)
-      result = extend(a().listIterator(), a.length(), 5)
+      result = extend(a().listIterator(), a.length, 5)
     }
 
     it("should return 6 patterns") {
@@ -341,7 +341,7 @@ class GeneralizePatternsCasesSpec : Spek({
     }
 
     it("should extend pattern to length 5") {
-      result.forEach { assertEquals(5, it.length()) }
+      result.forEach { assertEquals(5, it.length) }
     }
 
     it("should satisfy constraints") {

@@ -39,8 +39,8 @@ fun specializePrefiller(rule : RuleWithPositionInfo, n : Int) :
   val numUsed2 = rule.preFillerInfo.numUsed2
   val preFiller1 = rule().baseRule1.preFiller
   val preFiller2 = rule().baseRule2.preFiller
-  val patternLen1 = preFiller1.length()
-  val patternLen2 = preFiller2.length()
+  val patternLen1 = preFiller1.length
+  val patternLen2 = preFiller2.length
 
   val genSet1 = generalize(
     preFiller1.croppedSubPattern(patternLen1 - n, patternLen1 - numUsed1),
