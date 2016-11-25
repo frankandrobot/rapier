@@ -3,6 +3,9 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
+/**
+ * @deprecated do not use
+ */
 class BoundedBinaryMinHeap<T : Comparable<T>> protected constructor(private val array : ArrayList<T?>) {
 
   private var lastItemIndex = 0

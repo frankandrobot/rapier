@@ -55,11 +55,13 @@ data class BetterIterator<T>(val array : ArrayList<T>) : Iterator<T>, Iterable<T
     return "Itor(${array}, curIndex=${curIndex})"
   }
 
+
   val curIndex : Int
     get() = len
 
   val lastIndex : Int
     get() = array.size - 1
+
 
   fun overrideIndex(index : Int) : BetterIterator<T> {
 
