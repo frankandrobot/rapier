@@ -3,6 +3,10 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
+/**
+ * Performance is not great at all. However, rapier uses a small capacity (<10),
+ * so performance is good enough.
+ */
 class PriorityQueue<T : Comparable<T>>(val capacity : Int) {
 
   private val queue = ArrayList<T>(capacity)
