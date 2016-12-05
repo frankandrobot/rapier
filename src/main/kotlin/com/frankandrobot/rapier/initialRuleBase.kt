@@ -1,7 +1,6 @@
 package com.frankandrobot.rapier
 
 import com.frankandrobot.rapier.document.Document
-import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.tokenize
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.template.Slot
@@ -15,27 +14,28 @@ fun initialRuleBase(slot: Pair<Slot, SlotFiller>, document: Document): List<IRul
 
   val doc = document.value
   val slotName = slot.first
-  val filler = slot.second
+  val slotFiller = slot.second
 
   var startIndex = 0
-  var _index = { doc.indexOf(filler.value, startIndex) }
-  var index = _index()
+  var nextSlotFillerIndex = { doc.indexOf(slotFiller.value, startIndex) }
+  var index = nextSlotFillerIndex()
 
   val rules = mutableListOf<IRule>()
 
   while (index >= 0) {
 
     val preFiller = doc.substring(0, index)
-    val postFiller = doc.substring(index + filler.value.length)
+    val postFiller = doc.substring(index + slotFiller.value.length)
 
-    rules.add(mostSpecificRule(preFiller, filler.value, postFiller, slotName))
+    rules.add(mostSpecificRule(preFiller, slotFiller.value, postFiller, slotName))
 
     startIndex = index + 1
-    index = _index()
+    index = nextSlotFillerIndex()
   }
 
   return rules
 }
+
 
 /**
  * Initial rule list has no semantic constraints and no pattern lists.
@@ -46,18 +46,20 @@ internal fun mostSpecificRule(preFiller: String, filler: String, postFiller: Str
   val fillerTokens = tokenize(filler)
   val postFillerTokens = tokenize(postFiller)
 
-  val preFillerPatterns = preFillerTokens.map { _pattern(it) }
-  val fillerPatterns = fillerTokens.map { _pattern(it) }
-  val postFillerPatterns = postFillerTokens.map { _pattern(it) }
+  val preFillerPatterns = preFillerTokens.map {
+    PatternItem(words(it.word), tags(it.posTag))
+  }
+  val fillerPatterns = fillerTokens.map {
+    PatternItem(words(it.word), tags(it.posTag))
+  }
+  val postFillerPatterns = postFillerTokens.map {
+    PatternItem(words(it.word), tags(it.posTag))
+  }
 
-  return BaseRule(
+  return MostSpecificRule(
     preFiller = Pattern(preFillerPatterns),
     filler = Pattern(fillerPatterns),
     postFiller = Pattern(postFillerPatterns),
     slot = slot
   )
 }
-
-internal fun _pattern(token: Token) = PatternItem(
-  hashSetOf(WordConstraint(token.word)), hashSetOf(PosTagConstraint(token.posTag))
-)

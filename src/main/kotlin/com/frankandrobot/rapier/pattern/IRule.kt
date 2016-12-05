@@ -17,6 +17,12 @@ data class BaseRule(
   override val postFiller: Pattern = Pattern(),
   override val slot: Slot) : IRule
 
+data class MostSpecificRule(
+  override val preFiller: Pattern = Pattern(),
+  override val filler: Pattern = Pattern(),
+  override val postFiller: Pattern = Pattern(),
+  override val slot: Slot) : IRule
+
 data class DerivedRule(
   override val preFiller: Pattern,
   override val filler: Pattern,
