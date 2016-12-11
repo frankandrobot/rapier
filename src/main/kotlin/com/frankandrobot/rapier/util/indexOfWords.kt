@@ -4,16 +4,19 @@ import com.frankandrobot.rapier.nlp.Token
 import java.util.*
 
 
-fun ArrayList<Token>.indexOfWords(words : ArrayList<Token>, start : Int = 0) : Int {
+/**
+ * Finds a sublist, matching words only
+ */
+fun ArrayList<Token>.indexOfWords(subList: ArrayList<Token>, start : Int = 0) : Int {
 
-  if (words.size > 0) {
+  if (subList.size > 0) {
 
     var i = start
 
     while (i <= this.lastIndex) {
 
-      if (this[i].word == words.first().word && words.size + i - 1 <= this.lastIndex) {
-        val match = words.foldIndexed(true) { j, total, word ->
+      if (this[i].word == subList.first().word && subList.size + i - 1 <= this.lastIndex) {
+        val match = subList.foldIndexed(true) { j, total, word ->
           this[j + i].word == word.word && total
         }
 

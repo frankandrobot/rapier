@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.util
 
 import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.nlp.wordTagToken
 import com.frankandrobot.rapier.nlp.wordTokens
 import org.jetbrains.spek.api.Spek
 import java.util.*
@@ -78,6 +79,13 @@ class IndexOfWordsSpec : Spek({
       val searchList = wordTokens("a", "b")
       val result = list.indexOfWords(searchList, start = 1)
       assertEquals(2, result)
+    }
+
+    it("should match against words only") {
+      val list = arrayListOf(wordTagToken("a", "1"))
+      val searchList = arrayListOf(wordTagToken("a", "2"))
+      val result = list.indexOfWords(searchList)
+      assertEquals(0, result)
     }
   }
 })
