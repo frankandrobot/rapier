@@ -19,30 +19,19 @@ data class SlotName(private val name : String) {
  * Even though you have the option of having no "raw" value, that will throw an error
  * in production. So you should always expect this to be set.
  */
-data class SlotFiller(val raw : Option<String> = Option.None) {
+data class SlotFiller(val raw : Option<String> = Option.None,
+                      private val tokens : ArrayList<Token> = ArrayList<Token>()) {
 
-  internal constructor(raw : String) : this(Option.Some(raw))
-
-  /**
-   * Use this to avoid running #tokenize in tests, which is expensive.
-   * Yea, test code made it to prod. Kinda bad but should be safe.
-   */
-  internal constructor(wordTokens : ArrayList<Token>) : this() {
-    _test = (ArrayList<Token>() + wordTokens) as ArrayList<Token>
-  }
-
-  private var _test = ArrayList<Token>()
-
-  private val tokens : ArrayList<Token> by lazy {
-
-    if (_test.isEmpty() && raw.isDefined()) { tokenize(raw.get()) }
-    else if (_test.isNotEmpty() && raw.isEmpty()) { _test }
-    else {
+  operator fun invoke() : ArrayList<Token> {
+    if (raw.isDefined() && tokens.isEmpty()) {
+      tokens.addAll(tokenize(raw.get()))
+    }
+    else if (raw.isEmpty() && tokens.isEmpty()) {
       throw Exception("You forgot to set the raw value or test token values")
     }
-  }
 
-  operator fun invoke() = tokens
+    return tokens
+  }
 }
 
 //TODO throughly test hashsets

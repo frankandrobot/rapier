@@ -12,7 +12,7 @@ class SlotSpec : Spek({
 
     describe("token list") {
       it("should return token list when set") {
-        val filler = SlotFiller(wordTokens("a", "b", "c"))
+        val filler = SlotFiller(tokens = wordTokens("a", "b", "c"))
         filler() shouldEqual wordTokens("a", "b", "c")
       }
 
@@ -25,19 +25,21 @@ class SlotSpec : Spek({
 
     describe("hashset") {
       it("should add distinct fillers") {
-        val filler1 = SlotFiller(wordTokens = wordTokens("1"))
-        val filler2 = SlotFiller(wordTokens = wordTokens("2"))
+        val filler1 = SlotFiller(tokens = wordTokens("1"))
+        val filler2 = SlotFiller(tokens = wordTokens("2"))
         val result = hashSetOf(filler1, filler2)
         result shouldContain filler1
         result shouldContain filler2
+        result.size shouldEqual 2
       }
 
       it("should add distinct filler, part 2") {
-        val filler1 = SlotFiller(wordTokens("two"))
-        val filler2 = SlotFiller(wordTokens("three"))
+        val filler1 = SlotFiller(tokens = wordTokens("two"))
+        val filler2 = SlotFiller(tokens = wordTokens("three"))
         val result = hashSetOf(filler1, filler2)
-        result shouldContain SlotFiller(wordTokens("two"))
-        result shouldContain SlotFiller(wordTokens("three"))
+        result shouldContain SlotFiller(tokens = wordTokens("two"))
+        result shouldContain SlotFiller(tokens = wordTokens("three"))
+        result.size shouldEqual 2
       }
     }
   }

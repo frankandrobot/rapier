@@ -6,6 +6,7 @@ import com.frankandrobot.rapier.meta.SlotName
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.wordTokens
 import com.frankandrobot.rapier.pattern.*
+import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import java.util.*
@@ -37,7 +38,7 @@ class MostSpecificRulesSpec : Spek({
       assertEquals(result.size, 1)
       assertEquals(
         SimplifiedRule(rule),
-        SimplifiedRule(preFiller = listOf("one"), filler = listOf("ten"), postFiller = listOf("foo"))
+        SimplifiedRule(preFiller = listOf("1"), filler = listOf("ten"), postFiller = listOf("foo"))
       )
     }
 
@@ -53,11 +54,11 @@ class MostSpecificRulesSpec : Spek({
       assertEquals(result.size, 2)
       assertEquals(
         SimplifiedRule(rule1),
-        SimplifiedRule(preFiller = listOf("one"), filler = listOf("ten"), postFiller = listOf("foo", "ten"))
+        SimplifiedRule(preFiller = listOf("1"), filler = listOf("ten"), postFiller = listOf("foo", "ten"))
       )
       assertEquals(
         SimplifiedRule(rule2),
-        SimplifiedRule(preFiller = listOf("one", "ten", "foo"), filler = listOf("ten"), postFiller = listOf())
+        SimplifiedRule(preFiller = listOf("1", "ten", "foo"), filler = listOf("ten"), postFiller = listOf())
       )
     }
   }*/
@@ -72,9 +73,9 @@ class MostSpecificRulesSpec : Spek({
     beforeEach {
       slot = Slot(
         SlotName("any slot"),
-        hashSetOf(SlotFiller(wordTokens("two", "three")))
+        hashSetOf(SlotFiller(tokens = wordTokens("2", "3")))
       )
-      doc = wordTokens("one", "two", "three", "four")
+      doc = wordTokens("1", "2", "3", "4")
 
       result = mostSpecificSlotRules(slot, doc)
 
@@ -97,9 +98,9 @@ class MostSpecificRulesSpec : Spek({
       it("should create a correct IRule") {
 
         val expected = MostSpecificRule(
-          preFiller = patternOfItemWords("one"),
-          filler = patternOfItemWords("two", "three"),
-          postFiller = patternOfItemWords("four"),
+          preFiller = patternOfItemWords("1"),
+          filler = patternOfItemWords("2", "3"),
+          postFiller = patternOfItemWords("4"),
           slot = slot
         )
 
@@ -114,13 +115,13 @@ class MostSpecificRulesSpec : Spek({
 
     it("should create a correct IRule when no prefiller") {
 
-      val tokens = wordTokens("two", "three", "four")
+      val tokens = wordTokens("2", "3", "4")
       val result = mostSpecificSlotRules(slot, tokens)
 
       val expected = MostSpecificRule(
         preFiller = Pattern(),
-        filler = Pattern(patternItemOfWords("two"), patternItemOfWords("three")),
-        postFiller = Pattern(patternItemOfWords("four")),
+        filler = patternOfItemWords("2", "3"),
+        postFiller = patternOfItemWords("4"),
         slot = slot
       )
 
@@ -129,12 +130,12 @@ class MostSpecificRulesSpec : Spek({
 
     it("should create a correct IRule when no postfiller") {
 
-      val tokens = wordTokens("one", "two", "three")
+      val tokens = wordTokens("1", "2", "3")
       val result = mostSpecificSlotRules(slot, tokens)
 
       val expected = MostSpecificRule(
-        preFiller = patternOfItemWords("one"),
-        filler = Pattern(patternItemOfWords("two"), patternItemOfWords("three")),
+        preFiller = patternOfItemWords("1"),
+        filler = patternOfItemWords("2", "3"),
         postFiller = Pattern(),
         slot = slot
       )
@@ -144,19 +145,19 @@ class MostSpecificRulesSpec : Spek({
 
     it("should find multiple matches") {
 
-      val tokens = wordTokens("two", "three", "two", "three")
+      val tokens = wordTokens("2", "3", "2", "3")
       val result = mostSpecificSlotRules(slot, tokens)
 
       result.size shouldEqual 2
       result[0] shouldEqual MostSpecificRule(
         preFiller = Pattern(),
-        filler = Pattern(patternItemOfWords("two"), patternItemOfWords("three")),
-        postFiller = patternOfItemWords("two", "three"),
+        filler = patternOfItemWords("2", "3"),
+        postFiller = patternOfItemWords("2", "3"),
         slot = slot
       )
       result[1] shouldEqual MostSpecificRule(
-        preFiller = patternOfItemWords("two", "three"),
-        filler = patternOfItemWords("two", "three"),
+        preFiller = patternOfItemWords("2", "3"),
+        filler = patternOfItemWords("2", "3"),
         postFiller = Pattern(),
         slot = slot
       )
@@ -165,21 +166,24 @@ class MostSpecificRulesSpec : Spek({
     it("should find matches for each slot filler") {
       slot = Slot(
         SlotName("any slot"),
-        fillers = hashSetOf(SlotFiller(wordTokens("two")), SlotFiller(wordTokens("three")))
+        fillers = hashSetOf(
+          SlotFiller(tokens = wordTokens("2")),
+          SlotFiller(tokens = wordTokens("3"))
+        )
       )
       result = mostSpecificSlotRules(slot, doc)
 
       result.size shouldEqual 2
-      result[0] shouldEqual MostSpecificRule(
-        preFiller = patternOfItemWords("one"),
-        filler = Pattern(patternItemOfWords("two")),
-        postFiller = patternOfItemWords("three", "four"),
+      result shouldContain MostSpecificRule(
+        preFiller = patternOfItemWords("1"),
+        filler = patternOfItemWords("2"),
+        postFiller = patternOfItemWords("3", "4"),
         slot = slot
       )
-      result[1] shouldEqual MostSpecificRule(
-        preFiller = patternOfItemWords("one", "two"),
-        filler = Pattern(patternItemOfWords("three")),
-        postFiller = Pattern(patternItemOfWords("four")),
+      result shouldContain MostSpecificRule(
+        preFiller = patternOfItemWords("1", "2"),
+        filler = patternOfItemWords("3"),
+        postFiller = patternOfItemWords("4"),
         slot = slot
       )
     }
@@ -187,19 +191,19 @@ class MostSpecificRulesSpec : Spek({
     it("should find multiple matches in correct location") {
       slot = Slot(
         SlotName("any slot"),
-        hashSetOf(SlotFiller(wordTokens("a", "a")))
+        hashSetOf(SlotFiller(tokens = wordTokens("a", "a")))
       )
       doc = wordTokens("a", "a", "a", "a")
       result = mostSpecificSlotRules(slot, doc)
 
       result.size shouldEqual 2
-      result[0] shouldEqual MostSpecificRule(
+      result shouldContain MostSpecificRule(
         preFiller = Pattern(),
         filler = patternOfItemWords("a","a"),
         postFiller = patternOfItemWords("a","a"),
         slot = slot
       )
-      result[1] shouldEqual MostSpecificRule(
+      result shouldContain MostSpecificRule(
         preFiller = patternOfItemWords("a","a"),
         filler = patternOfItemWords("a","a"),
         postFiller = Pattern(),
