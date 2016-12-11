@@ -36,4 +36,5 @@ dependencies {
     compile "org.funktionale:funktionale:0.9.5"
 
     testCompile 'org.jetbrains.spek:spek:1.0.25'
+    testCompile 'org.amshove.kluent:kluent:1.11'
 }
