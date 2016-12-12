@@ -5,11 +5,6 @@ import com.frankandrobot.rapier.parse.PatternListExpandedForm
 import java.util.*
 
 
-fun words(vararg words : String) = words.map { WordConstraint(it) }.toHashSet()
-
-fun tags(vararg tags : String) = tags.map{ PosTagConstraint(it) }.toHashSet()
-
-
 /**
  * Rapier allows 3 kinds of constraints:
  * - words the element can match,
@@ -32,11 +27,27 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
 
   override val length = 1
 
+  constructor(token : Token)
+  : this(
+    wordConstraints = hashSetOf(WordConstraint(token.word))
+      .filter{ it.value.isDefined() }
+      .toHashSet(),
+    posTagConstraints = hashSetOf(PosTagConstraint(token.posTag))
+      .filter{ it.value.isDefined() }
+      .toHashSet(),
+    semanticConstraints = hashSetOf(SemanticConstraint(token.semanticClass))
+      .filter{ it.value.isDefined() }
+      .toHashSet()
+  )
+
   internal constructor(vararg wordConstraint: WordConstraint)
   : this(HashSet<WordConstraint>().plus(wordConstraint) as HashSet<out WordConstraint>)
 
   internal constructor(words: List<String>, tags: List<String>)
-  : this(words.map{WordConstraint(it)}.toHashSet(), tags.map{PosTagConstraint(it)}.toHashSet())
+  : this(
+    words.map(::WordConstraint).toHashSet(),
+    tags.map(::PosTagConstraint).toHashSet()
+  )
 
 
   /**
@@ -87,3 +98,7 @@ data class PatternList(override val wordConstraints: HashSet<out WordConstraint>
   override fun toString() = "list: max length: $length, word: $wordConstraints, tag: " +
     "$posTagConstraints, semantic: $semanticConstraints"
 }
+
+
+internal fun patternItemOfWords(vararg words : String) =
+  PatternItem(wordConstraints = words.map(::WordConstraint).toHashSet())

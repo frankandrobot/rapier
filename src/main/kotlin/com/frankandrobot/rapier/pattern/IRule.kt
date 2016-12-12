@@ -1,6 +1,6 @@
 package com.frankandrobot.rapier.pattern
 
-import com.frankandrobot.rapier.template.Slot
+import com.frankandrobot.rapier.meta.Slot
 import com.frankandrobot.rapier.util.indent
 
 

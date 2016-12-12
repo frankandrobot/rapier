@@ -12,10 +12,6 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
   internal constructor(vararg patternElement: PatternElement)
   : this(ArrayList<PatternElement>() + patternElement.asList())
 
-  internal constructor(vararg patternItems : String)
-
-  : this(patternItems.map{ PatternItem(words(it)) })
-
   internal constructor(vararg patternItems : Int)
 
   : this(patternItems.map{ PatternItem(words(it.toString())) })
@@ -41,3 +37,7 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
 
   override fun toString() = patternElements.joinToString("\n")
 }
+
+
+internal fun patternOfItemWords(vararg words : String) =
+  Pattern(words.map{ PatternItem(words(it)) })
