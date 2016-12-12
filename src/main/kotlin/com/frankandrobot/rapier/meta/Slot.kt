@@ -7,7 +7,7 @@ import java.util.*
 
 
 data class Slot(val name: SlotName,
-                val fillers : HashSet<SlotFiller>,
+                val slotFillers: HashSet<SlotFiller>,
                 val enabled : Boolean = true)
 
 data class SlotName(private val name : String) {
@@ -16,9 +16,11 @@ data class SlotName(private val name : String) {
 }
 
 /**
- * Even though you have the option of having no "raw" value, that will throw an error
- * in production. So you should always expect this to be set.
+ * convenience class to help create slots. Don't use
  */
+data class SlotFillerInfo(val slotFillers : HashSet<SlotFiller>,
+                          val enabled : Boolean)
+
 data class SlotFiller(val raw : Option<String> = Option.None,
                       private val tokens : ArrayList<Token> = ArrayList<Token>()) {
 
@@ -36,3 +38,26 @@ data class SlotFiller(val raw : Option<String> = Option.None,
 
 //TODO throughly test hashsets
 //TODO test wordconstraints and tokens
+
+fun slots(vararg slots : Pair<SlotName, SlotFillerInfo>) =
+  slots.map{ slot -> Slot(
+    name = slot.first,
+    slotFillers = slot.second.slotFillers,
+    enabled = slot.second.enabled
+  )}.fold(HashMap<SlotName,Slot>()) { total, slot -> total[slot.name] = slot; total }
+
+internal fun slotFillers(vararg slotFillers: ArrayList<Token>) =
+  SlotFillerInfo(
+    enabled = true,
+    slotFillers = slotFillers
+      .map{ tokens -> SlotFiller(tokens = tokens) }
+      .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
+  )
+
+internal fun disabledSlotFillers(vararg slotFillers : ArrayList<Token>) =
+  SlotFillerInfo(
+   enabled = false,
+    slotFillers = slotFillers
+      .map{ tokens -> SlotFiller(tokens = tokens) }
+      .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
+  )

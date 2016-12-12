@@ -10,7 +10,7 @@ class DocumentSpec : Spek({
   describe("Document") {
     describe("token list") {
       it("should return token list when set") {
-        val doc = Document(wordTokens = wordTokens("a", "b", "c"))
+        val doc = Document(tokens = wordTokens("a", "b", "c"))
         assertEquals(wordTokens("a", "b", "c"), doc())
       }
 

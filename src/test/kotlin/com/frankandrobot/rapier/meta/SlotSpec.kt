@@ -24,7 +24,7 @@ class SlotSpec : Spek({
     }
 
     describe("hashset") {
-      it("should add distinct fillers") {
+      it("should add distinct slotFillers") {
         val filler1 = SlotFiller(tokens = wordTokens("1"))
         val filler2 = SlotFiller(tokens = wordTokens("2"))
         val result = hashSetOf(filler1, filler2)

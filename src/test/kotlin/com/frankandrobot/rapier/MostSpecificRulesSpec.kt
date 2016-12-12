@@ -1,11 +1,10 @@
 package com.frankandrobot.rapier
 
-import com.frankandrobot.rapier.meta.Slot
-import com.frankandrobot.rapier.meta.SlotFiller
-import com.frankandrobot.rapier.meta.SlotName
+import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.wordTokens
 import com.frankandrobot.rapier.pattern.*
+import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
@@ -15,53 +14,73 @@ import kotlin.test.assertEquals
 
 class MostSpecificRulesSpec : Spek({
 
-//  data class SimplifiedRule(val preFiller : List<String>,
-//                            val filler : List<String>,
-//                            val postFiller : List<String>) {
-//    constructor(rule : IRule) : this(
-//      rule.preFiller().flatMap{ it.wordConstraints }.map{ it.value },
-//      rule.filler().flatMap{ it.wordConstraints }.map{ it.value },
-//      rule.postFiller().flatMap{ it.wordConstraints }.map{ it.value }
-//    )
-//  }
+  describe("#mostSpecificRuleBase") {
 
-  /*describe("#mostSpecificRuleBase") {
-
-    it("should work when the slot doesn't repeat in document") {
-
-      val slot = Pair(Slot("salary"), SlotFiller("ten"))
-      val document = Document("one ten foo")
-
-      val result = mostSpecificRuleBase(slot, document)
-      val rule = result.first()
-
-      assertEquals(result.size, 1)
-      assertEquals(
-        SimplifiedRule(rule),
-        SimplifiedRule(preFiller = listOf("1"), filler = listOf("ten"), postFiller = listOf("foo"))
+    val blankTemplate = BlankTemplate(
+      name = "test",
+      slots = hashSetOf(SlotName("a"), SlotName("b"))
+    )
+    val example1 = Example(
+      blankTemplate = blankTemplate,
+      document = Document(tokens = wordTokens("a1","a2","b1","b2")),
+      filledTemplate = FilledTemplate(
+        slots = slots(
+          SlotName("a") to slotFillers(wordTokens("a1"), wordTokens("a2")),
+          SlotName("b") to disabledSlotFillers(wordTokens("b1","b2"))
+        )
       )
+    )
+    val example2 = Example(
+      blankTemplate = blankTemplate,
+      document = Document(tokens = wordTokens("A1","A2","B1","B2")),
+      filledTemplate = FilledTemplate(
+        slots = slots(
+          SlotName("a") to slotFillers(wordTokens("A1","A2")),
+          SlotName("b") to disabledSlotFillers(wordTokens("B1","B2"))
+        )
+      )
+    )
+    var result : List<Pair<SlotName, List<IRule>>> = emptyList()
+
+    beforeEach() {
+      result = mostSpecificRules(blankTemplate, Examples(listOf(example1, example2)))
     }
 
-    it("should work when slot repeats in document") {
+    it("should ignore disabled slots") {
+      val cResult = result.find{ it.first == SlotName("b") }
+      cResult `should not be` null
+      cResult!!.second.size shouldEqual 0
+    }
 
-      val slot = Pair(Slot("salary"), SlotFiller("ten"))
-      val document = Document("one ten foo ten")
+    it("should get rules for all examples for a") {
+      val aResult = result.find{ it.first == SlotName("a") }
+      aResult `should not be` null
+      val aRules = aResult!!.second
 
-      val result = mostSpecificRuleBase(slot, document)
-      val rule1 = result[0]
-      val rule2 = result[1]
+      aRules.size shouldEqual 3
 
-      assertEquals(result.size, 2)
-      assertEquals(
-        SimplifiedRule(rule1),
-        SimplifiedRule(preFiller = listOf("1"), filler = listOf("ten"), postFiller = listOf("foo", "ten"))
+      aRules shouldContain MostSpecificRule(
+        preFiller = Pattern(),
+        filler = patternOfItemWords("a1"),
+        postFiller = patternOfItemWords("a2","b1","b2"),
+        slot = example1[SlotName("a")]
       )
-      assertEquals(
-        SimplifiedRule(rule2),
-        SimplifiedRule(preFiller = listOf("1", "ten", "foo"), filler = listOf("ten"), postFiller = listOf())
+
+      aRules shouldContain MostSpecificRule(
+        preFiller = patternOfItemWords("a1"),
+        filler = patternOfItemWords("a2"),
+        postFiller = patternOfItemWords("b1","b2"),
+        slot = example1[SlotName("a")]
+      )
+
+      aRules shouldContain MostSpecificRule(
+        preFiller = Pattern(),
+        filler = patternOfItemWords("A1","A2"),
+        postFiller = patternOfItemWords("B1","B2"),
+        slot = example2[SlotName("a")]
       )
     }
-  }*/
+  }
 
   describe("#mostSpecificSlotRule") {
 
@@ -166,7 +185,7 @@ class MostSpecificRulesSpec : Spek({
     it("should find matches for each slot filler") {
       slot = Slot(
         SlotName("any slot"),
-        fillers = hashSetOf(
+        slotFillers = hashSetOf(
           SlotFiller(tokens = wordTokens("2")),
           SlotFiller(tokens = wordTokens("3"))
         )
@@ -207,6 +226,50 @@ class MostSpecificRulesSpec : Spek({
         preFiller = patternOfItemWords("a","a"),
         filler = patternOfItemWords("a","a"),
         postFiller = Pattern(),
+        slot = slot
+      )
+    }
+
+    it("should work when the slot doesn't repeat in document") {
+
+      slot = Slot(
+        SlotName("any slot"),
+        hashSetOf(SlotFiller(tokens = wordTokens("a")))
+      )
+      doc = wordTokens("a", "b", "c", "d")
+
+      result = mostSpecificSlotRules(slot, doc)
+
+      result.size shouldEqual 1
+      result.first() shouldEqual MostSpecificRule(
+        preFiller = Pattern(),
+        filler = patternOfItemWords("a"),
+        postFiller = patternOfItemWords("b", "c", "d"),
+        slot = slot
+      )
+    }
+
+    it("should work when slot repeats in document") {
+
+      slot = Slot(
+        SlotName("any slot"),
+        hashSetOf(SlotFiller(tokens = wordTokens("a")))
+      )
+      doc = wordTokens("a", "b", "a", "d")
+
+      result = mostSpecificSlotRules(slot, doc)
+
+      result.size shouldEqual 2
+      result shouldContain MostSpecificRule(
+        preFiller = Pattern(),
+        filler = patternOfItemWords("a"),
+        postFiller = patternOfItemWords("b", "a", "d"),
+        slot = slot
+      )
+      result shouldContain MostSpecificRule(
+        preFiller = patternOfItemWords("a", "b"),
+        filler = patternOfItemWords("a"),
+        postFiller = patternOfItemWords("d"),
         slot = slot
       )
     }
