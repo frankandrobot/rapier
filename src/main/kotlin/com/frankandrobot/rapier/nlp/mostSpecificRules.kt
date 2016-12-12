@@ -1,20 +1,13 @@
-package com.frankandrobot.rapier
+package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.meta.BlankTemplate
-import com.frankandrobot.rapier.meta.Examples
-import com.frankandrobot.rapier.meta.Slot
-import com.frankandrobot.rapier.meta.SlotName
-import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.pattern.MostSpecificRule
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.util.indexOfWords
-import java.util.*
 
 
-fun mostSpecificRules(blankTemplate : BlankTemplate,
-                      examples : Examples) : List<Pair<SlotName, List<IRule>>> {
+fun mostSpecificRules(blankTemplate : com.frankandrobot.rapier.meta.BlankTemplate,
+                      examples : com.frankandrobot.rapier.meta.Examples) : List<Pair<com.frankandrobot.rapier.meta.SlotName, List<com.frankandrobot.rapier.pattern.IRule>>> {
 
   examples().forEach{ it.blankTemplate == blankTemplate }
 
@@ -26,7 +19,7 @@ fun mostSpecificRules(blankTemplate : BlankTemplate,
     val mostSpecificRules = examplesWithSlotEnabled.flatMap{ example ->
       val slot = example[slotName]
       val document = example.document()
-      mostSpecificSlotRules(slot, document)
+      com.frankandrobot.rapier.nlp.mostSpecificSlotRules(slot, document)
     }
 
     Pair(slotName, mostSpecificRules)
@@ -37,8 +30,8 @@ fun mostSpecificRules(blankTemplate : BlankTemplate,
 /**
  * Create a list of the most specific rules for the Document for each slot filler
  */
-internal fun mostSpecificSlotRules(slot : Slot,
-                                   document : ArrayList<Token>) : List<IRule> {
+internal fun mostSpecificSlotRules(slot : com.frankandrobot.rapier.meta.Slot,
+                                   document : java.util.ArrayList<com.frankandrobot.rapier.nlp.Token>) : List<com.frankandrobot.rapier.pattern.IRule> {
 
   return slot.slotFillers.flatMap{ slotFiller ->
 
@@ -46,13 +39,13 @@ internal fun mostSpecificSlotRules(slot : Slot,
     var nextSlotFillerIndex = { document.indexOfWords(slotFiller(), start = startIndex) }
     var index = nextSlotFillerIndex()
 
-    val rules = mutableListOf<IRule>()
+    val rules = mutableListOf<com.frankandrobot.rapier.pattern.IRule>()
 
     while (index >= 0) {
 
       val preFiller = document
         .subList(0, index)
-        .map(::PatternItem)
+        .map(::(com.frankandrobot.rapier.pattern.PatternItem))
       val filler = document
         .subList(index, index + slotFiller().size)
         .map(::PatternItem)
