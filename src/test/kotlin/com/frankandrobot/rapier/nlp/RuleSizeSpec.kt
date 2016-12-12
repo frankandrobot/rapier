@@ -1,7 +1,7 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.dummySlot
 import com.frankandrobot.rapier.pattern.*
-import com.frankandrobot.rapier.template.Slot
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -63,7 +63,7 @@ class RuleSizeSpec : Spek({
           preFiller = Pattern(PatternItem()),
           filler = Pattern(PatternList(length = 1)),
           postFiller = Pattern(PatternItem(words("one", "two", "three"))),
-          slot = Slot("any")
+          slot = dummySlot("any")
         )
         val expected = weight * (2 + 3 + (2 + 2 * 2))
 

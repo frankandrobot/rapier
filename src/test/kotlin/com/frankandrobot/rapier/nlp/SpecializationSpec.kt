@@ -1,7 +1,8 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.dummySlot
+import com.frankandrobot.rapier.emptyBaseRule
 import com.frankandrobot.rapier.pattern.*
-import com.frankandrobot.rapier.template.Slot
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -12,8 +13,8 @@ class SpecializationSpec : Spek({
 
     describe("example") {
 
-      var baseRule1 = emptyBaseRule
-      var baseRule2 = emptyBaseRule
+      var baseRule1 = emptyBaseRule()
+      var baseRule2 = emptyBaseRule()
       var fillerGeneralizations : List<Pattern> = emptyList()
       var fillerRules : List<RuleWithPositionInfo> = emptyList()
       var iteration1 : List<RuleWithPositionInfo> = emptyList()
@@ -35,7 +36,7 @@ class SpecializationSpec : Spek({
             PatternItem(words("georgia"), tags("nnp")),
             PatternItem(words("."), tags("."))
           ),
-          slot = Slot("any")
+          slot = dummySlot("any")
         )
 
         baseRule2 = BaseRule(
@@ -52,7 +53,7 @@ class SpecializationSpec : Spek({
             PatternItem(words("missouri"), tags("nnp")),
             PatternItem(words("."), tags("."))
           ),
-          slot = Slot("any")
+          slot = dummySlot("any")
         )
 
         fillerGeneralizations = generalize(baseRule1.filler, baseRule2.filler)
@@ -86,7 +87,7 @@ class SpecializationSpec : Spek({
                 PatternList(words("atlanta", "kansas", "city"), tags("nnp"), length = 2)
               ),
               postFiller = Pattern(PatternItem(words(","), tags(","))),
-              slot = Slot("any"),
+              slot = dummySlot("any"),
               baseRule1 = baseRule1,
               baseRule2 = baseRule2
             )
@@ -102,7 +103,7 @@ class SpecializationSpec : Spek({
                 PatternList(posTagConstraints = tags("nnp"), length = 2)
               ),
               postFiller = Pattern(PatternItem(words(","), tags(","))),
-              slot = Slot("any"),
+              slot = dummySlot("any"),
               baseRule1 = baseRule1,
               baseRule2 = baseRule2
             )
@@ -150,10 +151,4 @@ class SpecializationSpec : Spek({
   }
 })
 
-val emptyBaseRule = BaseRule(
-  preFiller = Pattern(),
-  filler = Pattern(),
-  postFiller = Pattern(),
-  slot = Slot("")
-)
 

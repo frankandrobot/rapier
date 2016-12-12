@@ -8,10 +8,10 @@ import kotlin.test.assertEquals
 class GeneralizePatternsCasesSpec : Spek({
 
   val empty = Pattern()
-  val one = Pattern("one")
-  val two = Pattern("one", "two")
-  val three = Pattern("one", "two", "three")
-  val anyPattern = Pattern("one", "two", "three")
+  val one = patternOfItemWords("one")
+  val two = patternOfItemWords("one", "two")
+  val three = patternOfItemWords("one", "two", "three")
+  val anyPattern = patternOfItemWords("one", "two", "three")
 
   describe("caseEqualLengthPatterns") {
 
@@ -29,8 +29,8 @@ class GeneralizePatternsCasesSpec : Spek({
     }
 
     describe("patterns of length greater than 1") {
-      val a = Pattern("ate", "the", "pasta")
-      val b = Pattern("hit", "the", "ball")
+      val a = patternOfItemWords("ate", "the", "pasta")
+      val b = patternOfItemWords("hit", "the", "ball")
 
       var result = emptyList<Pattern>()
 
@@ -39,8 +39,8 @@ class GeneralizePatternsCasesSpec : Spek({
       }
 
       it("should generalize patterns by pairing corresponding elements") {
-        val a = Pattern("a", "x")
-        val b = Pattern("b", "x")
+        val a = patternOfItemWords("a", "x")
+        val b = patternOfItemWords("b", "x")
         val result = caseEqualLengthPatterns(a, b).get()
 
         assertEquals(2, result.size)
@@ -95,7 +95,7 @@ class GeneralizePatternsCasesSpec : Spek({
     }
 
     it("should return the same pattern element transformed to a list for patterns of length 1") {
-      val result = caseAnEmptyPattern(empty, Pattern("one")).get()
+      val result = caseAnEmptyPattern(empty, patternOfItemWords("one")).get()
       assertEquals(1, result.size)
       assertEquals(Pattern(PatternList(words("one"), length = 1)), result[0])
     }

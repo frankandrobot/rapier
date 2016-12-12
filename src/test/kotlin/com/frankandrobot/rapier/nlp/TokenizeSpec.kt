@@ -1,11 +1,10 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.nlp.tokenize
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class NlpProxyTest : Spek({
+class TokenizeSpec : Spek({
 
  // val text = """If you can't explain it simply, you don't understand it well enough."""
 
@@ -13,7 +12,7 @@ class NlpProxyTest : Spek({
     it("should tokenize contractions and punctuations correctly") {
 
       val text = "can't explain, you!"
-      var result = tokenize(text).map{ it.word }
+      var result = tokenize(text).map{ it.word.get() }
 
       assertEquals(listOf("ca", "n't", "explain", ",", "you", "!"), result)
     }
@@ -21,7 +20,7 @@ class NlpProxyTest : Spek({
     it("should tokenize URLs correctly") {
 
       val text = "http://foobar.com is good"
-      val result = tokenize(text).map{ it.word }
+      val result = tokenize(text).map{ it.word.get() }
 
       assertEquals(listOf("http://foobar.com", "is", "good"), result)
     }
@@ -29,7 +28,7 @@ class NlpProxyTest : Spek({
     it("should tokenize hastags correctly") {
 
       val text = "explain #simply"
-      val result = tokenize(text).map{ it.word }
+      val result = tokenize(text).map{ it.word.get() }
 
       assertEquals(listOf("explain", "#simply"), result)
     }
