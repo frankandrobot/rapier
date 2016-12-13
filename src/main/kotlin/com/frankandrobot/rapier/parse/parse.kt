@@ -7,25 +7,16 @@ import com.frankandrobot.rapier.util.BetterIterator
 import java.util.*
 
 
-fun PatternItem.parse(tokens : BetterIterator<Token>) : ParseResult = parse(ParseResult(tokens))
+/**
+ * Consume the tokens found in the ParsePatternItemList in sequential order.
+ * Note that it does NOT mutate the original token list. Instead ParseResult contains
+ * the updated token iterator.
+ *
+ * @param tokens
+ */
+fun ParsePatternItemList.parse(tokens : BetterIterator<Token>) : ParseResult
+  = parse(ParseResult(tokens))
 
-fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
-
-  val tokens = parseResult.tokens()
-
-  if (tokens.hasNext() && this.test(tokens.peek())) {
-
-    return ParseResult(
-      tokens,
-      matchFound = true,
-      matches = parseResult.matches.plus(tokens.next()) as ArrayList<Token>
-    )
-  }
-
-  return ParseResult(parseResult.tokens(), matchFound = false)
-}
-
-fun ParsePatternItemList.parse(tokens : BetterIterator<Token>) : ParseResult = parse(ParseResult(tokens))
 
 fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
@@ -33,7 +24,7 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
   val consumed =
     this.items.size === 0 ||
-    this.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
+      this.items.all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
 
   if (consumed) {
 
@@ -46,6 +37,34 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
       tokens,
       matchFound = true,
       matches = parseResult.matches.plus(matches) as ArrayList
+    )
+  }
+
+  return ParseResult(parseResult.tokens(), matchFound = false)
+}
+
+
+/**
+ * Consume the first token iff it matches the PatternItem
+ * Note that it does NOT mutate the original token list. Instead ParseResult contains
+ * the updated token iterator.
+ *
+ * @param tokens
+ */
+fun PatternItem.parse(tokens : BetterIterator<Token>) : ParseResult
+  = parse(ParseResult(tokens))
+
+
+fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
+
+  val tokens = parseResult.tokens()
+
+  if (tokens.hasNext() && this.test(tokens.peek())) {
+
+    return ParseResult(
+      tokens,
+      matchFound = true,
+      matches = parseResult.matches.plus(tokens.next()) as ArrayList<Token>
     )
   }
 

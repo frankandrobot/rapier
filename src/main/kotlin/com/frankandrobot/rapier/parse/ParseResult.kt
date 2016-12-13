@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.nlp.wordToken
 import com.frankandrobot.rapier.util.BetterIterator
 import java.util.*
 
@@ -19,7 +20,7 @@ data class ParseResult(private val tokens : BetterIterator<Token>,
   internal constructor(tokens : BetterIterator<Token>,
                        matchFound : Boolean = true,
                        vararg matches : String)
-  : this(tokens, matchFound, (ArrayList<Token>() + matches.map{ Token(it) }) as ArrayList)
+  : this(tokens, matchFound, (ArrayList<Token>() + matches.map(::wordToken)) as ArrayList)
 
   fun tokens() = this.tokens.clone()
 
