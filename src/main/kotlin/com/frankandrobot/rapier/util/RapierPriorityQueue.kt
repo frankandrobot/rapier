@@ -7,7 +7,7 @@ import java.util.*
  * Performance is not great at all. However, rapier uses a small capacity (<10),
  * so performance is good enough.
  */
-class PriorityQueue<T : Comparable<T>>(val capacity : Int) {
+class RapierPriorityQueue<T : Comparable<T>>(val capacity : Int) {
 
   private val queue = ArrayList<T>(capacity)
 
@@ -19,10 +19,14 @@ class PriorityQueue<T : Comparable<T>>(val capacity : Int) {
   val worst : T
     get() = queue.last()
 
+  val size : Int
+    get() = queue.lastIndex + 1
+
+
   /**
    * Runtime: n*log(n). Matches edge cases of original source code.
    */
-  fun insert(value : T) : PriorityQueue<T> {
+  fun insert(value : T) : RapierPriorityQueue<T> {
 
     if (queue.lastIndex < capacity - 1) {
 
@@ -39,6 +43,13 @@ class PriorityQueue<T : Comparable<T>>(val capacity : Int) {
         queue.sort()
       }
     }
+
+    return this
+  }
+
+  fun addAll(collection : Collection<T>) : RapierPriorityQueue<T> {
+
+    collection.forEach{insert(it)}
 
     return this
   }

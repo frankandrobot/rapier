@@ -1,17 +1,18 @@
 package com.frankandrobot.rapier.util
 
+import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class PriorityQueueSpec : Spek({
+class RapierPriorityQueueSpec : Spek({
 
-  describe("PriorityQueue") {
+  describe("RapierPriorityQueue") {
 
     describe("when capacity not reached") {
 
       it("should insert in order") {
-        val queue = PriorityQueue<Int>(10)
+        val queue = RapierPriorityQueue<Int>(10)
           .insert(5)
           .insert(8)
           .insert(2)
@@ -21,7 +22,7 @@ class PriorityQueueSpec : Spek({
       }
 
       it("should return the best item") {
-        val queue = PriorityQueue<Int>(10)
+        val queue = RapierPriorityQueue<Int>(10)
           .insert(5)
           .insert(8)
           .insert(2)
@@ -31,7 +32,7 @@ class PriorityQueueSpec : Spek({
       }
 
       it("should return the worst item") {
-        val queue = PriorityQueue<Int>(10)
+        val queue = RapierPriorityQueue<Int>(10)
           .insert(5)
           .insert(8)
           .insert(2)
@@ -43,7 +44,7 @@ class PriorityQueueSpec : Spek({
 
 
     it("should be able to reach capacity") {
-      val queue = PriorityQueue<Int>(5)
+      val queue = RapierPriorityQueue<Int>(5)
         .insert(1)
         .insert(2)
         .insert(3)
@@ -57,7 +58,7 @@ class PriorityQueueSpec : Spek({
     describe("when capacity is reached") {
 
       it("should NOT insert item if worse than existing items") {
-        val queue = PriorityQueue<Int>(5)
+        val queue = RapierPriorityQueue<Int>(5)
           .insert(1)
           .insert(2)
           .insert(3)
@@ -71,7 +72,7 @@ class PriorityQueueSpec : Spek({
       it("should NOT insert item if same as worst item") {
         val item = Integer(1)
         val anotherItem = Integer(1)
-        val queue = PriorityQueue<Integer>(1)
+        val queue = RapierPriorityQueue<Integer>(1)
           .insert(item)
           .insert(anotherItem)
         val result = queue()[0]
@@ -80,7 +81,7 @@ class PriorityQueueSpec : Spek({
       }
 
       it("should replace an item if better than existing items") {
-        val queue = PriorityQueue<Int>(5)
+        val queue = RapierPriorityQueue<Int>(5)
           .insert(1)
           .insert(2)
           .insert(3)
@@ -90,6 +91,34 @@ class PriorityQueueSpec : Spek({
 
         assertEquals(arrayListOf(0,1,2,3,4), queue())
       }
+    }
+
+
+    it("should report correct size when inserted less than capacity") {
+      val queue = RapierPriorityQueue<Int>(5)
+        .insert(1)
+        .insert(2)
+
+      queue.size shouldEqual 2
+    }
+
+    it("should report correct size when inserted maximum capacity") {
+      val queue = RapierPriorityQueue<Int>(5)
+        .insert(1)
+        .insert(2)
+        .insert(3)
+        .insert(4)
+        .insert(5)
+        .insert(0)
+
+      queue.size shouldEqual 5
+    }
+
+    it("should addAll items in a collection") {
+      val queue = RapierPriorityQueue<Int>(5)
+        .addAll((1..5).toList())
+
+      queue() shouldEqual arrayListOf(1,2,3,4,5)
     }
   }
 })
