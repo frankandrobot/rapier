@@ -9,7 +9,7 @@ import java.util.*
 
 /**
  * Recall, a Pattern is a list of PatternElements (which are PatternItems or PatternLists).
- * Instances of this object represent the collection of all possible PatternItem lists the Pattern represents.
+ * This class expands a Pattern into one or more lists of PatternItems.
  *
  * # Examples
  *
@@ -45,7 +45,8 @@ import java.util.*
  *
  * # Too Inefficient?
  *
- * Note that while this is very inefficient, this is fine because we expect these to be local to a filler...hence, small.
+ * Note that while this is very inefficient, this is fine because we expect these to be
+ * local to a filler...hence, small.
  *
  */
 data class PatternExpandedForm(private val pattern : Pattern) {
@@ -64,6 +65,7 @@ data class PatternExpandedForm(private val pattern : Pattern) {
     _expansion
   }
 
+
   private fun add(patternElement: PatternElement) {
 
     if (patternElement is PatternItem) {
@@ -75,6 +77,7 @@ data class PatternExpandedForm(private val pattern : Pattern) {
       split(patternElement)
     }
   }
+
 
   private fun split(patternList : PatternList) {
 
