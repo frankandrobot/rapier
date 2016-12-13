@@ -20,7 +20,7 @@ fun ParsePatternItemList.parse(tokens : BetterIterator<Token>) : ParseResult
 
 fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
-  val tokens = parseResult.tokens()
+  val tokens = parseResult.tokens
 
   val consumed =
     this.items.size === 0 ||
@@ -31,7 +31,7 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
     var matches : List<Token>
 
     if (this.items.size === 0) { matches = arrayListOf(EmptyToken) }
-    else { matches = parseResult.tokens().peek(this.items.size) }
+    else { matches = parseResult.tokens.peek(this.items.size) }
 
     return ParseResult(
       tokens,
@@ -40,7 +40,7 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
     )
   }
 
-  return ParseResult(parseResult.tokens(), matchFound = false)
+  return ParseResult(parseResult.tokens, matchFound = false)
 }
 
 
@@ -57,7 +57,7 @@ fun PatternItem.parse(tokens : BetterIterator<Token>) : ParseResult
 
 fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
 
-  val tokens = parseResult.tokens()
+  val tokens = parseResult.tokens
 
   if (tokens.hasNext() && this.test(tokens.peek())) {
 
@@ -68,5 +68,5 @@ fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
     )
   }
 
-  return ParseResult(parseResult.tokens(), matchFound = false)
+  return ParseResult(parseResult.tokens, matchFound = false)
 }

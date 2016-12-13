@@ -13,7 +13,7 @@ import java.util.*
  * - as well as the current matches
  * - if matchFound, continuation function will execute if called
  */
-data class ParseResult(private val tokens : BetterIterator<Token>,
+data class ParseResult(private val _tokens : BetterIterator<Token>,
                        val matchFound : Boolean = true,
                        val matches : ArrayList<Token> = ArrayList<Token>()) {
 
@@ -22,7 +22,8 @@ data class ParseResult(private val tokens : BetterIterator<Token>,
                        vararg matches : String)
   : this(tokens, matchFound, (ArrayList<Token>() + matches.map(::wordToken)) as ArrayList)
 
-  fun tokens() = this.tokens.clone()
+  val tokens : BetterIterator<Token>
+    get() = _tokens.clone()
 
   fun <T> then(next : (ParseResult) -> List<T>) : List<T> {
 
