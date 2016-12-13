@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
-class FullParsePatternItemListTest : Spek({
+class PatternListExpandedFormSpec : Spek({
 
   describe("PatternList") {
 
@@ -21,6 +21,7 @@ class FullParsePatternItemListTest : Spek({
     val listLength2 = { PatternList(constraint1(), length = 2) }
 
     val listLength2Constraints2 = { PatternList(constraint1(), constraint2(), length = 2) }
+
 
     it("should expand a list of length 1 into 2 item lists") {
 
