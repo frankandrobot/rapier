@@ -46,5 +46,8 @@ class PatternListExpandedForm(private val patternList : PatternList) {
     })
   }
 
+  /**
+   * returns cached version of the expansion
+   */
   operator fun invoke() = expansion
 }

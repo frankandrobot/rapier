@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.pattern
 
+import com.frankandrobot.rapier.parse.ParsePatternItemList
 import com.frankandrobot.rapier.parse.PatternExpandedForm
 import java.util.*
 
@@ -28,9 +29,10 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
     ))
 
 
-  private val expandedForm = PatternExpandedForm(this)
+  private val _expandedForm = PatternExpandedForm(this)
 
-  fun expandedForm() = this.expandedForm.invoke()
+  val expandedForm : ArrayList<ParsePatternItemList>
+    get() = _expandedForm.invoke()
 
   val length : Int
     get() = invoke().size

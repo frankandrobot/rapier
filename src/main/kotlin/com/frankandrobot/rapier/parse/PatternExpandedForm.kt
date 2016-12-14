@@ -48,6 +48,7 @@ import java.util.*
  * Note that while this is very inefficient, this is fine because we expect these to be
  * local to a filler...hence, small.
  *
+ * Note also that it's cached.
  */
 data class PatternExpandedForm(private val pattern : Pattern) {
 
@@ -81,7 +82,7 @@ data class PatternExpandedForm(private val pattern : Pattern) {
 
   private fun split(patternList : PatternList) {
 
-    val patternListExpansion = patternList.expandedForm()
+    val patternListExpansion = patternList.expandedForm
     val newSize = _expansion.size * patternListExpansion.size
     val prevPatterns = _expansion
 
@@ -99,6 +100,9 @@ data class PatternExpandedForm(private val pattern : Pattern) {
     }
   }
 
+  /**
+   * Returns a cached copy of the expansion.
+   */
   operator fun invoke() = expansion
 
   operator fun get(i : Int) = expansion[i]

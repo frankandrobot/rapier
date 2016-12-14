@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.parse.ParsePatternItemList
 import com.frankandrobot.rapier.parse.PatternListExpandedForm
 import java.util.*
 
@@ -52,6 +53,9 @@ data class PatternItem(override val wordConstraints: HashSet<out WordConstraint>
 
   /**
    * Does the token satisfy all the constraints?
+   *
+   * Note that PatternList has no #test method because it gets turned into a
+   * ParsePatternItemList (i.e., a list of PatternItems), so that it uses this method.
    */
   fun test(token: Token) : Boolean {
 
@@ -91,9 +95,10 @@ data class PatternList(override val wordConstraints: HashSet<out WordConstraint>
   : this(wordConstraint.toHashSet(), length = length)
 
 
-  private val expandedForm = PatternListExpandedForm(this)
+  private val _expandedForm = PatternListExpandedForm(this)
 
-  fun expandedForm() = this.expandedForm.invoke()
+  val expandedForm : ArrayList<ParsePatternItemList>
+    get() = _expandedForm.invoke()
 
   override fun toString() = "list: max length: $length, word: $wordConstraints, tag: " +
     "$posTagConstraints, semantic: $semanticConstraints"

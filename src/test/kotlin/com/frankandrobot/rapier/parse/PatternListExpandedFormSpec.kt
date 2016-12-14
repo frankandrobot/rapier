@@ -25,7 +25,7 @@ class PatternListExpandedFormSpec : Spek({
 
     it("should expand a list of length 1 into 2 item lists") {
 
-      val result = listLength1().expandedForm()
+      val result = listLength1().expandedForm
 
       assertEquals(2, result.size)
       assertEquals(ParsePatternItemList(), result[0])
@@ -34,7 +34,7 @@ class PatternListExpandedFormSpec : Spek({
 
     it("should expand a list of length 2 into into 3 item lists") {
 
-      val result = listLength2().expandedForm()
+      val result = listLength2().expandedForm
 
       assertEquals(3, result.size)
       assertEquals(ParsePatternItemList(), result[0])
@@ -44,7 +44,7 @@ class PatternListExpandedFormSpec : Spek({
 
     it("should expand a list of length 1 with two contraints into 4 item lists") {
 
-      val result = listLength2Constraints2().expandedForm()
+      val result = listLength2Constraints2().expandedForm
 
       assertEquals(3, result.size)
       assertEquals(ParsePatternItemList(), result[0])

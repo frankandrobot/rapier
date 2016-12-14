@@ -1,9 +1,8 @@
 package com.frankandrobot.rapier.parse
 
-import com.frankandrobot.rapier.nlp.wordTokens
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.words
-import com.frankandrobot.rapier.util.BetterIterator
+import com.frankandrobot.rapier.textToTokenIterator
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -13,9 +12,9 @@ class ParseSpec : Spek({
   val anyItem = { PatternItem(words("one")) }
   val anyItemList = { ParsePatternItemList("one", "two") }
 
-  val tokenIterator = { start : Int -> BetterIterator(
-    wordTokens("one", "two", "three", "four"),
-    start
+  val tokenIterator = { start : Int -> textToTokenIterator(
+    "one two three four",
+    start = start
   )}
 
 
@@ -33,7 +32,7 @@ class ParseSpec : Spek({
     }
 
     it("should work when no match") {
-      val noMatch = BetterIterator(wordTokens("two", "three"))
+      val noMatch = textToTokenIterator("two three")
       val result = anyItem().parse(noMatch)
 
       assertEquals(ParseResult(noMatch, matchFound = false), result)
@@ -55,7 +54,7 @@ class ParseSpec : Spek({
     }
 
     it("should work when no match") {
-      val noMatch = BetterIterator(wordTokens("two", "three"))
+      val noMatch = textToTokenIterator("two three")
       val result = anyItemList().parse(ParseResult(noMatch))
 
       assertEquals(ParseResult(noMatch, matchFound = false), result)
