@@ -1,81 +1,59 @@
 package com.frankandrobot.rapier.parse
 
-import com.frankandrobot.rapier.meta.Document
 import com.frankandrobot.rapier.meta.SlotFiller
-import com.frankandrobot.rapier.nlp.EmptyToken
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.util.BetterIterator
+import org.funktionale.option.Option
 import java.util.*
 
 
 /**
- * Returns matched fillers *anywhere* in the Document
+ * Inspired by JS regexp#match. Returns token lists from the documenTokens that
+ * represent matches. For example, if the documentTokens are [a,b,c,d,e] and the rule
+ * matches [a,b,c], then it will return [a,b,c]. Doh!
  */
-fun IRule.fillerMatch(doc : Document) : List<SlotFiller> {
-
-  return _fillerMatch(BetterIterator(doc())).map{SlotFiller(it.word)}
-}
-
-/**
- * While elegant, this is actually pretty inefficient.
- * It traverses all of the globs that didn't find matches anyway,
- * so it ends up visiting all of the possible combinations of prefillers, fillers,
- * postfillers.
- *
- * Scans the document tokens looking for a rule match. Should this return true/false?
- * Instead it returns a filler list with the size of the list equal to the number of
- * matches.
- */
-internal fun IRule._fillerMatch(documentTokens : BetterIterator<Token>) : List<Token> {
+internal fun IRule._exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult> {
 
   return (documentTokens.curIndex..documentTokens.lastIndex)
     .map{ documentTokens.clone().overrideIndex(it) }
     .flatMap { latestTokens ->
       preFiller.expandedForm
         .map { it.parse(latestTokens) }
-        .flatMap { glob ->
+        .flatMap { preFillerParseResult ->
           // "then" fires (i.e., runs the closure) only if a match is found; otherwise it
           // returns it just returns an empty list
-          glob.then {
+          preFillerParseResult.then {
             filler.expandedForm
-              .map { it.parse(glob) }
-              .flatMap { glob ->
+              .map { it.parse(preFillerParseResult.tokens) }
+              .flatMap { fillerParseResult ->
                 // ditto
-                glob.then {
+                fillerParseResult.then {
                   postFiller.expandedForm
-                    .map { it.parse(glob) }
+                    .map { it.parse(fillerParseResult.tokens) }
+                    .map{ postFillerParseResult ->
+                      MatchResult(
+                        preFillerMatch = preFillerParseResult.matches,
+                        fillerMatch = fillerParseResult.matches,
+                        postFillerMatch = postFillerParseResult.matches,
+                        matchFound = postFillerParseResult.matchFound
+                      )
+                    }
                 }
               }
           }
         }
     }
     // the expandedForm also includes the empty token so filter that out
-    .filter { it.matchFound && it.matches[1] != EmptyToken }
-    .map { it.matches[1] }
+    .filter { it.matchFound }
 }
 
-fun IRule.exactFillerMatch(documentTokens : ArrayList<Token>) : List<SlotFiller> {
+fun IRule.exactMatch(documentTokens : ArrayList<Token>) : List<SlotFiller> {
 
-  return _fillerMatch(BetterIterator(documentTokens)).map{SlotFiller(it.word)}
+  return _exactMatch(BetterIterator(documentTokens)).map{SlotFiller(Option.Some("foo"))}
 }
 
-internal fun IRule._exactFillerMatch(tokens : BetterIterator<Token>) : List<Token> {
-
-  return preFiller.expandedForm
-    .map { it.parse(tokens) }
-    .flatMap { glob ->
-      glob.then {
-        filler.expandedForm
-          .map { it.parse(glob) }
-          .flatMap { glob ->
-            glob.then {
-              postFiller.expandedForm
-                .map { it.parse(glob) }
-            }
-          }
-      }
-    }
-    .filter { it.matchFound && it.matches[1] != EmptyToken }
-    .map { it.matches[1] }
-}
+data class MatchResult(val preFillerMatch : ArrayList<Token>,
+                       val fillerMatch : ArrayList<Token>,
+                       val postFillerMatch : ArrayList<Token>,
+                       val matchFound : Boolean = true)
