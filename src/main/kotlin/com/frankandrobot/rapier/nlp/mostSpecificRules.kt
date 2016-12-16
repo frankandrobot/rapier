@@ -17,7 +17,7 @@ import java.util.*
  */
 fun mostSpecificRules(blankTemplate : BlankTemplate,
                       examples : Examples) :
-  List<Pair<SlotName, List<IRule>>> {
+  List<Pair<SlotName, ArrayList<IRule>>> {
 
   examples().forEach{ it.blankTemplate == blankTemplate }
 
@@ -30,7 +30,7 @@ fun mostSpecificRules(blankTemplate : BlankTemplate,
       val slot = example[slotName]
       val document = example.document()
       mostSpecificSlotRules(slot, document)
-    }
+    } as ArrayList<IRule>
 
     Pair(slotName, mostSpecificRules)
   }
@@ -42,7 +42,7 @@ fun mostSpecificRules(blankTemplate : BlankTemplate,
  */
 internal fun mostSpecificSlotRules(slot : Slot,
                                    document : ArrayList<Token>) :
-  List<IRule> {
+  ArrayList<IRule> {
 
   return slot.slotFillers.flatMap{ slotFiller ->
 
@@ -50,7 +50,7 @@ internal fun mostSpecificSlotRules(slot : Slot,
     var nextSlotFillerIndex = { document.indexOfWords(slotFiller(), start = startIndex) }
     var index = nextSlotFillerIndex()
 
-    val rules = mutableListOf<IRule>()
+    val rules = ArrayList<IRule>()
 
     while (index >= 0) {
 
@@ -77,5 +77,5 @@ internal fun mostSpecificSlotRules(slot : Slot,
     }
 
     rules
-  }
+  } as ArrayList<IRule>
 }

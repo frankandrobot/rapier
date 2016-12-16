@@ -1,6 +1,10 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.pattern.PatternList
+import com.frankandrobot.rapier.pattern.words
+import com.frankandrobot.rapier.patternOfWordItems
 import org.jetbrains.spek.api.Spek
 import java.util.*
 import kotlin.test.assertEquals
@@ -12,14 +16,14 @@ class GeneralizePatternsSpec : Spek ({
 
     it("should work when one pattern is empty") {
       val emptyPat = Pattern()
-      val result = findExactMatchIndices(emptyPat, patternOfItemWords("a", "b", "c"))
+      val result = findExactMatchIndices(emptyPat, patternOfWordItems("a", "b", "c"))
 
       assertEquals(2, result.size)
     }
 
     it("should ignore partial matches") {
       val left = Pattern(PatternItem(listOf("x"), listOf("tag1")))
-      val right = patternOfItemWords("x")
+      val right = patternOfWordItems("x")
       val result = findExactMatchIndices(left, right)
 
       assertEquals(2, result.size)
@@ -36,8 +40,8 @@ class GeneralizePatternsSpec : Spek ({
     describe("match order") {
 
       it("should return the first match for x") {
-        val left = patternOfItemWords("1", "x", "2")
-        val right = patternOfItemWords("3", "x", "x")
+        val left = patternOfWordItems("1", "x", "2")
+        val right = patternOfWordItems("3", "x", "x")
         val result = findExactMatchIndices(left, right)
 
         assertEquals(MatchIndices(leftIndex = 1, rightIndex = 1), result[1])
@@ -45,16 +49,16 @@ class GeneralizePatternsSpec : Spek ({
       }
 
       it("should NOT match x since y does not have a chance to match") {
-        val left = patternOfItemWords("1", "x", "y")
-        val right = patternOfItemWords("3", "4", "5", "x")
+        val left = patternOfWordItems("1", "x", "y")
+        val right = patternOfWordItems("3", "4", "5", "x")
         val result = findExactMatchIndices(left, right)
 
         assertEquals(2, result.size)
       }
 
       it("should match y but not x") {
-        val left = patternOfItemWords("1", "x", "y")
-        val right = patternOfItemWords("3", "4", "5", "y", "x")
+        val left = patternOfWordItems("1", "x", "y")
+        val right = patternOfWordItems("3", "4", "5", "y", "x")
         val result = findExactMatchIndices(left, right)
 
         assertEquals(3, result.size)
@@ -64,8 +68,8 @@ class GeneralizePatternsSpec : Spek ({
 
     describe("example") {
 
-      val left = patternOfItemWords("a", "b", "c")
-      val right = patternOfItemWords("1", "a", "3", "b", "c")
+      val left = patternOfWordItems("a", "b", "c")
+      val right = patternOfWordItems("1", "a", "3", "b", "c")
 
       var result = ArrayList<MatchIndices>()
 
@@ -97,26 +101,26 @@ class GeneralizePatternsSpec : Spek ({
 
     it("should work when one of the patterns is empty") {
       val left = Pattern()
-      val right = patternOfItemWords("a")
+      val right = patternOfWordItems("a")
       val result = partitionByExactMatches(left, right)
 
       assertEquals(Pair(left, right), result[0])
     }
 
     it("should work when no partitions between matches") {
-      val left = patternOfItemWords("x", "y")
-      val right = patternOfItemWords("x", "y")
+      val left = patternOfWordItems("x", "y")
+      val right = patternOfWordItems("x", "y")
       val result = partitionByExactMatches(left, right)
 
       assertEquals(2, result.size)
-      assertEquals(Pair(patternOfItemWords("x"), patternOfItemWords("x")), result[0])
-      assertEquals(Pair(patternOfItemWords("y"), patternOfItemWords("y")), result[1])
+      assertEquals(Pair(patternOfWordItems("x"), patternOfWordItems("x")), result[0])
+      assertEquals(Pair(patternOfWordItems("y"), patternOfWordItems("y")), result[1])
     }
 
     describe("example") {
 
-      val left = patternOfItemWords(     "x","y",    "z")
-      val right = patternOfItemWords("1","x","2","3","z","4")
+      val left = patternOfWordItems("x", "y", "z")
+      val right = patternOfWordItems("1", "x", "2", "3", "z", "4")
 
       var result = emptyList<Pair<Pattern,Pattern>>()
 
@@ -129,23 +133,23 @@ class GeneralizePatternsSpec : Spek ({
       }
 
       it("should match 1 to an empty pattern") {
-        assertEquals(Pair(Pattern(), patternOfItemWords("1")), result[0])
+        assertEquals(Pair(Pattern(), patternOfWordItems("1")), result[0])
       }
 
       it("should match x") {
-        assertEquals(Pair(patternOfItemWords("x"), patternOfItemWords("x")), result[1])
+        assertEquals(Pair(patternOfWordItems("x"), patternOfWordItems("x")), result[1])
       }
 
       it("should match y to 2 and 3") {
-        assertEquals(Pair(patternOfItemWords("y"), patternOfItemWords("2","3")), result[2])
+        assertEquals(Pair(patternOfWordItems("y"), patternOfWordItems("2", "3")), result[2])
       }
 
       it("should match z") {
-        assertEquals(Pair(patternOfItemWords("z"), patternOfItemWords("z")), result[3])
+        assertEquals(Pair(patternOfWordItems("z"), patternOfWordItems("z")), result[3])
       }
 
       it("should match 4 to an empty patten") {
-        assertEquals(Pair(Pattern(), patternOfItemWords("4")), result[4])
+        assertEquals(Pair(Pattern(), patternOfWordItems("4")), result[4])
       }
     }
   }
@@ -158,8 +162,8 @@ class GeneralizePatternsSpec : Spek ({
       var result = emptyList<Pattern>()
 
       beforeEach{
-        a = patternOfItemWords("kansas", "city")
-        b = patternOfItemWords("atlanta")
+        a = patternOfWordItems("kansas", "city")
+        b = patternOfWordItems("atlanta")
         result = generalize(a, b)
       }
 

@@ -36,7 +36,7 @@ internal fun <T : Constraint> generalize(a : HashSet<out T>, b : HashSet<out T>)
  * Currently generalizes only words and POS tags so...
  * returns at most 4 pattern elements.
  */
-internal fun generalize(a : PatternElement, b : PatternElement) : List<PatternElement> {
+fun generalize(a : PatternElement, b : PatternElement) : List<PatternElement> {
 
   var wordGeneralizations = generalize(a.wordConstraints, b.wordConstraints)
   var tagGeneralizations = generalize(a.posTagConstraints, b.posTagConstraints)

@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.patternOfWordItems
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
@@ -59,22 +60,22 @@ class MostSpecificRulesSpec : Spek({
 
       aRules shouldContain MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("a1"),
-        postFiller = patternOfItemWords("a2","b1","b2"),
+        filler = patternOfWordItems("a1"),
+        postFiller = patternOfWordItems("a2", "b1", "b2"),
         slot = example1[SlotName("a")]
       )
 
       aRules shouldContain MostSpecificRule(
-        preFiller = patternOfItemWords("a1"),
-        filler = patternOfItemWords("a2"),
-        postFiller = patternOfItemWords("b1","b2"),
+        preFiller = patternOfWordItems("a1"),
+        filler = patternOfWordItems("a2"),
+        postFiller = patternOfWordItems("b1", "b2"),
         slot = example1[SlotName("a")]
       )
 
       aRules shouldContain MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("A1","A2"),
-        postFiller = patternOfItemWords("B1","B2"),
+        filler = patternOfWordItems("A1", "A2"),
+        postFiller = patternOfWordItems("B1", "B2"),
         slot = example2[SlotName("a")]
       )
     }
@@ -115,9 +116,9 @@ class MostSpecificRulesSpec : Spek({
       it("should create a correct IRule") {
 
         val expected = MostSpecificRule(
-          preFiller = patternOfItemWords("1"),
-          filler = patternOfItemWords("2", "3"),
-          postFiller = patternOfItemWords("4"),
+          preFiller = patternOfWordItems("1"),
+          filler = patternOfWordItems("2", "3"),
+          postFiller = patternOfWordItems("4"),
           slot = slot
         )
 
@@ -137,8 +138,8 @@ class MostSpecificRulesSpec : Spek({
 
       val expected = MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("2", "3"),
-        postFiller = patternOfItemWords("4"),
+        filler = patternOfWordItems("2", "3"),
+        postFiller = patternOfWordItems("4"),
         slot = slot
       )
 
@@ -151,8 +152,8 @@ class MostSpecificRulesSpec : Spek({
       val result = mostSpecificSlotRules(slot, tokens)
 
       val expected = MostSpecificRule(
-        preFiller = patternOfItemWords("1"),
-        filler = patternOfItemWords("2", "3"),
+        preFiller = patternOfWordItems("1"),
+        filler = patternOfWordItems("2", "3"),
         postFiller = Pattern(),
         slot = slot
       )
@@ -168,13 +169,13 @@ class MostSpecificRulesSpec : Spek({
       result.size shouldEqual 2
       result[0] shouldEqual MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("2", "3"),
-        postFiller = patternOfItemWords("2", "3"),
+        filler = patternOfWordItems("2", "3"),
+        postFiller = patternOfWordItems("2", "3"),
         slot = slot
       )
       result[1] shouldEqual MostSpecificRule(
-        preFiller = patternOfItemWords("2", "3"),
-        filler = patternOfItemWords("2", "3"),
+        preFiller = patternOfWordItems("2", "3"),
+        filler = patternOfWordItems("2", "3"),
         postFiller = Pattern(),
         slot = slot
       )
@@ -192,15 +193,15 @@ class MostSpecificRulesSpec : Spek({
 
       result.size shouldEqual 2
       result shouldContain MostSpecificRule(
-        preFiller = patternOfItemWords("1"),
-        filler = patternOfItemWords("2"),
-        postFiller = patternOfItemWords("3", "4"),
+        preFiller = patternOfWordItems("1"),
+        filler = patternOfWordItems("2"),
+        postFiller = patternOfWordItems("3", "4"),
         slot = slot
       )
       result shouldContain MostSpecificRule(
-        preFiller = patternOfItemWords("1", "2"),
-        filler = patternOfItemWords("3"),
-        postFiller = patternOfItemWords("4"),
+        preFiller = patternOfWordItems("1", "2"),
+        filler = patternOfWordItems("3"),
+        postFiller = patternOfWordItems("4"),
         slot = slot
       )
     }
@@ -216,13 +217,13 @@ class MostSpecificRulesSpec : Spek({
       result.size shouldEqual 2
       result shouldContain MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("a","a"),
-        postFiller = patternOfItemWords("a","a"),
+        filler = patternOfWordItems("a", "a"),
+        postFiller = patternOfWordItems("a", "a"),
         slot = slot
       )
       result shouldContain MostSpecificRule(
-        preFiller = patternOfItemWords("a","a"),
-        filler = patternOfItemWords("a","a"),
+        preFiller = patternOfWordItems("a", "a"),
+        filler = patternOfWordItems("a", "a"),
         postFiller = Pattern(),
         slot = slot
       )
@@ -241,8 +242,8 @@ class MostSpecificRulesSpec : Spek({
       result.size shouldEqual 1
       result.first() shouldEqual MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("a"),
-        postFiller = patternOfItemWords("b", "c", "d"),
+        filler = patternOfWordItems("a"),
+        postFiller = patternOfWordItems("b", "c", "d"),
         slot = slot
       )
     }
@@ -260,14 +261,14 @@ class MostSpecificRulesSpec : Spek({
       result.size shouldEqual 2
       result shouldContain MostSpecificRule(
         preFiller = Pattern(),
-        filler = patternOfItemWords("a"),
-        postFiller = patternOfItemWords("b", "a", "d"),
+        filler = patternOfWordItems("a"),
+        postFiller = patternOfWordItems("b", "a", "d"),
         slot = slot
       )
       result shouldContain MostSpecificRule(
-        preFiller = patternOfItemWords("a", "b"),
-        filler = patternOfItemWords("a"),
-        postFiller = patternOfItemWords("d"),
+        preFiller = patternOfWordItems("a", "b"),
+        filler = patternOfWordItems("a"),
+        postFiller = patternOfWordItems("d"),
         slot = slot
       )
     }

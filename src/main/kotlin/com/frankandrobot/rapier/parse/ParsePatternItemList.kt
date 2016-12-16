@@ -11,7 +11,7 @@ import java.util.*
  * ParsePatternItemLists.
  */
 data class ParsePatternItemList(
-  val items : ArrayList<PatternItem> = ArrayList<PatternItem>()) {
+  private val items : ArrayList<PatternItem> = ArrayList<PatternItem>()) {
 
   internal constructor(vararg patternItem : PatternItem)
   : this((ArrayList<PatternItem>() + patternItem.asList()) as ArrayList<PatternItem>)
@@ -21,5 +21,11 @@ data class ParsePatternItemList(
 
   internal constructor(vararg word : String)
   : this((ArrayList<PatternItem>() + word.map{PatternItem(words(it))}) as ArrayList<PatternItem>)
+
+
+  operator fun invoke() = items
+
+  val length : Int
+    get() = items.size
 }
 

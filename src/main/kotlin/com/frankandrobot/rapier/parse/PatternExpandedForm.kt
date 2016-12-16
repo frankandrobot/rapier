@@ -71,7 +71,7 @@ data class PatternExpandedForm(private val pattern : Pattern) {
 
     if (patternElement is PatternItem) {
 
-      _expansion.forEach{ pattern -> pattern.items.add(patternElement) }
+      _expansion.forEach{ pattern -> pattern().add(patternElement) }
     }
     else if (patternElement is PatternList) {
 
@@ -91,9 +91,9 @@ data class PatternExpandedForm(private val pattern : Pattern) {
     patternListExpansion.forEach{ newItemList ->
       prevPatterns.forEach{ prevItemList ->
 
-        val clone = prevItemList.items.clone() as ArrayList<PatternItem>
+        val clone = prevItemList().clone() as ArrayList<PatternItem>
 
-        clone.addAll(newItemList.items)
+        clone.addAll(newItemList())
 
         _expansion.add(ParsePatternItemList(clone))
       }

@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.patternOfWordItems
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -8,10 +9,10 @@ import kotlin.test.assertEquals
 class GeneralizePatternsCasesSpec : Spek({
 
   val empty = Pattern()
-  val one = patternOfItemWords("one")
-  val two = patternOfItemWords("one", "two")
-  val three = patternOfItemWords("one", "two", "three")
-  val anyPattern = patternOfItemWords("one", "two", "three")
+  val one = patternOfWordItems("one")
+  val two = patternOfWordItems("one", "two")
+  val three = patternOfWordItems("one", "two", "three")
+  val anyPattern = patternOfWordItems("one", "two", "three")
 
   describe("caseEqualLengthPatterns") {
 
@@ -29,8 +30,8 @@ class GeneralizePatternsCasesSpec : Spek({
     }
 
     describe("patterns of length greater than 1") {
-      val a = patternOfItemWords("ate", "the", "pasta")
-      val b = patternOfItemWords("hit", "the", "ball")
+      val a = patternOfWordItems("ate", "the", "pasta")
+      val b = patternOfWordItems("hit", "the", "ball")
 
       var result = emptyList<Pattern>()
 
@@ -39,8 +40,8 @@ class GeneralizePatternsCasesSpec : Spek({
       }
 
       it("should generalize patterns by pairing corresponding elements") {
-        val a = patternOfItemWords("a", "x")
-        val b = patternOfItemWords("b", "x")
+        val a = patternOfWordItems("a", "x")
+        val b = patternOfWordItems("b", "x")
         val result = caseEqualLengthPatterns(a, b).get()
 
         assertEquals(2, result.size)
@@ -95,7 +96,7 @@ class GeneralizePatternsCasesSpec : Spek({
     }
 
     it("should return the same pattern element transformed to a list for patterns of length 1") {
-      val result = caseAnEmptyPattern(empty, patternOfItemWords("one")).get()
+      val result = caseAnEmptyPattern(empty, patternOfWordItems("one")).get()
       assertEquals(1, result.size)
       assertEquals(Pattern(PatternList(words("one"), length = 1)), result[0])
     }

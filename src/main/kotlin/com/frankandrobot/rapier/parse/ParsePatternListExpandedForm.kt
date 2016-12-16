@@ -18,8 +18,12 @@ import java.util.*
  * - `bar`, `bar`
  *
  * Each element of the collection is of type ParsePatternItemList.
+ *
+ * Note that the empty expansion is technically not part of the expanded form. However,
+ * it is there as a convenience for matching --- we need to be able to match against
+ * elements not being there
  */
-class PatternListExpandedForm(private val patternList : PatternList) {
+class ParsePatternListExpandedForm(private val patternList : PatternList) {
 
   val expansion: ArrayList<ParsePatternItemList> by lazy { expand(patternList) }
 

@@ -39,7 +39,3 @@ data class Pattern(private val patternElements: List<out PatternElement> = empty
 
   override fun toString() = patternElements.joinToString("\n")
 }
-
-
-internal fun patternOfItemWords(vararg words : String) =
-  Pattern(words.map{ PatternItem(words(it)) })

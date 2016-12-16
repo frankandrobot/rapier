@@ -2,7 +2,7 @@ package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.parse.ParsePatternItemList
-import com.frankandrobot.rapier.parse.PatternListExpandedForm
+import com.frankandrobot.rapier.parse.ParsePatternListExpandedForm
 import java.util.*
 
 
@@ -95,7 +95,7 @@ data class PatternList(override val wordConstraints: HashSet<out WordConstraint>
   : this(wordConstraint.toHashSet(), length = length)
 
 
-  private val _expandedForm = PatternListExpandedForm(this)
+  private val _expandedForm = ParsePatternListExpandedForm(this)
 
   val expandedForm : ArrayList<ParsePatternItemList>
     get() = _expandedForm.invoke()
@@ -103,7 +103,3 @@ data class PatternList(override val wordConstraints: HashSet<out WordConstraint>
   override fun toString() = "list: max length: $length, word: $wordConstraints, tag: " +
     "$posTagConstraints, semantic: $semanticConstraints"
 }
-
-
-internal fun patternItemOfWords(vararg words : String) =
-  PatternItem(wordConstraints = words.map(::WordConstraint).toHashSet())
