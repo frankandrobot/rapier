@@ -7,9 +7,14 @@ import com.frankandrobot.rapier.nlp.wordTokens
 import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.patternItemOfWords
-import com.frankandrobot.rapier.patternOfItemWords
+import com.frankandrobot.rapier.patternOfWordItems
+import com.frankandrobot.rapier.patternOfWordsList
 import com.frankandrobot.rapier.textToTokenIterator
+import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldNotContain
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 import org.jetbrains.spek.api.Spek
 import java.util.*
 
@@ -24,9 +29,9 @@ class MatchSpec : Spek({
     describe("pattern items") {
 
       val patternItemRule = { BaseRule(
-        preFiller = patternOfItemWords("a", "b"),
-        filler = patternOfItemWords("C", "D"),
-        postFiller = patternOfItemWords("e", "f"),
+        preFiller = patternOfWordItems("a", "b"),
+        filler = patternOfWordItems("C", "D"),
+        postFiller = patternOfWordItems("e", "f"),
         slot = anySlot()
       )}
 
@@ -80,8 +85,8 @@ class MatchSpec : Spek({
       it("should find a match when preFiller patterns have more than one constraint") {
         val rule = BaseRule(
           preFiller = Pattern(patternElement = patternItemOfWords("a", "b")),
-          filler = patternOfItemWords("C", "D"),
-          postFiller = patternOfItemWords("e", "f"),
+          filler = patternOfWordItems("C", "D"),
+          postFiller = patternOfWordItems("e", "f"),
           slot = anySlot()
         )
         val result = rule._exactMatch(textToTokenIterator("a C D e f xxxxx b C D e f"))
@@ -100,8 +105,8 @@ class MatchSpec : Spek({
 
       it("should find a match when postFiller patterns have more than one constraint") {
         val rule = BaseRule(
-          preFiller = patternOfItemWords("a", "b"),
-          filler = patternOfItemWords("C", "D"),
+          preFiller = patternOfWordItems("a", "b"),
+          filler = patternOfWordItems("C", "D"),
           postFiller = Pattern(patternElement = patternItemOfWords("e", "f")),
           slot = anySlot()
         )
@@ -120,75 +125,110 @@ class MatchSpec : Spek({
       }
     }
 
-/*    describe("pattern list") {
+    describe("pattern list") {
 
-      *//**
+      /**
        * Expanded patterns:
        *
-       * - prefiller filler postfiller
-       * - prefiller filler
-       * - filler postfiller
-       * - filler
-       *//*
+       * - a B c
+       * - a B
+       * - B c
+       * - B
+       */
       val patternListRule = { BaseRule(
-        preFiller = Pattern(PatternList(words("prefiller"), length = 1)),
-        filler = Pattern(PatternItem(words("filler"))),
-        postFiller = Pattern(PatternList(words("postfiller"), length = 1)),
+        preFiller = patternOfWordsList(length = 1, word = "a"),
+        filler = patternOfWordItems("B"),
+        postFiller = patternOfWordsList(length = 1, word = "c"),
         slot = anySlot()
       )}
+      val text = { textToTokenIterator("a B c") }
 
+      it("should match all expanded patterns") {
 
-      it("should match full expansion") {
-
-        val text = textToTokenIterator("prefiller filler postfiller")
-        val result = patternListRule()._exactMatch(text)
-
-        assertEquals(wordTokens("filler"), result.distinct())
+        val result = patternListRule()._exactMatch(text())
+        result.size shouldEqual 4
       }
 
-      it("should generate all patterns") {
+      it("should match full expansion: a B c") {
 
-        val text = textToTokenIterator("prefiller filler postfiller")
-        val result = patternListRule()._exactMatch(text)
-
-        assertEquals(4, result.size)
+        val result = patternListRule()._exactMatch(text())
+        result shouldContain MatchResult(
+          preFillerMatch = wordTokens("a"),
+          fillerMatch = wordTokens("B"),
+          postFillerMatch = wordTokens("c")
+        )
       }
 
-      it("should match variation 1: no prefiller") {
-
-        val text = textToTokenIterator("start filler postfiller end")
+      it("should match the expansions with no prefiller: B c and B") {
+        val text = textToTokenIterator("start B c end")
         val result = patternListRule()._exactMatch(text)
-
-        assertEquals(wordTokens("filler"), result.distinct())
+        result.size shouldEqual 2
+        result shouldContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = Some(wordTokens("B")),
+          postFillerMatch = Some(wordTokens("c"))
+        )
+        result shouldContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = Some(wordTokens("B")),
+          postFillerMatch = None
+        )
       }
 
-      it("should match variation 2: no postfiller") {
-
-        val text = textToTokenIterator("start prefiller filler end")
-
+      it("should match the expansions with no postfiller: a B and B") {
+        val text = textToTokenIterator("start a B end")
         val result = patternListRule()._exactMatch(text)
-
-        assertEquals(wordTokens("filler"), result.distinct())
+        result.size shouldEqual 2
+        result shouldContain MatchResult(
+          preFillerMatch = Some(wordTokens("a")),
+          fillerMatch = Some(wordTokens("B")),
+          postFillerMatch = None
+        )
+        result shouldContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = Some(wordTokens("B")),
+          postFillerMatch = None
+        )
       }
 
-      it("should match variation 3: no prefiller/postfiller") {
-
-        val text = textToTokenIterator("start filler end")
-
+      it("should match the expansion with no prefiller/postfiller: B") {
+        val text = textToTokenIterator("start B end")
         val result = patternListRule()._exactMatch(text)
-
-        assertEquals(wordTokens("filler"), result.distinct())
+        result.size shouldEqual 1
+        result shouldContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = Some(wordTokens("B")),
+          postFillerMatch = None
+        )
       }
 
-      it("should match variation 4: empty") {
-
+      it("should NOT match when filler is missing") {
         val text = textToTokenIterator("start end")
-
         val result = patternListRule()._exactMatch(text)
-
-        assertEquals(emptyList(), result.distinct())
+        result shouldNotContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = None,
+          postFillerMatch = None
+        )
       }
-    }*/
+
+      it("should NOT match when filler is missing") {
+        val text = textToTokenIterator("start end")
+        val patternListRule = BaseRule(
+          preFiller = patternOfWordsList(length = 1, word = "a"),
+          filler = patternOfWordsList(length = 1, word = "B"),
+          postFiller = patternOfWordsList(length = 1, word = "c"),
+          slot = anySlot()
+        )
+
+        val result = patternListRule._exactMatch(text)
+        result shouldNotContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = None,
+          postFillerMatch = None
+        )
+      }
+    }
   }
 })
 
