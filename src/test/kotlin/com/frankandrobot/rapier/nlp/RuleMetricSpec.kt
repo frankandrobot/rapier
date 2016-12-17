@@ -7,25 +7,22 @@ import com.frankandrobot.rapier.pattern.Pattern
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
+import kotlin.test.assertEquals
 
 
 class RuleMetricSpec : Spek({
 
-  var anyFiller  = wordSlotFiller("none")
-  var anyOtherFiller = wordSlotFiller("none")
-  var yetAnotherFiller = wordSlotFiller("none")
   var anySlot : Slot
 
-  var anySimpleRule = BaseRule(slot = dummySlot("none"))
-  var anyRuleMatchingTwoFillers = BaseRule(slot = dummySlot("none"))
+  var aSimpleRule = emptyRule
+  var aRuleWithTwoPatternItemsInFiller = emptyRule
+  var aRuleWithTwoConstraintsInFiller = emptyRule
+  var anyRuleWithNegativeMatches = emptyRule
 
-  var anyDocument = Document(tokens = wordTokens("none"))
-  var anyOtherDocument = Document(tokens = wordTokens("none"))
-  var yetAnotherDocument = Document(tokens = wordTokens("none"))
-
-  var anySimpleExample = emptyExample
-  var anyExampleWithTwoMatches = emptyExample
-  var yetAnotherExample = emptyExample
+  var aSimpleExample = emptyExample
+  var anExampleWithTwoPatternItemsInFiller = emptyExample
+  var anExampleWithTwoConstraintsInFiller = emptyExample
+  var anyExampleWithNegativeMatches = emptyExample
 
   val anyMinCov = 1
   val anyRuleSize = 1.0
@@ -34,9 +31,6 @@ class RuleMetricSpec : Spek({
 
   beforeEach {
 
-    anyFiller = wordSlotFiller("java")
-    anyOtherFiller = wordSlotFiller("c#")
-    yetAnotherFiller = wordSlotFiller("go lang")
     anySlot = Slot(
       name = SlotName("language"),
       slotFillers = hashSetOf(
@@ -46,27 +40,13 @@ class RuleMetricSpec : Spek({
       )
     )
 
-    anySimpleRule = BaseRule(
+    aSimpleRule = BaseRule(
       preFiller = patternOfWordItems("A"),
       filler = patternOfWordItems("java"),
       postFiller = patternOfWordItems("Z"),
       slot = anySlot
     )
-
-    anyRuleMatchingTwoFillers = BaseRule(
-      preFiller = patternOfWordItems("A"),
-      filler = Pattern(patternItemOfWords("java", "c#")),
-      postFiller = patternOfWordItems("Z"),
-      slot = anySlot
-    )
-
-    anyDocument = Document(tokens = wordTokens("A", "java", "Z"))
-    anyOtherDocument = Document(tokens = wordTokens("A", "c#", "Z"))
-    yetAnotherDocument = Document(
-      tokens = textTokenList("A java Z xxxxxxx A c# Z")
-    )
-
-    anySimpleExample = Example(
+    aSimpleExample = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
       Document(tokens = textTokenList("A java Z")),
       FilledTemplate(
@@ -80,7 +60,14 @@ class RuleMetricSpec : Spek({
         )
       )
     )
-    anyExampleWithTwoMatches = Example(
+
+    aRuleWithTwoPatternItemsInFiller = BaseRule(
+      preFiller = patternOfWordItems("A"),
+      filler = Pattern(patternItemOfWords("java", "c#")),
+      postFiller = patternOfWordItems("Z"),
+      slot = anySlot
+    )
+    anExampleWithTwoPatternItemsInFiller = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
       Document(tokens = textTokenList("A java Z xxxxxxx A c# Z")),
       FilledTemplate(
@@ -95,7 +82,14 @@ class RuleMetricSpec : Spek({
         )
       )
     )
-    yetAnotherExample = Example(
+
+    aRuleWithTwoConstraintsInFiller = BaseRule(
+      preFiller = patternOfWordItems("A"),
+      filler = patternOfWordItems("go", "lang"),
+      postFiller = patternOfWordItems("Z"),
+      slot = anySlot
+    )
+    anExampleWithTwoConstraintsInFiller = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
       Document(tokens = textTokenList("A go lang Z")),
       FilledTemplate(
@@ -104,6 +98,27 @@ class RuleMetricSpec : Spek({
             name = SlotName("language"),
             slotFillers = hashSetOf(
               wordSlotFiller("go", "lang")
+            )
+          )
+        )
+      )
+    )
+
+    anyRuleWithNegativeMatches = BaseRule(
+      preFiller = patternOfWordItems("A"),
+      filler = Pattern(patternItemOfWords("ruby", "rust")),
+      postFiller = patternOfWordItems("Z"),
+      slot = anySlot
+    )
+    anyExampleWithNegativeMatches = Example(
+      BlankTemplate(name = "test", slots = slotNames("language")),
+      Document(tokens = textTokenList("A ruby Z xxxxx A rust Z")),
+      FilledTemplate(
+        slots = slots(
+          Slot(
+            name = SlotName("language"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("ruby")
             )
           )
         )
@@ -118,32 +133,56 @@ class RuleMetricSpec : Spek({
 
       it("should find positive matches in simple rules") {
         val result =
-          RuleMetric(anySimpleRule, params)._evaluate(Examples(listOf(anySimpleExample)))
+          RuleMetric(aSimpleRule, params)._evaluate(Examples(listOf(aSimpleExample)))
         result.positives.size shouldEqual 1
         result.positives shouldContain wordSlotFiller("java")
       }
 
       it("should find no negative matches in simple rules") {
         val result =
-          RuleMetric(anySimpleRule, params)._evaluate(Examples(listOf(anySimpleExample)))
+          RuleMetric(aSimpleRule, params)._evaluate(Examples(listOf(aSimpleExample)))
         result.negatives.size shouldEqual 0
       }
 
-      it("should find two positive matches in example with two matches") {
+      it("should find two positive matches in example with two pattern items in filler") {
         val result =
-          RuleMetric(anyRuleMatchingTwoFillers, params)
-            ._evaluate(Examples(listOf(anyExampleWithTwoMatches)))
+          RuleMetric(aRuleWithTwoPatternItemsInFiller, params)
+            ._evaluate(Examples(listOf(anExampleWithTwoPatternItemsInFiller)))
         result.positives shouldEqual listOf(
           wordSlotFiller("java"),
           wordSlotFiller("c#")
         )
       }
 
-      it("should find no negative matches in example with two matches") {
+      it("should find no negative matches in example with two pattern items in filler") {
         val result =
-          RuleMetric(anyRuleMatchingTwoFillers, params)
-            ._evaluate(Examples(listOf(anyExampleWithTwoMatches)))
+          RuleMetric(aRuleWithTwoPatternItemsInFiller, params)
+            ._evaluate(Examples(listOf(anExampleWithTwoPatternItemsInFiller)))
         result.negatives.size shouldEqual 0
+      }
+
+      it("should find positive matches in example with two constraints in filler") {
+        val result =
+          RuleMetric(aRuleWithTwoConstraintsInFiller, params)
+            ._evaluate(Examples(listOf(anExampleWithTwoConstraintsInFiller)))
+        result.positives shouldEqual listOf(
+          wordSlotFiller("go", "lang")
+        )
+      }
+
+      it("should find no negative matches in example with two constraints in filler") {
+        val result =
+          RuleMetric(aRuleWithTwoConstraintsInFiller, params)
+            ._evaluate(Examples(listOf(anExampleWithTwoConstraintsInFiller)))
+        result.negatives.size shouldEqual 0
+      }
+
+      it("should find negative matches in example with negative matches") {
+        val result =
+          RuleMetric(anyRuleWithNegativeMatches, params)
+            ._evaluate(Examples(listOf(anyExampleWithNegativeMatches)))
+        result.negatives.size shouldEqual 1
+        result.negatives shouldEqual listOf(wordSlotFiller("rust"))
       }
     }
 
@@ -155,7 +194,7 @@ class RuleMetricSpec : Spek({
      * f(p,n,ruleSize) := -1.442695*log2((p+1)/(p+n+2)) + ruleSize/p;
      */
 
-/*    describe("metric") {
+    describe("metric") {
 
       it ("should use the correct formula 1") {
 
@@ -220,9 +259,6 @@ class RuleMetricSpec : Spek({
 
         assert(worseRule > rule)
       }
-    }*/
+    }
   }
 })
-
-//fun toTokens(vararg documents: Document) = documents.map{ it.raw.split(" ").map{Token
-//  (it)} }

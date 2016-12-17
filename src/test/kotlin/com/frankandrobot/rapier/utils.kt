@@ -42,6 +42,8 @@ fun patternOfWordsList(length : Int = 1, vararg word : String) =
   Pattern(PatternList(length = length, wordConstraints = words(*word)))
 
 
+val emptyRule = BaseRule(slot = dummySlot("none"))
+
 val emptyExample = Example(
   blankTemplate = BlankTemplate("", hashSetOf()),
   document = Document(),
