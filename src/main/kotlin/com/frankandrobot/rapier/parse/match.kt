@@ -1,6 +1,5 @@
 package com.frankandrobot.rapier.parse
 
-import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.util.BetterIterator
@@ -17,7 +16,7 @@ import java.util.*
  * Parsing by a PatternList returns a token list with a None (corresponding to matching
  * when the length of the PatternList is 0).
  */
-internal fun IRule._exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult> {
+fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult> {
 
   return (documentTokens.curIndex..documentTokens.lastIndex)
     .map{ documentTokens.clone().overrideIndex(it) }
@@ -48,17 +47,21 @@ internal fun IRule._exactMatch(documentTokens : BetterIterator<Token>) : List<Ma
           }
         }
     }
-    // the chain of "then"s must result in a matchFound
+    // the chain of "then"s must result in a matchFound (aka the prefiller, filler, and
+    // postfiller patterns all found a match)
     .filter { it.matchFound &&
-      // this corresponds to matching a Rule of patternlists with length = 0...this
-      // case doesn't make anysense so we filter it out
+      // Also, the prefiller, filler, and postfiller must all have matches. If they
+      // all don't, this corresponds to case when the prefiller, filler, and
+      // postfiller are all pattern lists of length = 0...this case shouldn't be
+      // counted so we filter it out
       (it.preFillerMatch.isDefined() || it.fillerMatch.isDefined()
         || it.postFillerMatch.isDefined()) }
 }
 
-fun IRule.exactMatch(documentTokens : ArrayList<Token>) : List<SlotFiller> {
 
-  return _exactMatch(BetterIterator(documentTokens)).map{SlotFiller(Option.Some("foo"))}
+fun IRule.exactMatch(documentTokens : ArrayList<Token>) : List<MatchResult> {
+
+  return this.exactMatch(BetterIterator(documentTokens))
 }
 
 
