@@ -1,122 +1,149 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.document.Document
+import com.frankandrobot.rapier.*
+import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.words
-import com.frankandrobot.rapier.template.*
+import org.amshove.kluent.shouldContain
+import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
-import kotlin.test.assertEquals
 
 
 class RuleMetricSpec : Spek({
 
+  var anyFiller  = wordSlotFiller("none")
+  var anyOtherFiller = wordSlotFiller("none")
+  var yetAnotherFiller = wordSlotFiller("none")
   var anySlot : Slot
-  var anyFiller  = SlotFiller("none")
-  var anyOtherFiller = SlotFiller("none")
-  var yetAnotherFiller = SlotFiller("none")
 
-  var anySimpleRule = BaseRule(slot = Slot("none"))
-  var anyRuleMatchingTwoFillers = BaseRule(slot = Slot("none"))
+  var anySimpleRule = BaseRule(slot = dummySlot("none"))
+  var anyRuleMatchingTwoFillers = BaseRule(slot = dummySlot("none"))
 
-  var anyDocument = Document("none")
-  var anyOtherDocument = Document("none")
+  var anyDocument = Document(tokens = wordTokens("none"))
+  var anyOtherDocument = Document(tokens = wordTokens("none"))
+  var yetAnotherDocument = Document(tokens = wordTokens("none"))
 
-  var anySimpleExample = Examples()
-  var anyOtherExample = Examples()
+  var anySimpleExample = emptyExample
+  var anyExampleWithTwoMatches = emptyExample
+  var yetAnotherExample = emptyExample
 
   val anyMinCov = 1
   val anyRuleSize = 1.0
+  val params = RapierParams(k_MinCov = anyMinCov, k_SizeWeight = anyRuleSize)
 
 
   beforeEach {
 
-    anySlot = Slot("anySlot")
-
-    anyFiller = SlotFiller("java")
-
-    anyOtherFiller = SlotFiller("c#")
-
-    yetAnotherFiller = SlotFiller("python")
+    anyFiller = wordSlotFiller("java")
+    anyOtherFiller = wordSlotFiller("c#")
+    yetAnotherFiller = wordSlotFiller("go lang")
+    anySlot = Slot(
+      name = SlotName("language"),
+      slotFillers = hashSetOf(
+        wordSlotFiller("java"),
+        wordSlotFiller("c#"),
+        wordSlotFiller("go", "lang")
+      )
+    )
 
     anySimpleRule = BaseRule(
-      preFiller = Pattern(PatternItem(words("preFiller"))),
-      filler = Pattern(PatternItem(words(anyFiller.value))),
-      postFiller = Pattern(PatternItem(words("postFiller"))),
+      preFiller = patternOfWordItems("A"),
+      filler = patternOfWordItems("java"),
+      postFiller = patternOfWordItems("Z"),
       slot = anySlot
     )
 
     anyRuleMatchingTwoFillers = BaseRule(
-      preFiller = Pattern(PatternItem(words("preFiller"))),
-      filler = Pattern(PatternItem(words(anyFiller.value, anyOtherFiller.value))),
-      postFiller = Pattern(PatternItem(words("postFiller"))),
+      preFiller = patternOfWordItems("A"),
+      filler = Pattern(patternItemOfWords("java", "c#")),
+      postFiller = patternOfWordItems("Z"),
       slot = anySlot
     )
 
-    anyDocument = Document("preFiller ${anyFiller.value} postFiller")
+    anyDocument = Document(tokens = wordTokens("A", "java", "Z"))
+    anyOtherDocument = Document(tokens = wordTokens("A", "c#", "Z"))
+    yetAnotherDocument = Document(
+      tokens = textTokenList("A java Z xxxxxxx A c# Z")
+    )
 
-    anyOtherDocument = Document("preFiller ${anyOtherFiller.value} postFiller")
-
-    anySimpleExample = Examples(Template(anySlot), FilledTemplate(anyDocument, Pair(anySlot, anyFiller)))
-
-    anyOtherExample = Examples(
-      Template(anySlot),
-      FilledTemplate(anyDocument, Pair(anySlot, anyFiller)),
-      FilledTemplate(anyOtherDocument, Pair(anySlot, yetAnotherFiller))
+    anySimpleExample = Example(
+      BlankTemplate(name = "test", slots = slotNames("language")),
+      Document(tokens = textTokenList("A java Z")),
+      FilledTemplate(
+        slots = slots(
+          Slot(
+            name = SlotName("language"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("java")
+            )
+          )
+        )
+      )
+    )
+    anyExampleWithTwoMatches = Example(
+      BlankTemplate(name = "test", slots = slotNames("language")),
+      Document(tokens = textTokenList("A java Z xxxxxxx A c# Z")),
+      FilledTemplate(
+        slots = slots(
+          Slot(
+            name = SlotName("language"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("java"),
+              wordSlotFiller("c#")
+            )
+          )
+        )
+      )
+    )
+    yetAnotherExample = Example(
+      BlankTemplate(name = "test", slots = slotNames("language")),
+      Document(tokens = textTokenList("A go lang Z")),
+      FilledTemplate(
+        slots = slots(
+          Slot(
+            name = SlotName("language"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("go", "lang")
+            )
+          )
+        )
+      )
     )
   }
 
 
   describe("RuleMetric") {
 
-    describe("evaluate") {
+    describe("_evaluate") {
 
-      it("should find positive examples in simple rules") {
-
-        val result = RuleMetric(
-          anySimpleRule,
-          kMinCov = anyMinCov,
-          kRuleSizeWeight = anyRuleSize
-        ).evaluate(anySimpleExample, toTokens(anyDocument))
-
-        assertEquals(listOf(anyFiller), result.positives)
+      it("should find positive matches in simple rules") {
+        val result =
+          RuleMetric(anySimpleRule, params)._evaluate(Examples(listOf(anySimpleExample)))
+        result.positives.size shouldEqual 1
+        result.positives shouldContain wordSlotFiller("java")
       }
 
-
-      it("should find no negative examples in simple rules") {
-
-        val result = RuleMetric(
-          anySimpleRule,
-          kMinCov = anyMinCov,
-          kRuleSizeWeight = anyRuleSize
-        ).evaluate(anySimpleExample, toTokens(anyDocument))
-
-        assertEquals(emptyList<SlotFiller>(), result.negatives)
+      it("should find no negative matches in simple rules") {
+        val result =
+          RuleMetric(anySimpleRule, params)._evaluate(Examples(listOf(anySimpleExample)))
+        result.negatives.size shouldEqual 0
       }
 
-
-      it("should still find positive examples in complex rules") {
-
-        val result = RuleMetric(
-          anyRuleMatchingTwoFillers,
-          kMinCov = anyMinCov,
-          kRuleSizeWeight = anyRuleSize
-        ).evaluate(anyOtherExample, toTokens(anyDocument, anyOtherDocument))
-
-        assertEquals(listOf(anyFiller), result.positives)
+      it("should find two positive matches in example with two matches") {
+        val result =
+          RuleMetric(anyRuleMatchingTwoFillers, params)
+            ._evaluate(Examples(listOf(anyExampleWithTwoMatches)))
+        result.positives shouldEqual listOf(
+          wordSlotFiller("java"),
+          wordSlotFiller("c#")
+        )
       }
 
-
-      it("should find negative examples in complex rules") {
-
-        val result = RuleMetric(
-          anyRuleMatchingTwoFillers,
-          kMinCov = anyMinCov,
-          kRuleSizeWeight = anyRuleSize
-        ).evaluate(anyOtherExample, toTokens(anyDocument, anyOtherDocument))
-
-        assertEquals(listOf(anyOtherFiller), result.negatives)
+      it("should find no negative matches in example with two matches") {
+        val result =
+          RuleMetric(anyRuleMatchingTwoFillers, params)
+            ._evaluate(Examples(listOf(anyExampleWithTwoMatches)))
+        result.negatives.size shouldEqual 0
       }
     }
 
@@ -127,7 +154,8 @@ class RuleMetricSpec : Spek({
      * log2(x) := log(x) / log(2);
      * f(p,n,ruleSize) := -1.442695*log2((p+1)/(p+n+2)) + ruleSize/p;
      */
-    describe("metric") {
+
+/*    describe("metric") {
 
       it ("should use the correct formula 1") {
 
@@ -192,8 +220,9 @@ class RuleMetricSpec : Spek({
 
         assert(worseRule > rule)
       }
-    }
+    }*/
   }
 })
 
-fun toTokens(vararg documents: Document) = documents.map{ it.value.split(" ").map{Token(it)} }
+//fun toTokens(vararg documents: Document) = documents.map{ it.raw.split(" ").map{Token
+//  (it)} }

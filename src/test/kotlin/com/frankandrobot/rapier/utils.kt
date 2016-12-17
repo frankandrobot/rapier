@@ -1,8 +1,6 @@
 package com.frankandrobot.rapier
 
-import com.frankandrobot.rapier.meta.Slot
-import com.frankandrobot.rapier.meta.SlotFiller
-import com.frankandrobot.rapier.meta.SlotName
+import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.nlp.wordToken
 import com.frankandrobot.rapier.nlp.wordTokens
 import com.frankandrobot.rapier.pattern.*
@@ -13,10 +11,11 @@ import java.util.*
 /**
  * @deprecated use wordTokens
  */
-fun textToTokenList(vararg text : String) = text.flatMap{it.split(" ")}.map(::wordToken)
+fun textTokenList(vararg text : String) = text.flatMap{it.split(" ")}.map(::wordToken)
+  as ArrayList
 
-fun textToTokenIterator(text : String, start : Int = 0) =
-  BetterIterator(textToTokenList(text) as ArrayList, start)
+fun textTokenIterator(text : String, start : Int = 0) =
+  BetterIterator(textTokenList(text), start)
 
 
 fun dummySlot(name : String) = Slot(SlotName(name), slotFillers = HashSet<SlotFiller>())
@@ -41,3 +40,10 @@ fun patternOfWordItems(vararg words : String) =
 
 fun patternOfWordsList(length : Int = 1, vararg word : String) =
   Pattern(PatternList(length = length, wordConstraints = words(*word)))
+
+
+val emptyExample = Example(
+  blankTemplate = BlankTemplate("", hashSetOf()),
+  document = Document(),
+  filledTemplate = FilledTemplate(hashMapOf())
+)
