@@ -47,17 +47,23 @@ class RuleMetric(private val rule : IRule,
    * not in the FilledTemplate. (In this case, it is considered to be an "accidental"
    * match and therefore, a negative match).
    *
+   * Note that the check to tell if a filler occurs in an Example tests only the
+   * word property, not the tag or semantic class.
+   *
    * @param examples
    */
   internal fun _evaluate(examples : Examples) : MetricResults {
 
-    val enabledSlotFillers = examples().flatMap(Example::enabledSlotFillers)
+    val enabledSlotFillers = examples()
+      .flatMap(Example::enabledSlotFillers)
+      .map{ it.dropTagAndSemanticProperties() }
     val fillerMatches = examples()
       .map{ it.document() }
       .flatMap{ rule.exactMatch(it) }
       .map{ it.fillerMatch }
       .filter{ it.isDefined() }
       .map{ SlotFiller(tokens = it.get()) }
+      .map{ it.dropTagAndSemanticProperties() }
 
     val positives = fillerMatches.filter { enabledSlotFillers.contains(it) }
     val negatives = fillerMatches.filter { !enabledSlotFillers.contains(it) }
