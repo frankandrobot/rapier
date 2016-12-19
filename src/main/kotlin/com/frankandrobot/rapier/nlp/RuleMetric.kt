@@ -82,3 +82,18 @@ class RuleMetric(private val rule : IRule,
     )
   }
 }
+
+
+data class ComparableRule(private val examples : Examples,
+                          private val params : RapierParams,
+                          private val rule : IRule) : Comparable<ComparableRule> {
+
+  private val ruleMetric = RuleMetric(rule, params)
+
+  override fun compareTo(other: ComparableRule): Int {
+    return ruleMetric.evaluate(examples).compareTo(other.ruleMetric.evaluate(examples))
+  }
+
+  operator fun invoke() = rule
+}
+

@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.meta
 
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.tokenize
+import com.frankandrobot.rapier.nlp.wordToken
 import org.funktionale.option.Option
 import java.util.*
 
@@ -16,7 +17,7 @@ data class SlotName(private val name : String) {
 }
 
 /**
- * convenience class to help create slots. Don't use
+ * @deprecated convenience class to help create slots. Don't use
  */
 data class SlotFillerInfo(val slotFillers : HashSet<SlotFiller>,
                           val enabled : Boolean)
@@ -34,12 +35,19 @@ data class SlotFiller(val raw : Option<String> = Option.None,
 
     return tokens
   }
+
+  fun dropTagAndSemanticProperties() =
+    SlotFiller(
+      raw = raw,
+      tokens = tokens
+        .filter{it.word.isDefined()}
+        .map{wordToken(it.word.get())} as ArrayList<Token>
+    )
 }
 
-//TODO throughly test hashsets
-//TODO test wordconstraints and tokens
+fun slotNames(vararg names : String) = names.map(::SlotName).toHashSet()
 
-fun slots(vararg slots : Pair<SlotName, SlotFillerInfo>) =
+internal fun slots(vararg slots : Pair<SlotName, SlotFillerInfo>) =
   slots.map{ slot -> Slot(
     name = slot.first,
     slotFillers = slot.second.slotFillers,

@@ -293,5 +293,88 @@ class RuleMetricSpec : Spek({
         assert(worseRule > rule)
       }
     }
+
+
+    describe("ComparableRule") {
+
+      val example = Example(
+        BlankTemplate(name = "test", slots = slotNames("slot")),
+        document = Document(tokens = textTokenList("a b c d e f g h i j")),
+        filledTemplate = FilledTemplate(
+          slots = slots(Slot(
+            name = SlotName("slot"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("a"),
+              wordSlotFiller("b"),
+              wordSlotFiller("c")
+            )
+          ))
+        )
+      )
+
+      it("should evaluate a rule with more positive matches as smaller") {
+        val rule1 = BaseRule(
+          preFiller = Pattern(),
+          filler = Pattern(patternItemOfWords("a","b","c")),
+          postFiller = Pattern(),
+          slot = Slot(
+            name = SlotName("slot"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("a"),
+              wordSlotFiller("b"),
+              wordSlotFiller("c")
+            )
+          )
+        )
+        val rule2 = BaseRule(
+          preFiller = Pattern(),
+          filler = Pattern(patternItemOfWords("a")),
+          postFiller = Pattern(),
+          slot = Slot(
+            name = SlotName("slot"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("a"),
+              wordSlotFiller("b"),
+              wordSlotFiller("c")
+            )
+          )
+        )
+        val a1 = ComparableRule(Examples(listOf(example)), params, rule1)
+        val a2= ComparableRule(Examples(listOf(example)), params, rule2)
+        (a1 < a2) shouldEqual true
+      }
+
+      it("should only count filler matches") {
+        val rule1 = BaseRule(
+          preFiller = Pattern(),
+          filler = Pattern(patternItemOfWords("a","b","c")),
+          postFiller = Pattern(),
+          slot = Slot(
+            name = SlotName("slot"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("a"),
+              wordSlotFiller("b"),
+              wordSlotFiller("c")
+            )
+          )
+        )
+        val rule2 = BaseRule(
+          preFiller = Pattern(patternItemOfWords("a","b","c","d")),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = Slot(
+            name = SlotName("slot"),
+            slotFillers = hashSetOf(
+              wordSlotFiller("a"),
+              wordSlotFiller("b"),
+              wordSlotFiller("c")
+            )
+          )
+        )
+        val a1 = ComparableRule(Examples(listOf(example)), params, rule1)
+        val a2= ComparableRule(Examples(listOf(example)), params, rule2)
+        (a1 < a2) shouldEqual true
+      }
+    }
   }
 })
