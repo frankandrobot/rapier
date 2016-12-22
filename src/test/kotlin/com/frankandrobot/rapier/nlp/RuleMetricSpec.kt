@@ -3,6 +3,7 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.BaseRule
+import com.frankandrobot.rapier.pattern.DerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
@@ -129,25 +130,25 @@ class RuleMetricSpec : Spek({
 
   describe("RuleMetric") {
 
-    describe("_evaluate") {
+    describe("metric") {
 
       it("should find positive matches in simple rules") {
         val result =
-          RuleMetric(aSimpleRule, params)._evaluate(Examples(listOf(aSimpleExample)))
+          RuleMetric(aSimpleRule, params).metric(Examples(listOf(aSimpleExample)))
         result.positives.size shouldEqual 1
         result.positives shouldContain wordSlotFiller("java")
       }
 
       it("should find no negative matches in simple rules") {
         val result =
-          RuleMetric(aSimpleRule, params)._evaluate(Examples(listOf(aSimpleExample)))
+          RuleMetric(aSimpleRule, params).metric(Examples(listOf(aSimpleExample)))
         result.negatives.size shouldEqual 0
       }
 
       it("should find two positive matches in example with two pattern items in filler") {
         val result =
           RuleMetric(aRuleWithTwoPatternItemsInFiller, params)
-            ._evaluate(Examples(listOf(anExampleWithTwoPatternItemsInFiller)))
+            .metric(Examples(listOf(anExampleWithTwoPatternItemsInFiller)))
         result.positives shouldEqual listOf(
           wordSlotFiller("java"),
           wordSlotFiller("c#")
@@ -157,14 +158,14 @@ class RuleMetricSpec : Spek({
       it("should find no negative matches in example with two pattern items in filler") {
         val result =
           RuleMetric(aRuleWithTwoPatternItemsInFiller, params)
-            ._evaluate(Examples(listOf(anExampleWithTwoPatternItemsInFiller)))
+            .metric(Examples(listOf(anExampleWithTwoPatternItemsInFiller)))
         result.negatives.size shouldEqual 0
       }
 
       it("should find positive matches in example with two constraints in filler") {
         val result =
           RuleMetric(aRuleWithTwoConstraintsInFiller, params)
-            ._evaluate(Examples(listOf(anExampleWithTwoConstraintsInFiller)))
+            .metric(Examples(listOf(anExampleWithTwoConstraintsInFiller)))
         result.positives shouldEqual listOf(
           wordSlotFiller("go", "lang")
         )
@@ -173,14 +174,14 @@ class RuleMetricSpec : Spek({
       it("should find no negative matches in example with two constraints in filler") {
         val result =
           RuleMetric(aRuleWithTwoConstraintsInFiller, params)
-            ._evaluate(Examples(listOf(anExampleWithTwoConstraintsInFiller)))
+            .metric(Examples(listOf(anExampleWithTwoConstraintsInFiller)))
         result.negatives.size shouldEqual 0
       }
 
       it("should find negative matches in example with negative matches") {
         val result =
           RuleMetric(anyRuleWithNegativeMatches, params)
-            ._evaluate(Examples(listOf(anyExampleWithNegativeMatches)))
+            .metric(Examples(listOf(anyExampleWithNegativeMatches)))
         result.negatives.size shouldEqual 1
         result.negatives shouldEqual listOf(wordSlotFiller("rust"))
       }
@@ -212,7 +213,7 @@ class RuleMetricSpec : Spek({
             )
           )
         )
-        val result = RuleMetric(rule, params)._evaluate(Examples(listOf(example)))
+        val result = RuleMetric(rule, params).metric(Examples(listOf(example)))
         result.positives.size shouldEqual 1
         result.negatives.size shouldEqual 0
         result.positives shouldEqual listOf(wordSlotFiller("word"))
@@ -313,10 +314,12 @@ class RuleMetricSpec : Spek({
       )
 
       it("should evaluate a rule with more positive matches as smaller") {
-        val rule1 = BaseRule(
+        val rule1 = DerivedRule(
           preFiller = Pattern(),
           filler = Pattern(patternItemOfWords("a","b","c")),
           postFiller = Pattern(),
+          baseRule1 = emptyRule,
+          baseRule2 = emptyRule,
           slot = Slot(
             name = SlotName("slot"),
             slotFillers = hashSetOf(
@@ -326,10 +329,12 @@ class RuleMetricSpec : Spek({
             )
           )
         )
-        val rule2 = BaseRule(
+        val rule2 = DerivedRule(
           preFiller = Pattern(),
           filler = Pattern(patternItemOfWords("a")),
           postFiller = Pattern(),
+          baseRule1 = emptyRule,
+          baseRule2 = emptyRule,
           slot = Slot(
             name = SlotName("slot"),
             slotFillers = hashSetOf(
@@ -345,10 +350,12 @@ class RuleMetricSpec : Spek({
       }
 
       it("should only count filler matches") {
-        val rule1 = BaseRule(
+        val rule1 = DerivedRule(
           preFiller = Pattern(),
           filler = Pattern(patternItemOfWords("a","b","c")),
           postFiller = Pattern(),
+          baseRule1 = emptyRule,
+          baseRule2 = emptyRule,
           slot = Slot(
             name = SlotName("slot"),
             slotFillers = hashSetOf(
@@ -358,10 +365,12 @@ class RuleMetricSpec : Spek({
             )
           )
         )
-        val rule2 = BaseRule(
+        val rule2 = DerivedRule(
           preFiller = Pattern(patternItemOfWords("a","b","c","d")),
           filler = Pattern(),
           postFiller = Pattern(),
+          baseRule1 = emptyRule,
+          baseRule2 = emptyRule,
           slot = Slot(
             name = SlotName("slot"),
             slotFillers = hashSetOf(

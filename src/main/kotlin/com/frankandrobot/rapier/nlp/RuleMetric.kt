@@ -23,8 +23,8 @@ internal fun metric(p : Int, n : Int, ruleSize : Double, kMinCov : Int) : Double
   else -1.442695*log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
 
-internal class MetricResults(val positives : List<SlotFiller>,
-                             val negatives : List<SlotFiller>)
+data class MetricResults(val positives : List<SlotFiller>,
+                         val negatives : List<SlotFiller>)
 
 
 /**
@@ -52,7 +52,7 @@ class RuleMetric(private val rule : IRule,
    *
    * @param examples
    */
-  internal fun _evaluate(examples : Examples) : MetricResults {
+  fun metric(examples : Examples) : MetricResults {
 
     val enabledSlotFillers = examples()
       .flatMap(Example::enabledSlotFillers)
@@ -73,7 +73,7 @@ class RuleMetric(private val rule : IRule,
 
 
   fun evaluate(examples : Examples) : Double {
-    val result = _evaluate(examples)
+    val result = metric(examples)
     return metric(
       p = result.positives.size,
       n = result.negatives.size,
@@ -82,18 +82,3 @@ class RuleMetric(private val rule : IRule,
     )
   }
 }
-
-
-data class ComparableRule(private val examples : Examples,
-                          private val params : RapierParams,
-                          private val rule : IRule) : Comparable<ComparableRule> {
-
-  private val ruleMetric = RuleMetric(rule, params)
-
-  override fun compareTo(other: ComparableRule): Int {
-    return ruleMetric.evaluate(examples).compareTo(other.ruleMetric.evaluate(examples))
-  }
-
-  operator fun invoke() = rule
-}
-

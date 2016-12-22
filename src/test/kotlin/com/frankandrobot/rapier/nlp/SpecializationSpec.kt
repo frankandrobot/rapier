@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.dummySlot
 import com.frankandrobot.rapier.emptyBaseRule
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.*
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
@@ -13,12 +14,14 @@ class SpecializationSpec : Spek({
 
     describe("example") {
 
+      val params = RapierParams()
+
       var baseRule1 = emptyBaseRule()
       var baseRule2 = emptyBaseRule()
       var fillerGeneralizations : List<Pattern> = emptyList()
-      var fillerRules : List<RuleWithPositionInfo> = emptyList()
-      var iteration1 : List<RuleWithPositionInfo> = emptyList()
-      var iteration2 : List<RuleWithPositionInfo> = emptyList()
+      var fillerRules : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> = emptyList()
+      var iteration1 : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> = emptyList()
+      var iteration2 : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> = emptyList()
 
 
       beforeEach {
@@ -58,17 +61,17 @@ class SpecializationSpec : Spek({
 
         fillerGeneralizations = generalize(baseRule1.filler, baseRule2.filler)
         fillerRules = fillerGeneralizations
-          .map { initialRule(it, baseRule1, baseRule2) }
-          .map { RuleWithPositionInfo(it) }
+          .map { derivedRuleWithEmptyPreAndPostFillers(it, baseRule1, baseRule2) }
+          .map(::RuleWithPositionInfo)
 
         iteration1 = fillerRules
-          .flatMap { specializePrefiller(it, n = 1) }
-          .flatMap { specializePostFiller(it, n = 1) }
+          .flatMap { specializePrefiller(rule = it, n = 1, params = params) }
+          .flatMap { specializePostFiller(rule = it, n = 1, params = params) }
         iteration2 = iteration1
-          .filter { it().preFiller().any{ it is PatternItem } }
-          .filter { it().postFiller().any{ it is PatternItem } }
-          .flatMap { specializePrefiller(it, n = 2)}
-          .flatMap { specializePostFiller(it, n = 2) }
+          .filter { it.preFiller().any{ it is PatternItem } }
+          .filter { it.postFiller().any{ it is PatternItem } }
+          .flatMap { specializePrefiller(rule = it, n = 2, params = params)}
+          .flatMap { specializePostFiller(rule = it, n = 2, params = params) }
       }
 
 

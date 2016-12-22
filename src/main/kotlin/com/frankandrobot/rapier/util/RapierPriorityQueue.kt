@@ -55,5 +55,5 @@ class RapierPriorityQueue<T : Comparable<T>>(val capacity : Int) {
   }
 
 
-  fun iterator(index : Int) = queue.listIterator(index)
+  fun iterator() = queue.asIterable()
 }

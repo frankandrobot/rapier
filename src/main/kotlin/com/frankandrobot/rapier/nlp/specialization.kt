@@ -1,119 +1,165 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.BaseRule
-import com.frankandrobot.rapier.pattern.DerivedRule
+import com.frankandrobot.rapier.meta.RapierParams
+import com.frankandrobot.rapier.pattern.IDerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
+import org.funktionale.option.Option
 
 
-data class FillerIndexInfo(val numUsed1 : Int = 0, val numUsed2 : Int = 0)
+fun Pattern.subPattern(from: Int,
+                       to: Int,
+                       maxDistance : Int) : Option<Pattern> {
 
-data class RuleWithPositionInfo(
-  private val rule : DerivedRule,
-  val preFillerInfo: FillerIndexInfo = FillerIndexInfo(),
-  val postFillerInfo: FillerIndexInfo = FillerIndexInfo()) {
+  if (0 <= from && from < to && to - from <= maxDistance) {
 
-  operator fun invoke() = rule
+    return Option.Some(Pattern(this().subList(from, to)))
+  }
+
+  return Option.None
 }
 
 
-fun initialRule(pattern : Pattern, baseRule1 : BaseRule, baseRule2 : BaseRule)
-  : DerivedRule {
+fun specializePrefiller(rule : IDerivedRule, n : Int, params : RapierParams) =
+  specializePrefiller(rule = com.frankandrobot.rapier.nlp.RuleWithPositionInfo(rule), n = n, params = params)
 
-  assert(baseRule1.slot == baseRule2.slot)
+fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
+  specializePostFiller(rule = com.frankandrobot.rapier.nlp.RuleWithPositionInfo(rule), n = n, params = params)
 
-  return DerivedRule(
-    preFiller = Pattern(),
-    filler = pattern,
-    postFiller = Pattern(),
-    slot = baseRule1.slot,
-    baseRule1 = baseRule1,
-    baseRule2 = baseRule2
-  )
-}
+internal fun specializePrefiller(rule : com.frankandrobot.rapier.nlp.RuleWithPositionInfo,
+                                 n : Int,
+                                 params : RapierParams) : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> {
 
-
-fun specializePrefiller(rule : RuleWithPositionInfo, n : Int) :
-  List<RuleWithPositionInfo> {
-
+  val k_MaxNoGainSearch = params.k_MaxNoGainSearch
   val numUsed1 = rule.preFillerInfo.numUsed1
   val numUsed2 = rule.preFillerInfo.numUsed2
-  val preFiller1 = rule().baseRule1.preFiller
-  val preFiller2 = rule().baseRule2.preFiller
+  val preFiller1 = rule.baseRule1.preFiller
+  val preFiller2 = rule.baseRule2.preFiller
   val patternLen1 = preFiller1.length
   val patternLen2 = preFiller2.length
 
   val genSet1 = generalize(
-    preFiller1.croppedSubPattern(patternLen1 - n, patternLen1 - numUsed1),
-    preFiller2.croppedSubPattern(patternLen2 - n + 1, patternLen2 - numUsed2)
-  ).map{ Pair(it, FillerIndexInfo(numUsed1 = n, numUsed2 = n - 1)) }
+    preFiller1.subPattern(
+      from = patternLen1 - n,
+      to = patternLen1 - numUsed1,
+      maxDistance = k_MaxNoGainSearch
+    ),
+    preFiller2.subPattern(
+      from = patternLen2 - n + 1,
+      to = patternLen2 - numUsed2,
+      maxDistance = k_MaxNoGainSearch
+    )
+  ).filter{ it.isDefined() }
+    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n, numUsed2 = n - 1)) }
 
   val genSet2 = generalize(
-    preFiller1.croppedSubPattern(patternLen1 - n + 1, patternLen1 - numUsed1),
-    preFiller2.croppedSubPattern(patternLen2 - n, patternLen2 - numUsed2)
-  ).map{ Pair(it, FillerIndexInfo(numUsed1 = n - 1, numUsed2 = n)) }
+    preFiller1.subPattern(
+      from = patternLen1 - n + 1,
+      to = patternLen1 - numUsed1,
+      maxDistance = k_MaxNoGainSearch
+    ),
+    preFiller2.subPattern(
+      from = patternLen2 - n,
+      to = patternLen2 - numUsed2,
+      maxDistance = k_MaxNoGainSearch
+    )
+  ).filter{ it.isDefined() }
+    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n - 1, numUsed2 = n)) }
 
   val genSet3 = generalize(
-    preFiller1.croppedSubPattern(patternLen1 - n, patternLen1 - numUsed1),
-    preFiller2.croppedSubPattern(patternLen2 - n, patternLen2 - numUsed2)
-  ).map{ Pair(it, FillerIndexInfo(numUsed1 = n, numUsed2 = n)) }
+    preFiller1.subPattern(
+      from = patternLen1 - n,
+      to = patternLen1 - numUsed1,
+      maxDistance = k_MaxNoGainSearch
+    ),
+    preFiller2.subPattern(
+      from = patternLen2 - n,
+      to = patternLen2 - numUsed2,
+      maxDistance = k_MaxNoGainSearch)
+  ).filter{ it.isDefined() }
+    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n, numUsed2 = n)) }
 
   val genSet = genSet1 + genSet2 + genSet3
 
   return genSet.map{ pattern ->
-    val newPreFiller = pattern.first + rule().preFiller
+    val newPreFiller = pattern.first + rule.preFiller
 
-    RuleWithPositionInfo(
-      DerivedRule(
-        preFiller = newPreFiller,
-        filler = rule().filler,
-        postFiller = rule().postFiller,
-        slot = rule().slot,
-        baseRule1 = rule().baseRule1,
-        baseRule2 = rule().baseRule2
-      ),
+    com.frankandrobot.rapier.nlp.RuleWithPositionInfo(
+      preFiller = newPreFiller,
+      filler = rule.filler,
+      postFiller = rule.postFiller,
+      slot = rule.slot,
+      baseRule1 = rule.baseRule1,
+      baseRule2 = rule.baseRule2,
       preFillerInfo = pattern.second,
       postFillerInfo = rule.postFillerInfo
     )
   }
 }
 
-fun specializePostFiller(rule : RuleWithPositionInfo, n : Int) :
-  List<RuleWithPositionInfo> {
+internal fun specializePostFiller(rule : com.frankandrobot.rapier.nlp.RuleWithPositionInfo,
+                                  n : Int,
+                                  params: RapierParams) : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> {
 
+  val k_MaxNoGainSearch = params.k_MaxNoGainSearch
   val numUsed1 = rule.postFillerInfo.numUsed1
   val numUsed2 = rule.postFillerInfo.numUsed2
-  val postFiller1 = rule().baseRule1.postFiller
-  val postFiller2 = rule().baseRule2.postFiller
+  val postFiller1 = rule.baseRule1.postFiller
+  val postFiller2 = rule.baseRule2.postFiller
 
   val genSet1 = generalize(
-    postFiller1.croppedSubPattern(numUsed1, n),
-    postFiller2.croppedSubPattern(numUsed2, n-1)
-  ).map{ Pair(it, FillerIndexInfo(numUsed1 = n, numUsed2 = n - 1)) }
+    postFiller1.subPattern(
+      from = numUsed1,
+      to = n,
+      maxDistance = k_MaxNoGainSearch
+    ),
+    postFiller2.subPattern(
+      from = numUsed2,
+      to = n-1,
+      maxDistance = k_MaxNoGainSearch
+    )
+  ).filter{ it.isDefined() }
+    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n, numUsed2 = n - 1)) }
 
   val genSet2 = generalize(
-    postFiller1.croppedSubPattern(numUsed1, n-1),
-    postFiller2.croppedSubPattern(numUsed2, n)
-  ).map{ Pair(it, FillerIndexInfo(numUsed1 = n - 1, numUsed2 = n)) }
+    postFiller1.subPattern(
+      from = numUsed1,
+      to = n-1,
+      maxDistance = k_MaxNoGainSearch
+    ),
+    postFiller2.subPattern(
+      from = numUsed2,
+      to = n,
+      maxDistance = k_MaxNoGainSearch
+    )
+  ).filter{ it.isDefined() }
+    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n - 1, numUsed2 = n)) }
 
   val genSet3 = generalize(
-    postFiller1.croppedSubPattern(numUsed1, n),
-    postFiller2.croppedSubPattern(numUsed2, n)
-  ).map{ Pair(it, FillerIndexInfo(numUsed1 = n, numUsed2 = n)) }
+    postFiller1.subPattern(
+      from = numUsed1,
+      to = n,
+      maxDistance = k_MaxNoGainSearch
+    ),
+    postFiller2.subPattern(
+      from = numUsed2,
+      to = n,
+      maxDistance = k_MaxNoGainSearch
+    )
+  ).filter{ it.isDefined() }
+    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n, numUsed2 = n)) }
 
   val genSet = genSet1 + genSet2 + genSet3
 
   return genSet.map{ pattern ->
-    val newPostFiller = rule().postFiller + pattern.first
+    val newPostFiller = rule.postFiller + pattern.first
 
-    RuleWithPositionInfo(
-      DerivedRule(
-        preFiller = rule().preFiller,
-        filler = rule().filler,
-        postFiller = newPostFiller,
-        slot = rule().slot,
-        baseRule1 = rule().baseRule1,
-        baseRule2 = rule().baseRule2
-      ),
+    com.frankandrobot.rapier.nlp.RuleWithPositionInfo(
+      preFiller = rule.preFiller,
+      filler = rule.filler,
+      postFiller = newPostFiller,
+      slot = rule.slot,
+      baseRule1 = rule.baseRule1,
+      baseRule2 = rule.baseRule2,
       preFillerInfo = rule.preFillerInfo,
       postFillerInfo = pattern.second
     )
