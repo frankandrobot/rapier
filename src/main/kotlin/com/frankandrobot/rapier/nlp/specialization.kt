@@ -1,8 +1,10 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.meta.RapierParams
+import com.frankandrobot.rapier.pattern.FillerIndexInfo
 import com.frankandrobot.rapier.pattern.IDerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.pattern.RuleWithPositionInfo
 import org.funktionale.option.Option
 
 
@@ -20,14 +22,14 @@ fun Pattern.subPattern(from: Int,
 
 
 fun specializePrefiller(rule : IDerivedRule, n : Int, params : RapierParams) =
-  specializePrefiller(rule = com.frankandrobot.rapier.nlp.RuleWithPositionInfo(rule), n = n, params = params)
+  specializePrefiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
 
 fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
-  specializePostFiller(rule = com.frankandrobot.rapier.nlp.RuleWithPositionInfo(rule), n = n, params = params)
+  specializePostFiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
 
-internal fun specializePrefiller(rule : com.frankandrobot.rapier.nlp.RuleWithPositionInfo,
+internal fun specializePrefiller(rule : RuleWithPositionInfo,
                                  n : Int,
-                                 params : RapierParams) : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> {
+                                 params : RapierParams) : List<RuleWithPositionInfo> {
 
   val k_MaxNoGainSearch = params.k_MaxNoGainSearch
   val numUsed1 = rule.preFillerInfo.numUsed1
@@ -83,7 +85,7 @@ internal fun specializePrefiller(rule : com.frankandrobot.rapier.nlp.RuleWithPos
   return genSet.map{ pattern ->
     val newPreFiller = pattern.first + rule.preFiller
 
-    com.frankandrobot.rapier.nlp.RuleWithPositionInfo(
+    RuleWithPositionInfo(
       preFiller = newPreFiller,
       filler = rule.filler,
       postFiller = rule.postFiller,
@@ -96,9 +98,9 @@ internal fun specializePrefiller(rule : com.frankandrobot.rapier.nlp.RuleWithPos
   }
 }
 
-internal fun specializePostFiller(rule : com.frankandrobot.rapier.nlp.RuleWithPositionInfo,
+internal fun specializePostFiller(rule : RuleWithPositionInfo,
                                   n : Int,
-                                  params: RapierParams) : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> {
+                                  params: RapierParams) : List<RuleWithPositionInfo> {
 
   val k_MaxNoGainSearch = params.k_MaxNoGainSearch
   val numUsed1 = rule.postFillerInfo.numUsed1
@@ -153,7 +155,7 @@ internal fun specializePostFiller(rule : com.frankandrobot.rapier.nlp.RuleWithPo
   return genSet.map{ pattern ->
     val newPostFiller = rule.postFiller + pattern.first
 
-    com.frankandrobot.rapier.nlp.RuleWithPositionInfo(
+    RuleWithPositionInfo(
       preFiller = rule.preFiller,
       filler = rule.filler,
       postFiller = newPostFiller,

@@ -19,9 +19,9 @@ class SpecializationSpec : Spek({
       var baseRule1 = emptyBaseRule()
       var baseRule2 = emptyBaseRule()
       var fillerGeneralizations : List<Pattern> = emptyList()
-      var fillerRules : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> = emptyList()
-      var iteration1 : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> = emptyList()
-      var iteration2 : List<com.frankandrobot.rapier.nlp.RuleWithPositionInfo> = emptyList()
+      var fillerRules : List<RuleWithPositionInfo> = emptyList()
+      var iteration1 : List<RuleWithPositionInfo> = emptyList()
+      var iteration2 : List<RuleWithPositionInfo> = emptyList()
 
 
       beforeEach {

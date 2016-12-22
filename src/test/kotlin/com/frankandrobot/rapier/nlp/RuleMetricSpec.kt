@@ -3,6 +3,7 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.BaseRule
+import com.frankandrobot.rapier.pattern.ComparableRule
 import com.frankandrobot.rapier.pattern.DerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
 import org.amshove.kluent.shouldContain
@@ -316,7 +317,7 @@ class RuleMetricSpec : Spek({
       it("should evaluate a rule with more positive matches as smaller") {
         val rule1 = DerivedRule(
           preFiller = Pattern(),
-          filler = Pattern(patternItemOfWords("a","b","c")),
+          filler = Pattern(patternItemOfWords("a", "b", "c")),
           postFiller = Pattern(),
           baseRule1 = emptyRule,
           baseRule2 = emptyRule,
@@ -352,7 +353,7 @@ class RuleMetricSpec : Spek({
       it("should only count filler matches") {
         val rule1 = DerivedRule(
           preFiller = Pattern(),
-          filler = Pattern(patternItemOfWords("a","b","c")),
+          filler = Pattern(patternItemOfWords("a", "b", "c")),
           postFiller = Pattern(),
           baseRule1 = emptyRule,
           baseRule2 = emptyRule,
@@ -366,7 +367,7 @@ class RuleMetricSpec : Spek({
           )
         )
         val rule2 = DerivedRule(
-          preFiller = Pattern(patternItemOfWords("a","b","c","d")),
+          preFiller = Pattern(patternItemOfWords("a", "b", "c", "d")),
           filler = Pattern(),
           postFiller = Pattern(),
           baseRule1 = emptyRule,

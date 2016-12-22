@@ -1,10 +1,6 @@
-package com.frankandrobot.rapier.nlp
+package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.meta.Slot
-import com.frankandrobot.rapier.pattern.DerivedRule
-import com.frankandrobot.rapier.pattern.IDerivedRule
-import com.frankandrobot.rapier.pattern.IRule
-import com.frankandrobot.rapier.pattern.Pattern
 
 
 /**

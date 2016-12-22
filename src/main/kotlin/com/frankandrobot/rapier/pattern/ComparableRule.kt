@@ -1,9 +1,13 @@
-package com.frankandrobot.rapier.nlp
+package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.RapierParams
-import com.frankandrobot.rapier.pattern.IDerivedRule
+import com.frankandrobot.rapier.nlp.RuleMetric
 
+
+/**
+ * Used to insert rules in the priority queue, using the Rule metric
+ */
 data class ComparableRule<T : IDerivedRule>(
   private val examples : Examples,
   private val params : RapierParams,

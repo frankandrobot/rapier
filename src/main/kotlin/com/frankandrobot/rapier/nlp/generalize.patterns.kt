@@ -4,6 +4,8 @@ import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.util.combinations
 import com.frankandrobot.rapier.util.sort
 import org.funktionale.option.Option
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 import java.util.*
 
 
@@ -138,4 +140,14 @@ fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
       combinations(total, curPatternListForSegment) { a : Pattern, b : Pattern -> a + b }
     }
   }
+}
+
+
+fun generalize(a : Option<Pattern>, b : Option<Pattern>) : List<Option<Pattern>> {
+
+  if (a.isDefined() && b.isDefined()) {
+    return generalize(a.get(), b.get()).map{Some(it)}
+  }
+
+  return listOf(None)
 }
