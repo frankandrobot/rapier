@@ -4,13 +4,138 @@ import com.frankandrobot.rapier.dummySlot
 import com.frankandrobot.rapier.emptyBaseRule
 import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.patternOfWordItems
+import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldNotEqual
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
 
 class SpecializationSpec : Spek({
 
-  describe("specializaton") {
+  describe("specializeFiller") {
+
+    val params = RapierParams()
+    val tooShortBaseRule = { BaseRule(
+      preFiller = patternOfWordItems("1"),
+      filler = patternOfWordItems("filler"),
+      postFiller = patternOfWordItems("end"),
+      slot = dummySlot("any")
+    ) }
+    val baseRule = { BaseRule(
+      preFiller = patternOfWordItems("1", "2", "3", "4", "5"),
+      filler = patternOfWordItems("filler"),
+      postFiller = patternOfWordItems("end"),
+      slot = dummySlot("any")
+    ) }
+
+
+    describe("constraints") {
+
+      it("should not generate rules if first base prefiller is too short") {
+        val rule = RuleWithPositionInfo(
+          baseRule1 = tooShortBaseRule(),
+          baseRule2 = baseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 2, n2 = 0)
+
+        result shouldEqual emptyList()
+      }
+
+      it("should not generate rules if second base prefiller is too short") {
+        val rule = RuleWithPositionInfo(
+          baseRule1 = baseRule(),
+          baseRule2 = tooShortBaseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 0, n2 = 2)
+        result shouldEqual emptyList()
+      }
+
+      it("should not generate rules if first base rule has used more than n1 pattern" +
+        " items") {
+        val rule = RuleWithPositionInfo(
+          preFillerInfo = FillerIndexInfo(numUsed1 = 3, numUsed2 = 0),
+          baseRule1 = baseRule(),
+          baseRule2 = baseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 3, n2 = 3)
+        result shouldEqual emptyList()
+      }
+
+      it("should not generate rules if second base rule has used more than n2 pattern" +
+        " items") {
+        val rule = RuleWithPositionInfo(
+          preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 3),
+          baseRule1 = baseRule(),
+          baseRule2 = baseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 3, n2 = 3)
+        result shouldEqual emptyList()
+      }
+
+      it("should not generate rules if first base rule will generalize over too many " +
+        "pattern items") {
+        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val rule = RuleWithPositionInfo(
+          preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
+          baseRule1 = baseRule(),
+          baseRule2 = baseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 5, n2 = 1)
+        result shouldEqual emptyList()
+      }
+
+      it("should not generate rules if second base rule will generalize over too many " +
+        "pattern items") {
+        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val rule = RuleWithPositionInfo(
+          preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
+          baseRule1 = baseRule(),
+          baseRule2 = baseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 1, n2 = 5)
+        result shouldEqual emptyList()
+      }
+
+      it("should generate rules when constraints satisfied") {
+        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val rule = RuleWithPositionInfo(
+          preFillerInfo = FillerIndexInfo(numUsed1 = 1, numUsed2 = 0),
+          baseRule1 = baseRule(),
+          baseRule2 = baseRule(),
+          preFiller = Pattern(),
+          filler = Pattern(),
+          postFiller = Pattern(),
+          slot = dummySlot("foo")
+        )
+        val result = specializePrefiller(rule, params, n1 = 2, n2 = 4)
+        result shouldNotEqual emptyList<RuleWithPositionInfo>()
+      }
+    }
 
     describe("example") {
 
