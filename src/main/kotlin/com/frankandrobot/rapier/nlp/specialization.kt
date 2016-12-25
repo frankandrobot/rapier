@@ -13,13 +13,21 @@ fun Pattern.subPattern(from: Int,
                        to: Int,
                        maxDistance : Int) : Option<Pattern> {
 
-  if (0 <= from && from <= to && to - from <= maxDistance) {
+  if (0 <= from && from <= to && to <= this.length && to - from <= maxDistance) {
 
     return Option.Some(Pattern(this().subList(from, to)))
   }
 
   return Option.None
 }
+
+
+fun specializePrefiller(rule : IDerivedRule, n : Int, params : RapierParams) =
+  specializePrefiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
+
+fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
+  specializePostFiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
+
 
 /**
  * Must satisfy these contraints in order to apply specialization algorithm:
@@ -90,16 +98,10 @@ internal fun specializePrefiller(rule : RuleWithPositionInfo,
 }
 
 
-fun specializePrefiller(rule : IDerivedRule, n : Int, params : RapierParams) =
-  specializePrefiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
-
-fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
-  specializePostFiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
-
-
 internal fun specializePostFiller(rule : RuleWithPositionInfo,
-                                  n : Int,
-                                  params: RapierParams) : List<RuleWithPositionInfo> {
+                                  params : RapierParams,
+                                  n1 : Int,
+                                  n2 : Int) : List<RuleWithPositionInfo> {
 
   val k_MaxNoGainSearch = params.k_MaxNoGainSearch
   val numUsed1 = rule.postFillerInfo.numUsed1
@@ -107,62 +109,42 @@ internal fun specializePostFiller(rule : RuleWithPositionInfo,
   val postFiller1 = rule.baseRule1.postFiller
   val postFiller2 = rule.baseRule2.postFiller
 
-  val genSet1 = generalize(
+  return generalize(
     postFiller1.subPattern(
       from = numUsed1,
-      to = n,
+      to = n1,
       maxDistance = k_MaxNoGainSearch
     ),
     postFiller2.subPattern(
       from = numUsed2,
-      to = n-1,
+      to = n2,
       maxDistance = k_MaxNoGainSearch
     )
-  ).filter{ it.isDefined() }
-    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n, numUsed2 = n - 1)) }
+  ).filter { it.isDefined() }
+    .map { pattern ->
+      val newPostFiller = rule.postFiller + pattern.get()
+      val positionInfo = FillerIndexInfo(numUsed1 = n1, numUsed2 = n2)
 
-  val genSet2 = generalize(
-    postFiller1.subPattern(
-      from = numUsed1,
-      to = n-1,
-      maxDistance = k_MaxNoGainSearch
-    ),
-    postFiller2.subPattern(
-      from = numUsed2,
-      to = n,
-      maxDistance = k_MaxNoGainSearch
-    )
-  ).filter{ it.isDefined() }
-    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n - 1, numUsed2 = n)) }
-
-  val genSet3 = generalize(
-    postFiller1.subPattern(
-      from = numUsed1,
-      to = n,
-      maxDistance = k_MaxNoGainSearch
-    ),
-    postFiller2.subPattern(
-      from = numUsed2,
-      to = n,
-      maxDistance = k_MaxNoGainSearch
-    )
-  ).filter{ it.isDefined() }
-    .map{ Pair(it.get(), FillerIndexInfo(numUsed1 = n, numUsed2 = n)) }
-
-  val genSet = genSet1 + genSet2 + genSet3
-
-  return genSet.map{ pattern ->
-    val newPostFiller = rule.postFiller + pattern.first
-
-    RuleWithPositionInfo(
-      preFiller = rule.preFiller,
-      filler = rule.filler,
-      postFiller = newPostFiller,
-      slot = rule.slot,
-      baseRule1 = rule.baseRule1,
-      baseRule2 = rule.baseRule2,
-      preFillerInfo = rule.preFillerInfo,
-      postFillerInfo = pattern.second
+      RuleWithPositionInfo(
+        preFiller = rule.preFiller,
+        filler = rule.filler,
+        postFiller = newPostFiller,
+        slot = rule.slot,
+        baseRule1 = rule.baseRule1,
+        baseRule2 = rule.baseRule2,
+        preFillerInfo = rule.preFillerInfo,
+        postFillerInfo = positionInfo
     )
   }
+}
+
+internal fun specializePostFiller(rule : RuleWithPositionInfo,
+                                  n : Int,
+                                  params: RapierParams) : List<RuleWithPositionInfo> {
+
+  val genSet1 = specializePostFiller(n1 = n,   n2 = n-1, rule = rule, params = params)
+  val genSet2 = specializePostFiller(n1 = n-1, n2 = n,   rule = rule, params = params)
+  val genSet3 = specializePostFiller(n1 = n,   n2 = n,   rule = rule, params = params)
+
+  return genSet1 + genSet2 + genSet3
 }
