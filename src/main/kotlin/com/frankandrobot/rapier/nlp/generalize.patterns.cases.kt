@@ -7,6 +7,7 @@ import com.frankandrobot.rapier.util.combinations
 import com.frankandrobot.rapier.util.fillCopy
 import com.frankandrobot.rapier.util.sort
 import org.funktionale.option.Option
+import org.funktionale.option.Option.None
 import org.funktionale.option.toOption
 import java.util.*
 
@@ -45,10 +46,10 @@ internal fun caseEqualLengthPatterns(a : Pattern, b : Pattern) : Option<List<Pat
     val bIter = b().iterator()
     val generalizations = a().map { generalize(it, bIter.next()) }
 
-    return combinations(generalizations).map { Pattern(it) }.toOption()
+    return combinations(generalizations).map(::Pattern).toOption()
   }
 
-  return Option.None
+  return None
 }
 
 
@@ -64,26 +65,32 @@ internal fun caseAnEmptyPattern(a: Pattern, b : Pattern) : Option<List<Pattern>>
 
   if (exactlyOneIsEmpty(a, b)) {
 
-    val nonEmpty = if (a().size == 0) b else a
-    val length = nonEmpty().fold(0) { total, patternElement -> total + patternElement.length }
-    val generalizations = nonEmpty().fold(listOf(nonEmpty()[0])) { total, patternElement ->
-      total.flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }.distinct()
+    val nonEmpty = if (a.length == 0) b else a
+    val length = nonEmpty().fold(0) {
+      total, patternElement -> total + patternElement.length
+    }
+    val generalizations = nonEmpty().fold(listOf(nonEmpty()[0])) {
+      total, patternElement ->
+      total
+        .flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }
+        .distinct()
     }
 
     return generalizations
       .map {
-        PatternList(
-          wordConstraints = it.wordConstraints,
-          posTagConstraints = it.posTagConstraints,
-          semanticConstraints = it.semanticConstraints,
-          length = length
+        Pattern(
+          PatternList(
+            wordConstraints = it.wordConstraints,
+            posTagConstraints = it.posTagConstraints,
+            semanticConstraints = it.semanticConstraints,
+            length = length
+          )
         )
       }
-      .map { Pattern(it) }
       .toOption()
   }
 
-  return Option.None
+  return None
 }
 
 
@@ -94,32 +101,34 @@ internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<P
 
   if (exactlyOneHasOneElement(a, b)) {
 
-    val c = if (b().size == 1) a else b
-    val d = if (b().size == 1) b else a
+    val c = if (b.length == 1) a else b
+    val d = if (b.length == 1) b else a
 
     val length = Math.max(
       d()[0].length,
       c().fold(0) { total, patternElement -> total + patternElement.length }
     )
     val generalizations = c().fold(listOf(d()[0])) { total, patternElement ->
-
-      total.flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }.distinct()
+      total
+        .flatMap { prevPatternElement -> generalize(prevPatternElement, patternElement) }
+        .distinct()
     }
 
     return generalizations
       .map {
-        PatternList(
-          wordConstraints = it.wordConstraints,
-          posTagConstraints = it.posTagConstraints,
-          semanticConstraints = it.semanticConstraints,
-          length = length
+        Pattern(
+          PatternList(
+            wordConstraints = it.wordConstraints,
+            posTagConstraints = it.posTagConstraints,
+            semanticConstraints = it.semanticConstraints,
+            length = length
+          )
         )
       }
-      .map { Pattern(it) }
       .toOption()
   }
 
-  return Option.None
+  return None
 }
 
 
@@ -155,7 +164,7 @@ internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Patter
     return listOf(Pattern(PatternList(length = longer.length))).toOption()
   }
 
-  return Option.None
+  return None
 }
 
 
