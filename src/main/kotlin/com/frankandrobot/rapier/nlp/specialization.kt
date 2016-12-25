@@ -13,7 +13,7 @@ fun Pattern.subPattern(from: Int,
                        to: Int,
                        maxDistance : Int) : Option<Pattern> {
 
-  if (0 <= from && from < to && to - from <= maxDistance) {
+  if (0 <= from && from <= to && to - from <= maxDistance) {
 
     return Option.Some(Pattern(this().subList(from, to)))
   }
