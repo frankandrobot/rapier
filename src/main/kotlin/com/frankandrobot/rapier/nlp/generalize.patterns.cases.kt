@@ -12,13 +12,13 @@ import java.util.*
 
 
 internal fun areEqualLengths(a : Pattern, b : Pattern) =
-  a().size == b().size && a().size > 0
+  a.length == b.length && a.length > 0
 
 internal fun exactlyOneIsEmpty(a : Pattern, b : Pattern) =
-  a().size != b().size && (a().size == 0 || b().size == 0)
+  a.length != b.length && (a.length == 0 || b.length == 0)
 
 internal fun exactlyOneHasOneElement(a : Pattern, b : Pattern) =
-  (a().size > b().size && b().size == 1) || (b().size > a().size && a().size == 1)
+  (a.length > b.length && b.length == 1) || (b.length > a.length && a.length == 1)
 
 internal fun areVeryLong(a : Pattern, b : Pattern) : Boolean {
   val patterns = sort(a, b)
