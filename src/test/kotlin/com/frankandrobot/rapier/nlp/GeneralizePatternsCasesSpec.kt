@@ -21,9 +21,11 @@ class GeneralizePatternsCasesSpec : Spek({
       it("should work like generalize pattern elements") {
         val a = PatternItem(listOf("man"), listOf("tag"))
         val b = PatternItem(listOf("woman"), listOf("tag"))
-        val expected = generalize(a, b)
         val actual = caseEqualLengthPatterns(Pattern(a), Pattern(b)).get().flatMap { it() }
-
+        val expected = listOf(
+          PatternItem(words(), tags("tag")),
+          PatternItem(words("man","woman"), tags("tag"))
+        )
         assertEquals(true, expected.containsAll(actual))
         assertEquals(true, actual.containsAll(expected))
       }
