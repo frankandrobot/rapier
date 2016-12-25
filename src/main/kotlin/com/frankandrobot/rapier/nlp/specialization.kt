@@ -6,19 +6,30 @@ import com.frankandrobot.rapier.pattern.IDerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.RuleWithPositionInfo
 import org.funktionale.option.Option
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 
 
+/**
+ * Returns the sub-Pattern consisting of the pattern elements from fromIndex to
+ * toIndex - 1. That means that when fromIndex == toIndex, it returns Some(Pattern()),
+ * that is, the empty Pattern. This is a valid pattern and therefore it makes sense to
+ * return Some as opposed to None.
+ *
+ * Note that when the constraints aren't satisfied, it returns None, not the empty
+ * Pattern.
+ */
+fun Pattern.subPattern(fromIndex: Int,
+                       toIndex: Int,
+                       maxElements: Int) : Option<Pattern> {
 
-fun Pattern.subPattern(from: Int,
-                       to: Int,
-                       maxDistance : Int) : Option<Pattern> {
+  if (0 <= fromIndex && fromIndex <= toIndex && toIndex <= this.length &&
+    toIndex - fromIndex <= maxElements) {
 
-  if (0 <= from && from <= to && to <= this.length && to - from <= maxDistance) {
-
-    return Option.Some(Pattern(this().subList(from, to)))
+    return Some(Pattern(this().subList(fromIndex, toIndex)))
   }
 
-  return Option.None
+  return None
 }
 
 
@@ -55,14 +66,14 @@ internal fun specializePrefiller(rule : RuleWithPositionInfo,
 
     return generalize(
       basePreFiller1.subPattern(
-        from = basePreFillerLen1 - n1,
-        to = basePreFillerLen1 - numUsed1,
-        maxDistance = k_MaxNoGainSearch
+        fromIndex = basePreFillerLen1 - n1,
+        toIndex = basePreFillerLen1 - numUsed1,
+        maxElements = k_MaxNoGainSearch
       ),
       basePreFiller2.subPattern(
-        from = basePreFillerLen2 - n2,
-        to = basePreFillerLen2 - numUsed2,
-        maxDistance = k_MaxNoGainSearch
+        fromIndex = basePreFillerLen2 - n2,
+        toIndex = basePreFillerLen2 - numUsed2,
+        maxElements = k_MaxNoGainSearch
       )
     ).filter { it.isDefined() }
       .map { pattern ->
@@ -111,14 +122,14 @@ internal fun specializePostFiller(rule : RuleWithPositionInfo,
 
   return generalize(
     postFiller1.subPattern(
-      from = numUsed1,
-      to = n1,
-      maxDistance = k_MaxNoGainSearch
+      fromIndex = numUsed1,
+      toIndex = n1,
+      maxElements = k_MaxNoGainSearch
     ),
     postFiller2.subPattern(
-      from = numUsed2,
-      to = n2,
-      maxDistance = k_MaxNoGainSearch
+      fromIndex = numUsed2,
+      toIndex = n2,
+      maxElements = k_MaxNoGainSearch
     )
   ).filter { it.isDefined() }
     .map { pattern ->
