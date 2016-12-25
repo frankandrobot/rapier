@@ -56,6 +56,7 @@ class SpecializationSpec : Spek({
     }
   }
 
+
   describe("specializeFiller") {
 
     describe("constraints") {
@@ -83,7 +84,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 2, n2 = 0)
+        val result = specializePreFiller(rule, params, n1 = 2, n2 = 0)
         result shouldEqual emptyList()
       }
 
@@ -96,7 +97,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 0, n2 = 2)
+        val result = specializePreFiller(rule, params, n1 = 0, n2 = 2)
         result shouldEqual emptyList()
       }
 
@@ -111,7 +112,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 3, n2 = 3)
+        val result = specializePreFiller(rule, params, n1 = 3, n2 = 3)
         result shouldEqual emptyList()
       }
 
@@ -126,7 +127,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 3, n2 = 3)
+        val result = specializePreFiller(rule, params, n1 = 3, n2 = 3)
         result shouldEqual emptyList()
       }
 
@@ -142,7 +143,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 5, n2 = 1)
+        val result = specializePreFiller(rule, params, n1 = 5, n2 = 1)
         result shouldEqual emptyList()
       }
 
@@ -158,7 +159,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 1, n2 = 5)
+        val result = specializePreFiller(rule, params, n1 = 1, n2 = 5)
         result shouldEqual emptyList()
       }
 
@@ -173,7 +174,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(),
           slot = dummySlot("foo")
         )
-        val result = specializePrefiller(rule, params, n1 = 2, n2 = 4)
+        val result = specializePreFiller(rule, params, n1 = 2, n2 = 4)
         result shouldNotEqual emptyList<RuleWithPositionInfo>()
       }
     }
@@ -219,10 +220,9 @@ class SpecializationSpec : Spek({
         fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
           .map(::RuleWithPositionInfo)
         iteration1 = fillerRules
-          .flatMap { specializePrefiller(rule = it, n = 1, params = params) }
+          .flatMap { specializePreFiller(rule = it, n = 1, params = params) }
         iteration2 = iteration1
-          //.filter { it.preFiller().any{ it is PatternItem } }
-          .flatMap { specializePrefiller(rule = it, n = 2, params = params)}
+          .flatMap { specializePreFiller(rule = it, n = 2, params = params)}
       }
 
 
@@ -315,6 +315,7 @@ class SpecializationSpec : Spek({
     }
   }
 
+
   describe("specializePostFiller") {
 
     describe("constraints") {
@@ -329,12 +330,13 @@ class SpecializationSpec : Spek({
       val baseRule = { BaseRule(
         preFiller = patternOfWordItems("start"),
         filler = patternOfWordItems("filler"),
-        postFiller = patternOfWordItems("1", "2", "3", "4", "5"),
+        postFiller = patternOfWordItems("0", "1", "2", "3", "4"),
         slot = dummySlot("any")
       ) }
 
       it("should not generate rules if first base postfiller is too short") {
         val rule = RuleWithPositionInfo(
+          postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = tooShortBaseRule(),
           baseRule2 = baseRule(),
           preFiller = Pattern(),
@@ -348,6 +350,7 @@ class SpecializationSpec : Spek({
 
       it("should not generate rules if second base postfiller is too short") {
         val rule = RuleWithPositionInfo(
+          postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
           baseRule2 = tooShortBaseRule(),
           preFiller = Pattern(),
@@ -362,7 +365,7 @@ class SpecializationSpec : Spek({
       it("should not generate rules if first base rule has used more than n1 pattern" +
         " items") {
         val rule = RuleWithPositionInfo(
-          preFillerInfo = FillerIndexInfo(numUsed1 = 4, numUsed2 = 0),
+          postFillerInfo = FillerIndexInfo(numUsed1 = 4, numUsed2 = 0),
           baseRule1 = baseRule(),
           baseRule2 = baseRule(),
           preFiller = Pattern(),
@@ -377,7 +380,7 @@ class SpecializationSpec : Spek({
       it("should not generate rules if second base rule has used more than n2 pattern" +
         " items") {
         val rule = RuleWithPositionInfo(
-          preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 4),
+          postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 4),
           baseRule1 = baseRule(),
           baseRule2 = baseRule(),
           preFiller = Pattern(),
@@ -393,7 +396,7 @@ class SpecializationSpec : Spek({
         "pattern items") {
         val params = RapierParams(k_MaxNoGainSearch = 4)
         val rule = RuleWithPositionInfo(
-          preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
+          postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
           baseRule2 = baseRule(),
           preFiller = Pattern(),
@@ -409,7 +412,7 @@ class SpecializationSpec : Spek({
         "pattern items") {
         val params = RapierParams(k_MaxNoGainSearch = 4)
         val rule = RuleWithPositionInfo(
-          preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
+          postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
           baseRule2 = baseRule(),
           preFiller = Pattern(),
@@ -424,7 +427,7 @@ class SpecializationSpec : Spek({
       it("should generate rules when constraints satisfied") {
         val params = RapierParams(k_MaxNoGainSearch = 4)
         val rule = RuleWithPositionInfo(
-          preFillerInfo = FillerIndexInfo(numUsed1 = 1, numUsed2 = 0),
+          postFillerInfo = FillerIndexInfo(numUsed1 = 1, numUsed2 = 0),
           baseRule1 = baseRule(),
           baseRule2 = baseRule(),
           preFiller = Pattern(),
@@ -443,19 +446,14 @@ class SpecializationSpec : Spek({
 
       var baseRule1 = emptyBaseRule()
       var baseRule2 = emptyBaseRule()
-      var fillerGeneralizations : List<Pattern> = emptyList()
       var fillerRules : List<RuleWithPositionInfo> = emptyList()
       var iteration1 : List<RuleWithPositionInfo> = emptyList()
       var iteration2 : List<RuleWithPositionInfo> = emptyList()
 
-
       beforeEach {
 
         baseRule1 = BaseRule(
-          preFiller = Pattern(
-            PatternItem(words("located"), tags("vbn")),
-            PatternItem(words("in"), tags("in"))
-          ),
+          preFiller = Pattern(),
           filler = Pattern(
             PatternItem(words("atlanta"), tags("nnp"))
           ),
@@ -468,10 +466,7 @@ class SpecializationSpec : Spek({
         )
 
         baseRule2 = BaseRule(
-          preFiller = Pattern(
-            PatternItem(words("offices"), tags("nns")),
-            PatternItem(words("in"), tags("in"))
-          ),
+          preFiller = Pattern(),
           filler = Pattern(
             PatternItem(words("kansas"), tags("nnp")),
             PatternItem(words("city"), tags("nnp"))
@@ -484,19 +479,13 @@ class SpecializationSpec : Spek({
           slot = dummySlot("any")
         )
 
-        fillerGeneralizations = generalize(baseRule1.filler, baseRule2.filler)
-        fillerRules = fillerGeneralizations
-          .map { derivedRuleWithEmptyPreAndPostFillers(it, baseRule1, baseRule2) }
+        fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
           .map(::RuleWithPositionInfo)
-
         iteration1 = fillerRules
-          .flatMap { specializePrefiller(rule = it, n = 1, params = params) }
           .flatMap { specializePostFiller(rule = it, n = 1, params = params) }
         iteration2 = iteration1
-          .filter { it.preFiller().any{ it is PatternItem } }
-          .filter { it.postFiller().any{ it is PatternItem } }
-          .flatMap { specializePrefiller(rule = it, n = 2, params = params)}
-          .flatMap { specializePostFiller(rule = it, n = 2, params = params) }
+          .filter{ rule -> rule.postFiller().all { it is PatternItem }}
+          .flatMap { specializePostFiller(rule = it, n = 2, params = params)}
       }
 
 
@@ -506,26 +495,10 @@ class SpecializationSpec : Spek({
 
         beforeEach { result = iteration1.map{ it() } }
 
-        it("should generalize fillers") {
-          fillerGeneralizations shouldContain Pattern(
-            PatternList(
-              words("atlanta", "kansas", "city"),
-              tags("nnp"),
-              length = 2
-            )
-          )
-          fillerGeneralizations shouldContain Pattern(
-            PatternList(posTagConstraints = tags("nnp"), length = 2)
-          )
-          fillerGeneralizations.size shouldEqual 2
-        }
-
         it("should contain rule 1") {
 
           result shouldContain DerivedRule(
-            preFiller = Pattern(
-              PatternItem(words("in"), tags("in"))
-            ),
+            preFiller = Pattern(),
             filler = Pattern(
               PatternList(words("atlanta", "kansas", "city"), tags("nnp"), length = 2)
             ),
@@ -540,22 +513,18 @@ class SpecializationSpec : Spek({
 
         it("should contain rule 2") {
 
-          assertEquals(true, result.any {
-            it == DerivedRule(
-              preFiller = Pattern(
-                PatternItem(words("in"), tags("in"))
-              ),
-              filler = Pattern(
-                PatternList(posTagConstraints = tags("nnp"), length = 2)
-              ),
-              postFiller = Pattern(
-                PatternItem(words(","), tags(","))
-              ),
-              slot = dummySlot("any"),
-              baseRule1 = baseRule1,
-              baseRule2 = baseRule2
-            )
-          })
+          result shouldContain DerivedRule(
+            preFiller = Pattern(),
+            filler = Pattern(
+              PatternList(posTagConstraints = tags("nnp"), length = 2)
+            ),
+            postFiller = Pattern(
+              PatternItem(words(","), tags(","))
+            ),
+            slot = dummySlot("any"),
+            baseRule1 = baseRule1,
+            baseRule2 = baseRule2
+          )
         }
       }
 
@@ -565,34 +534,36 @@ class SpecializationSpec : Spek({
 
         beforeEach { result = iteration2.map{ it() } }
 
-        it("should contain prefiller 1") {
-          val elem = PatternList(words("located"), tags("vbn"), length = 1)
-          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        it("should contain postfiller 1") {
+          val rule = DerivedRule(
+            preFiller = Pattern(),
+            filler = Pattern(
+              PatternList(posTagConstraints = tags("nnp"), length = 2)
+            ),
+            postFiller = Pattern(
+              PatternItem(words(","), tags(",")),
+              PatternList(words("georgia"), tags("nnp"), length = 1)
+            ),
+            slot = dummySlot("any"),
+            baseRule1 = baseRule1,
+            baseRule2 = baseRule2
+          )
+          result shouldContain rule
         }
 
-        it("should contain prefiller 2") {
-          val elem = PatternItem(words(), tags("vbn", "nns"))
-          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        it("should contain postfiller 2") {
+          val elem = PatternItem(words(), tags("nnp"))
+          assertEquals(true, result.any{ it.postFiller().any{ it == elem }})
         }
 
-        it("should contain prefiller 3") {
-          val elem = PatternList(words("offices"), tags("nns"), length = 1)
-          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        it("should contain postfiller 3") {
+          val elem = PatternList(words("missouri"), tags("nnp"), length = 1)
+          assertEquals(true, result.any{ it.postFiller().any{ it == elem }})
         }
 
-        it("should contain prefiller 4") {
-          val elem = PatternItem()
-          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
-        }
-
-        it("should contain prefiller 5") {
-          val elem = PatternItem(words("located", "offices"), tags("vbn", "nns"))
-          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
-        }
-
-        it("should contain prefiller 6") {
-          val elem = PatternItem(words("located", "offices"))
-          assertEquals(true, result.any{ it.preFiller().any{ it == elem }})
+        it("should contain postfiller 4") {
+          val elem = PatternItem(words("georgia", "missouri"), tags("nnp"))
+          assertEquals(true, result.any{ it.postFiller().any{ it == elem }})
         }
       }
     }
@@ -604,7 +575,6 @@ class SpecializationSpec : Spek({
 
     var baseRule1 = emptyBaseRule()
     var baseRule2 = emptyBaseRule()
-    var fillerGeneralizations : List<Pattern> = emptyList()
     var fillerRules : List<RuleWithPositionInfo> = emptyList()
     var iteration1 : List<RuleWithPositionInfo> = emptyList()
     var iteration2 : List<RuleWithPositionInfo> = emptyList()
@@ -645,18 +615,16 @@ class SpecializationSpec : Spek({
         slot = dummySlot("any")
       )
 
-      fillerGeneralizations = generalize(baseRule1.filler, baseRule2.filler)
-      fillerRules = fillerGeneralizations
-        .map { derivedRuleWithEmptyPreAndPostFillers(it, baseRule1, baseRule2) }
+      fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
         .map(::RuleWithPositionInfo)
 
       iteration1 = fillerRules
-        .flatMap { specializePrefiller(rule = it, n = 1, params = params) }
+        .flatMap { specializePreFiller(rule = it, n = 1, params = params) }
         .flatMap { specializePostFiller(rule = it, n = 1, params = params) }
       iteration2 = iteration1
         .filter { it.preFiller().any{ it is PatternItem } }
         .filter { it.postFiller().any{ it is PatternItem } }
-        .flatMap { specializePrefiller(rule = it, n = 2, params = params)}
+        .flatMap { specializePreFiller(rule = it, n = 2, params = params)}
         .flatMap { specializePostFiller(rule = it, n = 2, params = params) }
     }
 
@@ -666,20 +634,6 @@ class SpecializationSpec : Spek({
       var result = emptyList<DerivedRule>()
 
       beforeEach { result = iteration1.map{ it() } }
-
-      it("should generalize fillers") {
-        fillerGeneralizations shouldContain Pattern(
-          PatternList(
-            words("atlanta", "kansas", "city"),
-            tags("nnp"),
-            length = 2
-          )
-        )
-        fillerGeneralizations shouldContain Pattern(
-          PatternList(posTagConstraints = tags("nnp"), length = 2)
-        )
-        fillerGeneralizations.size shouldEqual 2
-      }
 
       it("should contain rule 1") {
 

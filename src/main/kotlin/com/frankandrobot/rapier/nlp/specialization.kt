@@ -33,8 +33,8 @@ fun Pattern.subPattern(fromIndex: Int,
 }
 
 
-fun specializePrefiller(rule : IDerivedRule, n : Int, params : RapierParams) =
-  specializePrefiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
+fun specializePreFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
+  specializePreFiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
 
 fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
   specializePostFiller(rule = RuleWithPositionInfo(rule), n = n, params = params)
@@ -47,7 +47,7 @@ fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
  * - underSearchLimit = n1 - numUsed1 <= k_MaxNoGainSearch &&
  *   n2 - numUsed2 <= k_MaxNoGainSearch
  */
-internal fun specializePrefiller(rule : RuleWithPositionInfo,
+internal fun specializePreFiller(rule : RuleWithPositionInfo,
                                  params : RapierParams,
                                  n1 : Int,
                                  n2 : Int) : List<RuleWithPositionInfo> {
@@ -97,13 +97,13 @@ internal fun specializePrefiller(rule : RuleWithPositionInfo,
 }
 
 
-internal fun specializePrefiller(rule : RuleWithPositionInfo,
+internal fun specializePreFiller(rule : RuleWithPositionInfo,
                                  n : Int,
                                  params : RapierParams) : List<RuleWithPositionInfo> {
 
-  val genSet1 = specializePrefiller(n1 = n,   n2 = n-1, rule = rule, params = params)
-  val genSet2 = specializePrefiller(n1 = n-1, n2 = n,   rule = rule, params = params)
-  val genSet3 = specializePrefiller(n1 = n,   n2 = n,   rule = rule, params = params)
+  val genSet1 = specializePreFiller(n1 = n,   n2 = n-1, rule = rule, params = params)
+  val genSet2 = specializePreFiller(n1 = n-1, n2 = n,   rule = rule, params = params)
+  val genSet3 = specializePreFiller(n1 = n,   n2 = n,   rule = rule, params = params)
 
   return genSet1 + genSet2 + genSet3
 }
