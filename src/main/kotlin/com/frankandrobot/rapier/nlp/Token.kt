@@ -1,29 +1,32 @@
 package com.frankandrobot.rapier.nlp
 
 import org.funktionale.option.Option
-import java.util.*
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 
 
-data class Token(val word : Option<String>,
-                 val posTag : Option<String>,
-                 val semanticClass : Option<String>)
+interface IToken {
+  val word: Option<String>
+  val posTag: Option<String>
+  val semanticClass: Option<String>
+}
 
-val EmptyToken = Token(
-  word = Option.None,
-  posTag = Option.None,
-  semanticClass = Option.None
-)
+data class Token(override val word : Option<String>,
+                 override val posTag : Option<String>,
+                 override val semanticClass : Option<String>) : IToken {
 
-fun wordToken(word : String) = Token(
-  word = Option.Some(word),
-  posTag = Option.None,
-  semanticClass = Option.None
-)
+  fun dropTagAndSemanticProperties() = WordToken(word)
+}
+
+data class WordToken(override val word : Option<String>) : IToken {
+  override val posTag = None
+  override val semanticClass = None
+}
 
 fun wordTagToken(word : String, tag : String) = Token(
-  word = Option.Some(word),
-  posTag = Option.Some(tag),
-  semanticClass = Option.None
+  word = Some(word),
+  posTag = Some(tag),
+  semanticClass = None
 )
 
-fun wordTokens(vararg words : String) = words.map(::wordToken) as ArrayList<Token>
+

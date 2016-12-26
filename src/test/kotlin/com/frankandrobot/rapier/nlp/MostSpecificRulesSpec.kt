@@ -3,6 +3,8 @@ package com.frankandrobot.rapier.nlp
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.patternOfWordItems
+import com.frankandrobot.rapier.tokens
+import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
@@ -21,7 +23,7 @@ class MostSpecificRulesSpec : Spek({
     )
     val example1 = Example(
       blankTemplate = blankTemplate,
-      document = Document(tokens = wordTokens("a1","a2","b1","b2")),
+      document = Document(tokens = tokens("a1", "a2", "b1", "b2")),
       filledTemplate = FilledTemplate(
         slots = slots(
           SlotName("a") to slotFillers(wordTokens("a1"), wordTokens("a2")),
@@ -31,7 +33,7 @@ class MostSpecificRulesSpec : Spek({
     )
     val example2 = Example(
       blankTemplate = blankTemplate,
-      document = Document(tokens = wordTokens("A1","A2","B1","B2")),
+      document = Document(tokens = tokens("A1", "A2", "B1", "B2")),
       filledTemplate = FilledTemplate(
         slots = slots(
           SlotName("a") to slotFillers(wordTokens("A1","A2")),
@@ -93,7 +95,7 @@ class MostSpecificRulesSpec : Spek({
         SlotName("any slot"),
         hashSetOf(SlotFiller(tokens = wordTokens("2", "3")))
       )
-      doc = wordTokens("1", "2", "3", "4")
+      doc = tokens("1", "2", "3", "4")
 
       result = mostSpecificSlotRules(slot, doc)
 
@@ -133,7 +135,7 @@ class MostSpecificRulesSpec : Spek({
 
     it("should create a correct IRule when no prefiller") {
 
-      val tokens = wordTokens("2", "3", "4")
+      val tokens = tokens("2", "3", "4")
       val result = mostSpecificSlotRules(slot, tokens)
 
       val expected = MostSpecificRule(
@@ -148,7 +150,7 @@ class MostSpecificRulesSpec : Spek({
 
     it("should create a correct IRule when no postfiller") {
 
-      val tokens = wordTokens("1", "2", "3")
+      val tokens = tokens("1", "2", "3")
       val result = mostSpecificSlotRules(slot, tokens)
 
       val expected = MostSpecificRule(
@@ -163,7 +165,7 @@ class MostSpecificRulesSpec : Spek({
 
     it("should find multiple matches") {
 
-      val tokens = wordTokens("2", "3", "2", "3")
+      val tokens = tokens("2", "3", "2", "3")
       val result = mostSpecificSlotRules(slot, tokens)
 
       result.size shouldEqual 2
@@ -211,7 +213,7 @@ class MostSpecificRulesSpec : Spek({
         SlotName("any slot"),
         hashSetOf(SlotFiller(tokens = wordTokens("a", "a")))
       )
-      doc = wordTokens("a", "a", "a", "a")
+      doc = tokens("a", "a", "a", "a")
       result = mostSpecificSlotRules(slot, doc)
 
       result.size shouldEqual 2
@@ -235,7 +237,7 @@ class MostSpecificRulesSpec : Spek({
         SlotName("any slot"),
         hashSetOf(SlotFiller(tokens = wordTokens("a")))
       )
-      doc = wordTokens("a", "b", "c", "d")
+      doc = tokens("a", "b", "c", "d")
 
       result = mostSpecificSlotRules(slot, doc)
 
@@ -254,7 +256,7 @@ class MostSpecificRulesSpec : Spek({
         SlotName("any slot"),
         hashSetOf(SlotFiller(tokens = wordTokens("a")))
       )
-      doc = wordTokens("a", "b", "a", "d")
+      doc = tokens("a", "b", "a", "d")
 
       result = mostSpecificSlotRules(slot, doc)
 

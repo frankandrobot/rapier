@@ -1,19 +1,29 @@
 package com.frankandrobot.rapier
 
 import com.frankandrobot.rapier.meta.*
-import com.frankandrobot.rapier.nlp.wordToken
-import com.frankandrobot.rapier.nlp.wordTokens
+import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.nlp.WordToken
+import com.frankandrobot.rapier.parse.ParseResult
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.util.BetterIterator
+import org.funktionale.option.Option
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 import java.util.*
 
 
+fun tokens(vararg words : String) = words.map(::token) as ArrayList
+fun token(word : String) = Token(
+  word = Some(word),
+  posTag = None,
+  semanticClass = None
+)
+fun wordTokens(vararg words : String) = words.map{ WordToken(Some(it)) } as ArrayList
 /**
- * @deprecated use wordTokens
+ * @deprecated use tokens
  */
-fun textTokenList(vararg text : String) = text.flatMap{it.split(" ")}.map(::wordToken)
+fun textTokenList(vararg text : String) = text.flatMap{it.split(" ")}.map(::token)
   as ArrayList
-
 fun textTokenIterator(text : String, start : Int = 0) =
   BetterIterator(textTokenList(text), start)
 
@@ -49,3 +59,13 @@ val emptyExample = Example(
   document = Document(),
   filledTemplate = FilledTemplate(hashMapOf())
 )
+
+
+fun parseResult(tokens : BetterIterator<Token>,
+                matchFound : Boolean = true,
+                vararg matches : String) =
+  ParseResult(
+    _tokens = tokens,
+    matchFound = matchFound,
+    matches = matches.map{Some(token(it))} as ArrayList<Option<Token>>
+  )

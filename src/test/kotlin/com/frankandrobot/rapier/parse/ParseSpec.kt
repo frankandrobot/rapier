@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.parse
 
+import com.frankandrobot.rapier.parseResult
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.words
 import com.frankandrobot.rapier.textTokenIterator
@@ -28,7 +29,7 @@ class ParseSpec : Spek({
       val nextTokens = tokenIterator(nextToken)
       val result = anyItem().parse(initialTokens)
 
-      assertEquals(ParseResult(nextTokens, matchFound = true, matches = "one"), result)
+      assertEquals(parseResult(nextTokens, matchFound = true, matches = "one"), result)
     }
 
     it("should work when no match") {
@@ -50,7 +51,7 @@ class ParseSpec : Spek({
       val nextTokens = tokenIterator(nextToken)
       val result = anyItemList().parse(ParseResult(initialTokens))
 
-      assertEquals(ParseResult(nextTokens, true, "one", "two"), result)
+      assertEquals(parseResult(nextTokens, true, "one", "two"), result)
     }
 
     it("should work when no match") {

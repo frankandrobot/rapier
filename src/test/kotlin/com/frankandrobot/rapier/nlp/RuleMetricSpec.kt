@@ -186,39 +186,6 @@ class RuleMetricSpec : Spek({
         result.negatives.size shouldEqual 1
         result.negatives shouldEqual listOf(wordSlotFiller("rust"))
       }
-
-      it("it ignores tags and semantic classes in fillers") {
-        val slot = Slot(
-          name = SlotName("slotName"),
-          slotFillers = hashSetOf(
-            SlotFiller(tokens = arrayListOf(wordTagToken("word", "tag")))
-          )
-        )
-        val rule = BaseRule(
-          preFiller = Pattern(),
-          filler = patternOfWordItems("word"),
-          postFiller = Pattern(),
-          slot = slot
-        )
-        val example = Example(
-          BlankTemplate(name = "test", slots = slotNames("slotName")),
-          Document(tokens = textTokenList("a b c d word e f g h h i")),
-          FilledTemplate(
-            slots = slots(
-              Slot(
-                name = SlotName("slotName"),
-                slotFillers = hashSetOf(
-                  SlotFiller(tokens = arrayListOf(wordTagToken("word", "tag")))
-                )
-              )
-            )
-          )
-        )
-        val result = RuleMetric(rule, params).metric(Examples(listOf(example)))
-        result.positives.size shouldEqual 1
-        result.negatives.size shouldEqual 0
-        result.positives shouldEqual listOf(wordSlotFiller("word"))
-      }
     }
 
 

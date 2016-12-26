@@ -1,9 +1,9 @@
 package com.frankandrobot.rapier.meta
 
-import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.nlp.tokenize
-import com.frankandrobot.rapier.nlp.wordToken
+import com.frankandrobot.rapier.nlp.WordToken
+import com.frankandrobot.rapier.nlp.tokenizeWords
 import org.funktionale.option.Option
+import org.funktionale.option.Option.None
 import java.util.*
 
 
@@ -22,12 +22,12 @@ data class SlotName(private val name : String) {
 data class SlotFillerInfo(val slotFillers : HashSet<SlotFiller>,
                           val enabled : Boolean)
 
-data class SlotFiller(val raw : Option<String> = Option.None,
-                      private val tokens : ArrayList<Token> = ArrayList<Token>()) {
+data class SlotFiller(val raw : Option<String> = None,
+                      private val tokens : ArrayList<WordToken> = ArrayList<WordToken>()) {
 
-  operator fun invoke() : ArrayList<Token> {
+  operator fun invoke() : ArrayList<WordToken> {
     if (raw.isDefined() && tokens.isEmpty()) {
-      tokens.addAll(tokenize(raw.get()))
+      tokens.addAll(tokenizeWords(raw.get()))
     }
     else if (raw.isEmpty() && tokens.isEmpty()) {
       throw Exception("You forgot to set the raw value or test token values")
@@ -35,14 +35,6 @@ data class SlotFiller(val raw : Option<String> = Option.None,
 
     return tokens
   }
-
-  fun dropTagAndSemanticProperties() =
-    SlotFiller(
-      raw = raw,
-      tokens = tokens
-        .filter{it.word.isDefined()}
-        .map{wordToken(it.word.get())} as ArrayList<Token>
-    )
 }
 
 fun slotNames(vararg names : String) = names.map(::SlotName).toHashSet()
@@ -54,7 +46,7 @@ internal fun slots(vararg slots : Pair<SlotName, SlotFillerInfo>) =
     enabled = slot.second.enabled
   )}.fold(HashMap<SlotName,Slot>()) { total, slot -> total[slot.name] = slot; total }
 
-internal fun slotFillers(vararg slotFillers: ArrayList<Token>) =
+internal fun slotFillers(vararg slotFillers: ArrayList<WordToken>) =
   SlotFillerInfo(
     enabled = true,
     slotFillers = slotFillers
@@ -62,7 +54,7 @@ internal fun slotFillers(vararg slotFillers: ArrayList<Token>) =
       .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
   )
 
-internal fun disabledSlotFillers(vararg slotFillers : ArrayList<Token>) =
+internal fun disabledSlotFillers(vararg slotFillers : ArrayList<WordToken>) =
   SlotFillerInfo(
    enabled = false,
     slotFillers = slotFillers

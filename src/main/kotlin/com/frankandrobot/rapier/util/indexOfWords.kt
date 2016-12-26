@@ -1,13 +1,14 @@
 package com.frankandrobot.rapier.util
 
 import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.nlp.WordToken
 import java.util.*
 
 
 /**
  * Finds a sublist, matching words only
  */
-fun ArrayList<Token>.indexOfWords(subList: ArrayList<Token>, start : Int = 0) : Int {
+fun ArrayList<Token>.indexOfWords(subList: ArrayList<WordToken>, start : Int = 0) : Int {
 
   if (subList.size > 0) {
 

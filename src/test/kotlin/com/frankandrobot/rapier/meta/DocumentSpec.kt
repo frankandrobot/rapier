@@ -1,6 +1,6 @@
 package com.frankandrobot.rapier.meta
 
-import com.frankandrobot.rapier.nlp.wordTokens
+import com.frankandrobot.rapier.tokens
 import org.amshove.kluent.shouldThrow
 import org.funktionale.option.Option
 import org.jetbrains.spek.api.Spek
@@ -10,8 +10,8 @@ class DocumentSpec : Spek({
   describe("Document") {
     describe("token list") {
       it("should return token list when set") {
-        val doc = Document(tokens = wordTokens("a", "b", "c"))
-        assertEquals(wordTokens("a", "b", "c"), doc())
+        val doc = Document(tokens = tokens("a", "b", "c"))
+        assertEquals(tokens("a", "b", "c"), doc())
       }
 
       it("should throw an exception when nothing set") {

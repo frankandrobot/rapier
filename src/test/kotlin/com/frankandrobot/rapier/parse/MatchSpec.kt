@@ -4,7 +4,6 @@ import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.Slot
 import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.meta.SlotName
-import com.frankandrobot.rapier.nlp.wordTokens
 import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
 import org.amshove.kluent.shouldContain
@@ -37,9 +36,9 @@ class MatchSpec : Spek({
         val result = patternItemRule().exactMatch(anyText())
         result.size shouldEqual 1
         result.first() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("a", "b"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("e", "f")
+          preFillerMatch = tokens("a", "b"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("e", "f")
         )
       }
 
@@ -50,14 +49,14 @@ class MatchSpec : Spek({
         val result = patternItemRule().exactMatch(text)
         result.size shouldEqual 2
         result.first() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("a", "b"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("e", "f")
+          preFillerMatch = tokens("a", "b"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("e", "f")
         )
         result.last() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("a", "b"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("e", "f")
+          preFillerMatch = tokens("a", "b"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("e", "f")
         )
       }
 
@@ -89,14 +88,14 @@ class MatchSpec : Spek({
         val result = rule.exactMatch(textTokenIterator("a C D e f xxxxx b C D e f"))
         result.size shouldEqual 2
         result.first() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("a"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("e", "f")
+          preFillerMatch = tokens("a"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("e", "f")
         )
         result.last() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("b"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("e", "f")
+          preFillerMatch = tokens("b"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("e", "f")
         )
       }
 
@@ -110,14 +109,14 @@ class MatchSpec : Spek({
         val result = rule.exactMatch(textTokenIterator("a b C D e xxxxx a b C D f"))
         result.size shouldEqual 2
         result.first() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("a", "b"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("e")
+          preFillerMatch = tokens("a", "b"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("e")
         )
         result.last() shouldEqual MatchResult(
-          preFillerMatch = wordTokens("a", "b"),
-          fillerMatch = wordTokens("C", "D"),
-          postFillerMatch = wordTokens("f")
+          preFillerMatch = tokens("a", "b"),
+          fillerMatch = tokens("C", "D"),
+          postFillerMatch = tokens("f")
         )
       }
     }
@@ -150,9 +149,9 @@ class MatchSpec : Spek({
 
         val result = patternListRule().exactMatch(text())
         result shouldContain MatchResult(
-          preFillerMatch = wordTokens("a"),
-          fillerMatch = wordTokens("B"),
-          postFillerMatch = wordTokens("c")
+          preFillerMatch = tokens("a"),
+          fillerMatch = tokens("B"),
+          postFillerMatch = tokens("c")
         )
       }
 
@@ -162,12 +161,12 @@ class MatchSpec : Spek({
         result.size shouldEqual 2
         result shouldContain MatchResult(
           preFillerMatch = None,
-          fillerMatch = Some(wordTokens("B")),
-          postFillerMatch = Some(wordTokens("c"))
+          fillerMatch = Some(tokens("B")),
+          postFillerMatch = Some(tokens("c"))
         )
         result shouldContain MatchResult(
           preFillerMatch = None,
-          fillerMatch = Some(wordTokens("B")),
+          fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
       }
@@ -177,13 +176,13 @@ class MatchSpec : Spek({
         val result = patternListRule().exactMatch(text)
         result.size shouldEqual 2
         result shouldContain MatchResult(
-          preFillerMatch = Some(wordTokens("a")),
-          fillerMatch = Some(wordTokens("B")),
+          preFillerMatch = Some(tokens("a")),
+          fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
         result shouldContain MatchResult(
           preFillerMatch = None,
-          fillerMatch = Some(wordTokens("B")),
+          fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
       }
@@ -194,7 +193,7 @@ class MatchSpec : Spek({
         result.size shouldEqual 1
         result shouldContain MatchResult(
           preFillerMatch = None,
-          fillerMatch = Some(wordTokens("B")),
+          fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
       }
@@ -247,14 +246,14 @@ class MatchSpec : Spek({
         val result = ruleMatchingTwoFillers.exactMatch(text)
         result.size shouldEqual 2
         result shouldContain MatchResult(
-          preFillerMatch = Some(wordTokens("A")),
-          fillerMatch = Some(wordTokens("java")),
-          postFillerMatch = Some(wordTokens("Z"))
+          preFillerMatch = Some(tokens("A")),
+          fillerMatch = Some(tokens("java")),
+          postFillerMatch = Some(tokens("Z"))
         )
         result shouldContain MatchResult(
-          preFillerMatch = Some(wordTokens("A")),
-          fillerMatch = Some(wordTokens("c#")),
-          postFillerMatch = Some(wordTokens("Z"))
+          preFillerMatch = Some(tokens("A")),
+          fillerMatch = Some(tokens("c#")),
+          postFillerMatch = Some(tokens("Z"))
         )
       }
     }

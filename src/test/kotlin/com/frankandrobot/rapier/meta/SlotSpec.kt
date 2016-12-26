@@ -1,6 +1,6 @@
 package com.frankandrobot.rapier.meta
 
-import com.frankandrobot.rapier.nlp.wordTokens
+import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldThrow

@@ -6,6 +6,7 @@ import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.parse.exactMatch
 import com.frankandrobot.rapier.pattern.IRule
+import java.util.*
 
 
 internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
@@ -56,14 +57,14 @@ class RuleMetric(private val rule : IRule,
 
     val enabledSlotFillers = examples()
       .flatMap(Example::enabledSlotFillers)
-      .map{ it.dropTagAndSemanticProperties() }
     val fillerMatches = examples()
       .map{ it.document() }
       .flatMap{ rule.exactMatch(it) }
       .map{ it.fillerMatch }
       .filter{ it.isDefined() }
-      .map{ SlotFiller(tokens = it.get()) }
-      .map{ it.dropTagAndSemanticProperties() }
+      .map{ SlotFiller(
+        tokens = it.get().map{it.dropTagAndSemanticProperties()} as ArrayList
+      )}
 
     val positives = fillerMatches.filter { enabledSlotFillers.contains(it) }
     val negatives = fillerMatches.filter { !enabledSlotFillers.contains(it) }
