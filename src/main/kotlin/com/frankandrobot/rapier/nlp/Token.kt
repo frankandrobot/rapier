@@ -12,8 +12,6 @@ data class Token(val word : Option<String>,
   fun dropTagAndSemanticProperties() = WordToken(word)
 }
 
-data class WordToken(val word : Option<String>)
-
 fun wordTagToken(word : String, tag : String) = Token(
   word = Some(word),
   posTag = Some(tag),
