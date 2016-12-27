@@ -1,12 +1,10 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.meta.Example
 import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.meta.SlotFiller
-import com.frankandrobot.rapier.parse.exactMatch
+import com.frankandrobot.rapier.parse.getMatchedFillers
 import com.frankandrobot.rapier.pattern.IRule
-import java.util.*
 
 
 internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
@@ -55,21 +53,9 @@ class RuleMetric(private val rule : IRule,
    */
   fun metric(examples : Examples) : MetricResults {
 
-    val enabledSlotFillers = examples()
-      .flatMap(Example::enabledSlotFillers)
-    val fillerMatches = examples()
-      .map{ it.document() }
-      .flatMap{ rule.exactMatch(it) }
-      .map{ it.fillerMatch }
-      .filter{ it.isDefined() }
-      .map{ SlotFiller(
-        tokens = it.get().map{it.dropTagAndSemanticProperties()} as ArrayList
-      )}
+    val results = rule.getMatchedFillers(examples)
 
-    val positives = fillerMatches.filter { enabledSlotFillers.contains(it) }
-    val negatives = fillerMatches.filter { !enabledSlotFillers.contains(it) }
-
-    return MetricResults(positives = positives, negatives = negatives)
+    return MetricResults(positives = results.positives, negatives = results.negatives)
   }
 
 
