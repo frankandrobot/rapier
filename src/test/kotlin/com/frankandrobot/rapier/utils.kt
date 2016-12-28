@@ -29,12 +29,25 @@ fun textTokenIterator(text : String, start : Int = 0) =
 
 
 fun dummySlot(name : String) = Slot(SlotName(name), slotFillers = HashSet<SlotFiller>())
+fun dummySlots(name : String) = slots(dummySlot("name"))
 fun wordSlotFiller(vararg filler : String) = SlotFiller(tokens = wordTokens(*filler))
+fun slots(vararg slot : Slot) =
+  Slots(
+    slot.fold(HashMap<SlotName, Slot>()) { total, slot ->
+      total[slot.name] = slot; total
+    }
+  )
+
 
 fun patternItemOfWords(vararg words : String) =
   PatternItem(wordConstraints = words.map(::WordConstraint).toHashSet())
+fun patternOfWordItems(vararg words : String) =
+  Pattern(words.map { PatternItem(words(it)) })
+fun patternOfWordsList(length : Int = 1, vararg word : String) =
+  Pattern(PatternList(length = length, wordConstraints = words(*word)))
 
 
+val emptyRule = BaseRule(slot = dummySlot("none"))
 fun emptyBaseRule() = BaseRule(
   preFiller = Pattern(),
   filler = Pattern(),
@@ -42,15 +55,6 @@ fun emptyBaseRule() = BaseRule(
   slot = Slot(SlotName("none"), slotFillers = HashSet<SlotFiller>())
 )
 
-
-fun patternOfWordItems(vararg words : String) =
-  Pattern(words.map { PatternItem(words(it)) })
-
-fun patternOfWordsList(length : Int = 1, vararg word : String) =
-  Pattern(PatternList(length = length, wordConstraints = words(*word)))
-
-
-val emptyRule = BaseRule(slot = dummySlot("none"))
 
 val emptyExample = Example(
   blankTemplate = BlankTemplate("", hashSetOf()),
@@ -66,11 +70,4 @@ fun parseResult(tokens : BetterIterator<Token>,
     _tokens = tokens,
     matchFound = matchFound,
     matches = matches.map{Some(token(it))} as ArrayList<Option<Token>>
-  )
-
-fun slots(vararg slot : Slot) =
-  Slots(
-    slot.fold(HashMap<SlotName, Slot>()) { total, slot ->
-      total[slot.name] = slot; total
-    }
   )
