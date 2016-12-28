@@ -67,3 +67,10 @@ fun parseResult(tokens : BetterIterator<Token>,
     matchFound = matchFound,
     matches = matches.map{Some(token(it))} as ArrayList<Option<Token>>
   )
+
+fun slots(vararg slot : Slot) =
+  Slots(
+    slot.fold(HashMap<SlotName, Slot>()) { total, slot ->
+      total[slot.name] = slot; total
+    }
+  )
