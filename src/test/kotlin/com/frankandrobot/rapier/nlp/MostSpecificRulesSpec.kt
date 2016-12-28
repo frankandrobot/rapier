@@ -1,10 +1,8 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.*
-import com.frankandrobot.rapier.patternOfWordItems
-import com.frankandrobot.rapier.tokens
-import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual

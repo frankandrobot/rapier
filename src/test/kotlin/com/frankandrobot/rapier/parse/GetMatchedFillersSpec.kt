@@ -244,6 +244,5 @@ class GetMatchedFillersSpec : Spek ({
     it("should get total negative matches") {
       result.negatives shouldEqual listOf(wordSlotFiller("go"))
     }
-
   }
 })

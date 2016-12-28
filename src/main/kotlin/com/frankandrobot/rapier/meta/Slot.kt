@@ -46,18 +46,20 @@ internal fun slots(vararg slots : Pair<SlotName, SlotFillerInfo>) =
     enabled = slot.second.enabled
   )}.fold(HashMap<SlotName,Slot>()) { total, slot -> total[slot.name] = slot; total }
 
-internal fun slotFillers(vararg slotFillers: ArrayList<WordToken>) =
-  SlotFillerInfo(
-    enabled = true,
-    slotFillers = slotFillers
-      .map{ tokens -> SlotFiller(tokens = tokens) }
-      .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
+
+
+
+fun HashMap<SlotName,Slot>.slot(slotName : SlotName) : Slot =
+  this.getOrDefault(
+    slotName,
+    Slot(
+      name = slotName,
+      slotFillers = HashSet(),
+      enabled = false
+    )
   )
 
-internal fun disabledSlotFillers(vararg slotFillers : ArrayList<WordToken>) =
-  SlotFillerInfo(
-   enabled = false,
-    slotFillers = slotFillers
-      .map{ tokens -> SlotFiller(tokens = tokens) }
-      .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
-  )
+fun HashMap<SlotName,Slot>.enabledSlotFillers() =
+  this.filter { it.value.enabled }
+    .map { it.value.slotFillers }
+    .fold(HashSet<SlotFiller>()) { total, cur -> total.addAll(cur); total }
