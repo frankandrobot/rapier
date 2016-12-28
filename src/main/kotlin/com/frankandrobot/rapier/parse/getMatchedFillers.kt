@@ -28,11 +28,16 @@ internal fun getMatchedFillers(rule : IRule, example : Example) : FillerMatchRes
       .map{ it.get().map(Token::dropTagAndSemanticProperties) }
       .map{ SlotFiller(tokens = it as ArrayList) }
 
-  val enabledSlotFillers = example.enabledSlotFillers()
-  val positives = slotFillers.filter{ enabledSlotFillers.contains(it) }
-  val negatives = slotFillers.filter{ !enabledSlotFillers.contains(it) }
+  val slot = example[rule.slot.name]
 
-  return FillerMatchResults(positives = positives, negatives = negatives)
+  if (slot.enabled) {
+    val positives = slotFillers.filter { slot.slotFillers.contains(it) }
+    val negatives = slotFillers.filter { !slot.slotFillers.contains(it) }
+
+    return FillerMatchResults(positives = positives, negatives = negatives)
+  }
+
+  return FillerMatchResults(positives = emptyList(), negatives = emptyList())
 }
 
 
