@@ -1,8 +1,10 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.patternOfWordItems
+import com.frankandrobot.rapier.tokens
+import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
@@ -25,7 +27,7 @@ class MostSpecificRulesSpec : Spek({
       filledTemplate = FilledTemplate(
         slots = slots(
           SlotName("a") to slotFillers(wordTokens("a1"), wordTokens("a2")),
-          SlotName("b") to disabledSlotFillers(wordTokens("b1","b2"))
+          SlotName("b") to disabledSlotFillers(wordTokens("b1", "b2"))
         )
       )
     )
@@ -34,8 +36,8 @@ class MostSpecificRulesSpec : Spek({
       document = Document(tokens = tokens("A1", "A2", "B1", "B2")),
       filledTemplate = FilledTemplate(
         slots = slots(
-          SlotName("a") to slotFillers(wordTokens("A1","A2")),
-          SlotName("b") to disabledSlotFillers(wordTokens("B1","B2"))
+          SlotName("a") to slotFillers(wordTokens("A1", "A2")),
+          SlotName("b") to disabledSlotFillers(wordTokens("B1", "B2"))
         )
       )
     )

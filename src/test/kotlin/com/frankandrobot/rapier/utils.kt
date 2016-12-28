@@ -30,21 +30,6 @@ fun textTokenIterator(text : String, start : Int = 0) =
 
 fun dummySlot(name : String) = Slot(SlotName(name), slotFillers = HashSet<SlotFiller>())
 fun wordSlotFiller(vararg filler : String) = SlotFiller(tokens = wordTokens(*filler))
-fun slotFillers(vararg slotFillers: ArrayList<WordToken>) =
-  SlotFillerInfo(
-    enabled = true,
-    slotFillers = slotFillers
-      .map{ tokens -> SlotFiller(tokens = tokens) }
-      .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
-  )
-fun disabledSlotFillers(vararg slotFillers : ArrayList<WordToken>) =
-  SlotFillerInfo(
-    enabled = false,
-    slotFillers = slotFillers
-      .map{ tokens -> SlotFiller(tokens = tokens) }
-      .fold(HashSet<SlotFiller>()){ total, slotFiller -> total.add(slotFiller); total }
-  )
-
 
 fun patternItemOfWords(vararg words : String) =
   PatternItem(wordConstraints = words.map(::WordConstraint).toHashSet())
@@ -70,7 +55,7 @@ val emptyRule = BaseRule(slot = dummySlot("none"))
 val emptyExample = Example(
   blankTemplate = BlankTemplate("", hashSetOf()),
   document = Document(),
-  filledTemplate = FilledTemplate(hashMapOf())
+  filledTemplate = FilledTemplate(Slots(hashMapOf()))
 )
 
 
