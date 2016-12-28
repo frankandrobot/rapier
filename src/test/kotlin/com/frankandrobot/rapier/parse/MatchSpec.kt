@@ -28,7 +28,7 @@ class MatchSpec : Spek({
         preFiller = patternOfWordItems("a", "b"),
         filler = patternOfWordItems("C", "D"),
         postFiller = patternOfWordItems("e", "f"),
-        slot = anySlot()
+        slotName = anySlot().name
       )}
 
 
@@ -83,7 +83,7 @@ class MatchSpec : Spek({
           preFiller = Pattern(patternElement = patternItemOfWords("a", "b")),
           filler = patternOfWordItems("C", "D"),
           postFiller = patternOfWordItems("e", "f"),
-          slot = anySlot()
+          slotName = anySlot().name
         )
         val result = rule.exactMatch(textTokenIterator("a C D e f xxxxx b C D e f"))
         result.size shouldEqual 2
@@ -104,7 +104,7 @@ class MatchSpec : Spek({
           preFiller = patternOfWordItems("a", "b"),
           filler = patternOfWordItems("C", "D"),
           postFiller = Pattern(patternElement = patternItemOfWords("e", "f")),
-          slot = anySlot()
+          slotName = anySlot().name
         )
         val result = rule.exactMatch(textTokenIterator("a b C D e xxxxx a b C D f"))
         result.size shouldEqual 2
@@ -135,7 +135,7 @@ class MatchSpec : Spek({
         preFiller = patternOfWordsList(length = 1, word = "a"),
         filler = patternOfWordItems("B"),
         postFiller = patternOfWordsList(length = 1, word = "c"),
-        slot = anySlot()
+        slotName = anySlot().name
       )}
       val text = { textTokenIterator("a B c") }
 
@@ -214,7 +214,7 @@ class MatchSpec : Spek({
           preFiller = patternOfWordsList(length = 1, word = "a"),
           filler = patternOfWordsList(length = 1, word = "B"),
           postFiller = patternOfWordsList(length = 1, word = "c"),
-          slot = anySlot()
+          slotName = anySlot().name
         )
 
         val result = patternListRule.exactMatch(text)
@@ -241,7 +241,7 @@ class MatchSpec : Spek({
           preFiller = patternOfWordItems("A"),
           filler = Pattern(patternItemOfWords("java", "c#")),
           postFiller = patternOfWordItems("Z"),
-          slot = slot
+          slotName = slot.name
         )
         val result = ruleMatchingTwoFillers.exactMatch(text)
         result.size shouldEqual 2

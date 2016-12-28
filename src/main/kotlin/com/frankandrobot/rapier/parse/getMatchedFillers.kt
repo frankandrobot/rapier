@@ -19,18 +19,18 @@ data class FillerMatchResults(val positives : List<SlotFiller>,
  */
 internal fun getMatchedFillers(rule : IRule, example : Example) : FillerMatchResults {
 
-  val doc = example.document()
-  val matchResults = rule.exactMatch(doc)
-  val fillerMatchResults = matchResults.map{ it.fillerMatch }.filter{ it.isDefined() }
-  // put the match results in a SlotFiller
-  val slotFillers =
-    fillerMatchResults
-      .map{ it.get().map(Token::dropTagAndSemanticProperties) }
-      .map{ SlotFiller(tokens = it as ArrayList) }
-
-  val slot = example[rule.slot.name]
+  val slot = example[rule.slotName]
 
   if (slot.enabled) {
+    val doc = example.document()
+    val matchResults = rule.exactMatch(doc)
+    val fillerMatchResults = matchResults.map { it.fillerMatch }.filter { it.isDefined() }
+    // put the match results in a SlotFiller
+    val slotFillers =
+      fillerMatchResults
+        .map { it.get().map(Token::dropTagAndSemanticProperties) }
+        .map { SlotFiller(tokens = it as ArrayList) }
+
     val positives = slotFillers.filter { slot.slotFillers.contains(it) }
     val negatives = slotFillers.filter { !slot.slotFillers.contains(it) }
 

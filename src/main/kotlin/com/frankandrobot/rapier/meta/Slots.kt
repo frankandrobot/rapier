@@ -4,7 +4,6 @@ import java.util.*
 
 
 data class Slots(private val slots : HashMap<SlotName, Slot>) {
-  operator fun invoke() = slots
 
   operator fun get(slotName : SlotName) : Slot =
     slots.getOrDefault(

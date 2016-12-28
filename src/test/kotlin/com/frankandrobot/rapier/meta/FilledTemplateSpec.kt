@@ -17,15 +17,5 @@ class FilledTemplateSpec : Spek({
         slotFillers = hashSetOf(wordSlotFiller("filler"))
       )
     }
-
-    it("should get the enabled slots") {
-      val template = FilledTemplate(
-        slots(
-          SlotName("slot") to slotFillers(wordTokens("filler")),
-          SlotName("disabled") to disabledSlotFillers(wordTokens("disabledFiller"))
-        )
-      )
-      template.enabledSlotFillers shouldEqual hashSetOf(wordSlotFiller("filler"))
-    }
   }
 })

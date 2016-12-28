@@ -46,7 +46,7 @@ class RuleMetricSpec : Spek({
       preFiller = patternOfWordItems("A"),
       filler = patternOfWordItems("java"),
       postFiller = patternOfWordItems("Z"),
-      slot = anySlot
+      slotName = anySlot.name
     )
     aSimpleExample = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
@@ -67,7 +67,7 @@ class RuleMetricSpec : Spek({
       preFiller = patternOfWordItems("A"),
       filler = Pattern(patternItemOfWords("java", "c#")),
       postFiller = patternOfWordItems("Z"),
-      slot = anySlot
+      slotName = anySlot.name
     )
     anExampleWithTwoPatternItemsInFiller = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
@@ -89,7 +89,7 @@ class RuleMetricSpec : Spek({
       preFiller = patternOfWordItems("A"),
       filler = patternOfWordItems("go", "lang"),
       postFiller = patternOfWordItems("Z"),
-      slot = anySlot
+      slotName = anySlot.name
     )
     anExampleWithTwoConstraintsInFiller = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
@@ -110,7 +110,7 @@ class RuleMetricSpec : Spek({
       preFiller = patternOfWordItems("A"),
       filler = Pattern(patternItemOfWords("ruby", "rust")),
       postFiller = patternOfWordItems("Z"),
-      slot = anySlot
+      slotName = anySlot.name
     )
     anyExampleWithNegativeMatches = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),
@@ -288,14 +288,7 @@ class RuleMetricSpec : Spek({
           postFiller = Pattern(),
           baseRule1 = emptyRule,
           baseRule2 = emptyRule,
-          slot = Slot(
-            name = SlotName("slot"),
-            slotFillers = hashSetOf(
-              wordSlotFiller("a"),
-              wordSlotFiller("b"),
-              wordSlotFiller("c")
-            )
-          )
+          slotName = SlotName("slot")
         )
         val rule2 = DerivedRule(
           preFiller = Pattern(),
@@ -303,14 +296,7 @@ class RuleMetricSpec : Spek({
           postFiller = Pattern(),
           baseRule1 = emptyRule,
           baseRule2 = emptyRule,
-          slot = Slot(
-            name = SlotName("slot"),
-            slotFillers = hashSetOf(
-              wordSlotFiller("a"),
-              wordSlotFiller("b"),
-              wordSlotFiller("c")
-            )
-          )
+          slotName = SlotName("slot")
         )
         val a1 = ComparableRule(Examples(listOf(example)), params, rule1)
         val a2= ComparableRule(Examples(listOf(example)), params, rule2)
@@ -324,14 +310,7 @@ class RuleMetricSpec : Spek({
           postFiller = Pattern(),
           baseRule1 = emptyRule,
           baseRule2 = emptyRule,
-          slot = Slot(
-            name = SlotName("slot"),
-            slotFillers = hashSetOf(
-              wordSlotFiller("a"),
-              wordSlotFiller("b"),
-              wordSlotFiller("c")
-            )
-          )
+          slotName = SlotName("slot")
         )
         val rule2 = DerivedRule(
           preFiller = Pattern(patternItemOfWords("a", "b", "c", "d")),
@@ -339,14 +318,7 @@ class RuleMetricSpec : Spek({
           postFiller = Pattern(),
           baseRule1 = emptyRule,
           baseRule2 = emptyRule,
-          slot = Slot(
-            name = SlotName("slot"),
-            slotFillers = hashSetOf(
-              wordSlotFiller("a"),
-              wordSlotFiller("b"),
-              wordSlotFiller("c")
-            )
-          )
+          slotName = SlotName("slot")
         )
         val a1 = ComparableRule(Examples(listOf(example)), params, rule1)
         val a2= ComparableRule(Examples(listOf(example)), params, rule2)

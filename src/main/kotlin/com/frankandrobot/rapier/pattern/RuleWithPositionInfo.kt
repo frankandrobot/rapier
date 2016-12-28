@@ -1,6 +1,6 @@
 package com.frankandrobot.rapier.pattern
 
-import com.frankandrobot.rapier.meta.Slot
+import com.frankandrobot.rapier.meta.SlotName
 
 
 /**
@@ -15,7 +15,7 @@ data class RuleWithPositionInfo(
   override val postFiller : Pattern,
   override val baseRule1 : IRule,
   override val baseRule2 : IRule,
-  override val slot : Slot) : IDerivedRule {
+  override val slotName: SlotName) : IDerivedRule {
 
   constructor(rule : IDerivedRule) :
     this(
@@ -24,7 +24,7 @@ data class RuleWithPositionInfo(
       postFiller = rule.postFiller,
       baseRule1 = rule.baseRule1,
       baseRule2 = rule.baseRule2,
-      slot = rule.slot
+      slotName = rule.slotName
     )
 
   operator fun invoke() = DerivedRule(
@@ -33,7 +33,7 @@ data class RuleWithPositionInfo(
     postFiller = postFiller,
     baseRule1 = baseRule1,
     baseRule2 = baseRule2,
-    slot = slot
+    slotName = slotName
   )
 }
 

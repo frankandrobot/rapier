@@ -1,6 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.dummySlot
+import com.frankandrobot.rapier.dummySlotName
 import com.frankandrobot.rapier.emptyBaseRule
 import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.*
@@ -66,13 +66,13 @@ class SpecializationSpec : Spek({
         preFiller = patternOfWordItems("1"),
         filler = patternOfWordItems("filler"),
         postFiller = patternOfWordItems("end"),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       ) }
       val baseRule = { BaseRule(
         preFiller = patternOfWordItems("1", "2", "3", "4", "5"),
         filler = patternOfWordItems("filler"),
         postFiller = patternOfWordItems("end"),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       ) }
 
       it("should not generate rules if first base prefiller is too short") {
@@ -82,7 +82,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 2, n2 = 0)
         result shouldEqual emptyList()
@@ -95,7 +95,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 0, n2 = 2)
         result shouldEqual emptyList()
@@ -110,7 +110,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 3, n2 = 3)
         result shouldEqual emptyList()
@@ -125,7 +125,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 3, n2 = 3)
         result shouldEqual emptyList()
@@ -141,7 +141,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 5, n2 = 1)
         result shouldEqual emptyList()
@@ -157,7 +157,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 1, n2 = 5)
         result shouldEqual emptyList()
@@ -172,7 +172,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePreFiller(rule, params, n1 = 2, n2 = 4)
         result shouldNotEqual emptyList<RuleWithPositionInfo>()
@@ -201,7 +201,7 @@ class SpecializationSpec : Spek({
             PatternItem(words("atlanta"), tags("nnp"))
           ),
           postFiller = Pattern(),
-          slot = dummySlot("any")
+          slotName = dummySlotName("any")
         )
 
         baseRule2 = BaseRule(
@@ -214,7 +214,7 @@ class SpecializationSpec : Spek({
             PatternItem(words("city"), tags("nnp"))
           ),
           postFiller = Pattern(),
-          slot = dummySlot("any")
+          slotName = dummySlotName("any")
         )
 
         fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
@@ -242,7 +242,7 @@ class SpecializationSpec : Spek({
               PatternList(words("atlanta", "kansas", "city"), tags("nnp"), length = 2)
             ),
             postFiller = Pattern(),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )
@@ -258,7 +258,7 @@ class SpecializationSpec : Spek({
               PatternList(posTagConstraints = tags("nnp"), length = 2)
             ),
             postFiller = Pattern(),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )
@@ -281,7 +281,7 @@ class SpecializationSpec : Spek({
               PatternList(posTagConstraints = tags("nnp"), length = 2)
             ),
             postFiller = Pattern(),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )
@@ -325,13 +325,13 @@ class SpecializationSpec : Spek({
         preFiller = patternOfWordItems("start"),
         filler = patternOfWordItems("filler"),
         postFiller = patternOfWordItems("1"),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       ) }
       val baseRule = { BaseRule(
         preFiller = patternOfWordItems("start"),
         filler = patternOfWordItems("filler"),
         postFiller = patternOfWordItems("0", "1", "2", "3", "4"),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       ) }
 
       it("should not generate rules if first base postfiller is too short") {
@@ -342,7 +342,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 2, n2 = 0)
         result shouldEqual emptyList()
@@ -356,7 +356,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 0, n2 = 2)
         result shouldEqual emptyList()
@@ -371,7 +371,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 3, n2 = 3)
         result shouldEqual emptyList()
@@ -386,7 +386,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 3, n2 = 3)
         result shouldEqual emptyList()
@@ -402,7 +402,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 5, n2 = 1)
         result shouldEqual emptyList()
@@ -418,7 +418,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 1, n2 = 5)
         result shouldEqual emptyList()
@@ -433,7 +433,7 @@ class SpecializationSpec : Spek({
           preFiller = Pattern(),
           filler = Pattern(),
           postFiller = Pattern(),
-          slot = dummySlot("foo")
+          slotName = dummySlotName("foo")
         )
         val result = specializePostFiller(rule, params, n1 = 2, n2 = 4)
         result shouldNotEqual emptyList<RuleWithPositionInfo>()
@@ -462,7 +462,7 @@ class SpecializationSpec : Spek({
             PatternItem(words("georgia"), tags("nnp")),
             PatternItem(words("."), tags("."))
           ),
-          slot = dummySlot("any")
+          slotName = dummySlotName("any")
         )
 
         baseRule2 = BaseRule(
@@ -476,7 +476,7 @@ class SpecializationSpec : Spek({
             PatternItem(words("missouri"), tags("nnp")),
             PatternItem(words("."), tags("."))
           ),
-          slot = dummySlot("any")
+          slotName = dummySlotName("any")
         )
 
         fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
@@ -505,7 +505,7 @@ class SpecializationSpec : Spek({
             postFiller = Pattern(
               PatternItem(words(","), tags(","))
             ),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )
@@ -521,7 +521,7 @@ class SpecializationSpec : Spek({
             postFiller = Pattern(
               PatternItem(words(","), tags(","))
             ),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )
@@ -544,7 +544,7 @@ class SpecializationSpec : Spek({
               PatternItem(words(","), tags(",")),
               PatternList(words("georgia"), tags("nnp"), length = 1)
             ),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )
@@ -595,7 +595,7 @@ class SpecializationSpec : Spek({
           PatternItem(words("georgia"), tags("nnp")),
           PatternItem(words("."), tags("."))
         ),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       )
 
       baseRule2 = BaseRule(
@@ -612,7 +612,7 @@ class SpecializationSpec : Spek({
           PatternItem(words("missouri"), tags("nnp")),
           PatternItem(words("."), tags("."))
         ),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       )
 
       fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
@@ -647,7 +647,7 @@ class SpecializationSpec : Spek({
           postFiller = Pattern(
             PatternItem(words(","), tags(","))
           ),
-          slot = dummySlot("any"),
+          slotName = dummySlotName("any"),
           baseRule1 = baseRule1,
           baseRule2 = baseRule2
         )
@@ -666,7 +666,7 @@ class SpecializationSpec : Spek({
             postFiller = Pattern(
               PatternItem(words(","), tags(","))
             ),
-            slot = dummySlot("any"),
+            slotName = dummySlotName("any"),
             baseRule1 = baseRule1,
             baseRule2 = baseRule2
           )

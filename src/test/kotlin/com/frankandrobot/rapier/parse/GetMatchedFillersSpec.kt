@@ -41,7 +41,7 @@ class GetMatchedFillersSpec : Spek ({
         preFiller = patternOfWordItems("A"),
         filler = patternOfWordItems("java"),
         postFiller = patternOfWordItems("Z"),
-        slot = anySlot
+        slotName = anySlot.name
       )
       aSimpleExample = Example(
         BlankTemplate(name = "test", slots = slotNames("language")),
@@ -62,7 +62,7 @@ class GetMatchedFillersSpec : Spek ({
         preFiller = patternOfWordItems("A"),
         filler = Pattern(patternItemOfWords("java", "c#")),
         postFiller = patternOfWordItems("Z"),
-        slot = anySlot
+        slotName = anySlot.name
       )
       anExampleWithTwoPatternItemsInFiller = Example(
         BlankTemplate(name = "test", slots = slotNames("language")),
@@ -84,7 +84,7 @@ class GetMatchedFillersSpec : Spek ({
         preFiller = patternOfWordItems("A"),
         filler = patternOfWordItems("go", "lang"),
         postFiller = patternOfWordItems("Z"),
-        slot = anySlot
+        slotName = anySlot.name
       )
       anExampleWithTwoConstraintsInFiller = Example(
         BlankTemplate(name = "test", slots = slotNames("language")),
@@ -105,7 +105,7 @@ class GetMatchedFillersSpec : Spek ({
         preFiller = patternOfWordItems("A"),
         filler = Pattern(patternItemOfWords("ruby", "rust")),
         postFiller = patternOfWordItems("Z"),
-        slot = anySlot
+        slotName = anySlot.name
       )
       anyExampleWithNegativeMatches = Example(
         BlankTemplate(name = "test", slots = slotNames("language")),
@@ -200,7 +200,7 @@ class GetMatchedFillersSpec : Spek ({
       preFiller = patternOfWordItems("A"),
       filler = Pattern(patternItemOfWords("java","c#","go")),
       postFiller = patternOfWordItems("Z"),
-      slot = slot
+      slotName = slot.name
     )
     val example1 = Example(
       BlankTemplate(name = "test", slots = slotNames("language")),

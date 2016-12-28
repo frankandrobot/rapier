@@ -1,13 +1,10 @@
-package com.frankandrobot.rapier.nlp
+package com.frankandrobot.rapier.pattern
 
 import com.frankandrobot.rapier.meta.BlankTemplate
 import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.Slot
 import com.frankandrobot.rapier.meta.SlotName
-import com.frankandrobot.rapier.pattern.IRule
-import com.frankandrobot.rapier.pattern.MostSpecificRule
-import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
+import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.util.indexOfWords
 import java.util.*
 
@@ -68,8 +65,7 @@ internal fun mostSpecificSlotRules(slot : Slot,
         preFiller = Pattern(preFiller),
         filler = Pattern(filler),
         postFiller = Pattern(postFiller),
-        //TODO does this need to be more specific?
-        slot = slot
+        slotName = slot.name
       ))
 
       startIndex = index + slotFiller().size

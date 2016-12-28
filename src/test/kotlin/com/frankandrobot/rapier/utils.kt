@@ -28,8 +28,7 @@ fun textTokenIterator(text : String, start : Int = 0) =
   BetterIterator(textTokenList(text), start)
 
 
-fun dummySlot(name : String) = Slot(SlotName(name), slotFillers = HashSet<SlotFiller>())
-fun dummySlots(name : String) = slots(dummySlot("name"))
+fun dummySlotName(name : String) = SlotName(name)
 fun wordSlotFiller(vararg filler : String) = SlotFiller(tokens = wordTokens(*filler))
 fun slots(vararg slot : Slot) =
   Slots(
@@ -47,12 +46,12 @@ fun patternOfWordsList(length : Int = 1, vararg word : String) =
   Pattern(PatternList(length = length, wordConstraints = words(*word)))
 
 
-val emptyRule = BaseRule(slot = dummySlot("none"))
+val emptyRule = BaseRule(slotName = dummySlotName("none"))
 fun emptyBaseRule() = BaseRule(
   preFiller = Pattern(),
   filler = Pattern(),
   postFiller = Pattern(),
-  slot = Slot(SlotName("none"), slotFillers = HashSet<SlotFiller>())
+  slotName = SlotName("none")
 )
 
 

@@ -9,6 +9,4 @@ data class BlankTemplate(val name : String, private val slots: HashSet<SlotName>
 
 data class FilledTemplate(private val slots : Slots) {
   operator fun get(slotName : SlotName) = slots[slotName]
-  val enabledSlotFillers : HashSet<SlotFiller>
-    get() { return slots.enabledSlotFillers }
 }

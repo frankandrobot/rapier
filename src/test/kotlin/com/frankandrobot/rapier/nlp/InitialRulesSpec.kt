@@ -1,6 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.dummySlot
+import com.frankandrobot.rapier.dummySlotName
 import com.frankandrobot.rapier.pattern.*
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
@@ -19,7 +19,7 @@ class InitialRulesSpec : Spek({
           PatternItem(words("atlanta"), tags("nnp"))
         ),
         postFiller = Pattern(),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       )
     }
     val rule2 = {
@@ -33,7 +33,7 @@ class InitialRulesSpec : Spek({
           PatternItem(words("city"), tags("nnp"))
         ),
         postFiller = Pattern(),
-        slot = dummySlot("any")
+        slotName = dummySlotName("any")
       )
     }
     var result = emptyList<IDerivedRule>()
@@ -58,7 +58,7 @@ class InitialRulesSpec : Spek({
           PatternList(words("atlanta", "kansas", "city"), tags("nnp"), length = 2)
         ),
         postFiller = Pattern(),
-        slot = dummySlot("any"),
+        slotName = dummySlotName("any"),
         baseRule1 = rule1(),
         baseRule2 = rule2()
       )
@@ -68,7 +68,7 @@ class InitialRulesSpec : Spek({
           PatternList(posTagConstraints = tags("nnp"), length = 2)
         ),
         postFiller = Pattern(),
-        slot = dummySlot("any"),
+        slotName = dummySlotName("any"),
         baseRule1 = rule1(),
         baseRule2 = rule2()
       )
