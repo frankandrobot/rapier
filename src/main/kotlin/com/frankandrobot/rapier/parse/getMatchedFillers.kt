@@ -4,7 +4,7 @@ import com.frankandrobot.rapier.meta.Example
 import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.pattern.IRule
+import com.frankandrobot.rapier.rule.IRule
 import java.util.*
 
 

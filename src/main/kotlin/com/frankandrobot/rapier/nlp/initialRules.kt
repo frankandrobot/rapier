@@ -1,8 +1,8 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.IDerivedRule
-import com.frankandrobot.rapier.pattern.IRule
-import com.frankandrobot.rapier.pattern.derivedRuleWithEmptyPreAndPostFillers
+import com.frankandrobot.rapier.rule.IDerivedRule
+import com.frankandrobot.rapier.rule.IRule
+import com.frankandrobot.rapier.rule.derivedRuleWithEmptyPreAndPostFillers
 
 
 /**

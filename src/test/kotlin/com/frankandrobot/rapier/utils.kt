@@ -5,6 +5,7 @@ import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.WordToken
 import com.frankandrobot.rapier.parse.ParseResult
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.rule.BaseRule
 import com.frankandrobot.rapier.util.BetterIterator
 import org.funktionale.option.Option
 import org.funktionale.option.Option.None

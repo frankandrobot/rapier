@@ -2,10 +2,10 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
-import com.frankandrobot.rapier.pattern.BaseRule
-import com.frankandrobot.rapier.pattern.ComparableRule
-import com.frankandrobot.rapier.pattern.DerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.rule.BaseRule
+import com.frankandrobot.rapier.rule.ComparableRule
+import com.frankandrobot.rapier.rule.DerivedRule
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek

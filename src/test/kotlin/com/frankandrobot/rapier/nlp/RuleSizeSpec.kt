@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.dummySlotName
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.rule.BaseRule
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 

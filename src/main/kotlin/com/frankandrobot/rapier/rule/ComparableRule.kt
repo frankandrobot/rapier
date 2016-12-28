@@ -1,4 +1,4 @@
-package com.frankandrobot.rapier.pattern
+package com.frankandrobot.rapier.rule
 
 import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.RapierParams

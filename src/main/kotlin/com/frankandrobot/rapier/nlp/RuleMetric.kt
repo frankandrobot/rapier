@@ -4,7 +4,7 @@ import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.parse.getMatchedFillers
-import com.frankandrobot.rapier.pattern.IRule
+import com.frankandrobot.rapier.rule.IRule
 
 
 internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)

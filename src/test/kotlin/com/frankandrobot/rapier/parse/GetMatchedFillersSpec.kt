@@ -2,8 +2,8 @@ package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
-import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.rule.BaseRule
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek

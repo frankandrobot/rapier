@@ -2,6 +2,9 @@ package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.dummySlotName
 import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.rule.BaseRule
+import com.frankandrobot.rapier.rule.DerivedRule
+import com.frankandrobot.rapier.rule.IDerivedRule
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek

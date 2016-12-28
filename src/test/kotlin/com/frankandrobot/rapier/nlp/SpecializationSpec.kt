@@ -5,6 +5,10 @@ import com.frankandrobot.rapier.emptyBaseRule
 import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.patternOfWordItems
+import com.frankandrobot.rapier.rule.BaseRule
+import com.frankandrobot.rapier.rule.DerivedRule
+import com.frankandrobot.rapier.rule.FillerIndexInfo
+import com.frankandrobot.rapier.rule.RuleWithPositionInfo
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual

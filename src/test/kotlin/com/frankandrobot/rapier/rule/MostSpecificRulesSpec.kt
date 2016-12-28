@@ -1,7 +1,10 @@
-package com.frankandrobot.rapier.nlp
+package com.frankandrobot.rapier.rule
 
 import com.frankandrobot.rapier.meta.*
-import com.frankandrobot.rapier.pattern.*
+import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.pattern.PatternElement
+import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.patternOfWordItems
 import com.frankandrobot.rapier.tokens
 import com.frankandrobot.rapier.wordTokens

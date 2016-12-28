@@ -1,7 +1,7 @@
 package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.nlp.Token
-import com.frankandrobot.rapier.pattern.IRule
+import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.util.BetterIterator
 import org.funktionale.option.Option
 import org.funktionale.option.Option.Some

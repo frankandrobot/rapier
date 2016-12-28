@@ -1,6 +1,7 @@
-package com.frankandrobot.rapier.pattern
+package com.frankandrobot.rapier.rule
 
 import com.frankandrobot.rapier.meta.SlotName
+import com.frankandrobot.rapier.pattern.Pattern
 
 
 interface IRule {

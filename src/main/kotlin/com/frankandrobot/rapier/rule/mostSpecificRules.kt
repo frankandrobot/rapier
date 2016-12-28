@@ -1,10 +1,7 @@
-package com.frankandrobot.rapier.pattern
+package com.frankandrobot.rapier.rule
 
-import com.frankandrobot.rapier.meta.BlankTemplate
-import com.frankandrobot.rapier.meta.Examples
-import com.frankandrobot.rapier.meta.Slot
-import com.frankandrobot.rapier.meta.SlotName
-import com.frankandrobot.rapier.nlp.Token
+import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.util.indexOfWords
 import java.util.*
 
@@ -12,9 +9,9 @@ import java.util.*
 /**
  * Goes thru each slot and creates the most specific rules for each Example
  */
-fun mostSpecificRules(blankTemplate : BlankTemplate,
-                      examples : Examples) :
-  List<Pair<SlotName, ArrayList<IRule>>> {
+fun mostSpecificRules(blankTemplate : com.frankandrobot.rapier.meta.BlankTemplate,
+                      examples : com.frankandrobot.rapier.meta.Examples) :
+  List<Pair<com.frankandrobot.rapier.meta.SlotName, java.util.ArrayList<com.frankandrobot.rapier.rule.IRule>>> {
 
   examples().forEach{ it.blankTemplate == blankTemplate }
 
@@ -26,8 +23,8 @@ fun mostSpecificRules(blankTemplate : BlankTemplate,
     val mostSpecificRules = examplesWithSlotEnabled.flatMap{ example ->
       val slot = example[slotName]
       val document = example.document()
-      mostSpecificSlotRules(slot, document)
-    } as ArrayList<IRule>
+      com.frankandrobot.rapier.rule.mostSpecificSlotRules(slot, document)
+    } as java.util.ArrayList<com.frankandrobot.rapier.rule.IRule>
 
     Pair(slotName, mostSpecificRules)
   }
@@ -37,9 +34,9 @@ fun mostSpecificRules(blankTemplate : BlankTemplate,
 /**
  * Create a list of the most specific rules for the Document for each slot filler
  */
-internal fun mostSpecificSlotRules(slot : Slot,
-                                   document : ArrayList<Token>) :
-  ArrayList<IRule> {
+internal fun mostSpecificSlotRules(slot : com.frankandrobot.rapier.meta.Slot,
+                                   document : java.util.ArrayList<com.frankandrobot.rapier.nlp.Token>) :
+  java.util.ArrayList<com.frankandrobot.rapier.rule.IRule> {
 
   return slot.slotFillers.flatMap{ slotFiller ->
 
@@ -47,7 +44,7 @@ internal fun mostSpecificSlotRules(slot : Slot,
     var nextSlotFillerIndex = { document.indexOfWords(slotFiller(), start = startIndex) }
     var index = nextSlotFillerIndex()
 
-    val rules = ArrayList<IRule>()
+    val rules = java.util.ArrayList<com.frankandrobot.rapier.rule.IRule>()
 
     while (index >= 0) {
 

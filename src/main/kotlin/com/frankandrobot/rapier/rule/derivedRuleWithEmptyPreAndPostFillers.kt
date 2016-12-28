@@ -1,4 +1,6 @@
-package com.frankandrobot.rapier.pattern
+package com.frankandrobot.rapier.rule
+
+import com.frankandrobot.rapier.pattern.Pattern
 
 
 fun derivedRuleWithEmptyPreAndPostFillers(pattern : Pattern,

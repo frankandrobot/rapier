@@ -4,8 +4,8 @@ import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.Slot
 import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.meta.SlotName
-import com.frankandrobot.rapier.pattern.BaseRule
 import com.frankandrobot.rapier.pattern.Pattern
+import com.frankandrobot.rapier.rule.BaseRule
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotContain
@@ -29,7 +29,8 @@ class MatchSpec : Spek({
         filler = patternOfWordItems("C", "D"),
         postFiller = patternOfWordItems("e", "f"),
         slotName = anySlot().name
-      )}
+      )
+      }
 
 
       it("should match a simple rule") {
@@ -136,7 +137,8 @@ class MatchSpec : Spek({
         filler = patternOfWordItems("B"),
         postFiller = patternOfWordsList(length = 1, word = "c"),
         slotName = anySlot().name
-      )}
+      )
+      }
       val text = { textTokenIterator("a B c") }
 
       it("should match all expanded patterns") {

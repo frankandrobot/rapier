@@ -1,9 +1,9 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.pattern.IRule
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
+import com.frankandrobot.rapier.rule.IRule
 
 
 fun IRule.ruleSize(kRuleSizeWeight: Double) : Double {

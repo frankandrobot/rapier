@@ -1,4 +1,4 @@
-package com.frankandrobot.rapier.pattern
+package com.frankandrobot.rapier.rule
 
 
 interface IDerivedRule : IRule {

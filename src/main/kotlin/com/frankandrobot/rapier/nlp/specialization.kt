@@ -1,10 +1,10 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.meta.RapierParams
-import com.frankandrobot.rapier.pattern.FillerIndexInfo
-import com.frankandrobot.rapier.pattern.IDerivedRule
 import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.RuleWithPositionInfo
+import com.frankandrobot.rapier.rule.FillerIndexInfo
+import com.frankandrobot.rapier.rule.IDerivedRule
+import com.frankandrobot.rapier.rule.RuleWithPositionInfo
 import org.funktionale.option.Option
 import org.funktionale.option.Option.None
 import org.funktionale.option.Option.Some
