@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.rule.IDerivedRule
 import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.rule.derivedRuleWithEmptyPreAndPostFillers
@@ -10,10 +11,11 @@ import com.frankandrobot.rapier.rule.derivedRuleWithEmptyPreAndPostFillers
  * Generalize the fillers, then create rules using the generalized filles and empty
  * pre/post fillers.
  */
-fun initialRules(pairs : List<Pair<IRule, IRule>>) : List<IDerivedRule> {
+fun initialRules(pairs : List<Pair<IRule, IRule>>,
+                 params : RapierParams) : List<IDerivedRule> {
 
   val genFillers = pairs.flatMap{ pair ->
-    generalize(pair.first.filler, pair.second.filler).map{ pair to it }
+    generalize(pair.first.filler, pair.second.filler, params = params).map{ pair to it }
   }
 
   return genFillers

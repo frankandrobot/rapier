@@ -28,7 +28,7 @@ class RuleMetricSpec : Spek({
 
   val anyMinCov = 1
   val anyRuleSize = 1.0
-  val params = RapierParams(k_MinCov = anyMinCov, k_SizeWeight = anyRuleSize)
+  val params = RapierParams(metricMinPositiveMatches = anyMinCov, ruleSizeWeight = anyRuleSize)
 
 
   beforeEach {

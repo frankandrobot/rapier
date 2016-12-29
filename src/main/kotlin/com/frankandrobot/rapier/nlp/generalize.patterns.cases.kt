@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternElement
 import com.frankandrobot.rapier.pattern.PatternList
@@ -21,15 +22,15 @@ internal fun exactlyOneIsEmpty(a : Pattern, b : Pattern) =
 internal fun exactlyOneHasOneElement(a : Pattern, b : Pattern) =
   (a.length > b.length && b.length == 1) || (b.length > a.length && a.length == 1)
 
-internal fun areVeryLong(a : Pattern, b : Pattern) : Boolean {
+internal fun areVeryLong(a : Pattern, b : Pattern, params : RapierParams) : Boolean {
   val patterns = sort(a, b)
   val shorter = patterns.first
   val longer = patterns.second
   val diff = longer.length - shorter.length
 
-  return (longer.length >= 3 && diff > maxDifferenceInPatternLength) ||
-    (longer.length > maxUnequalPatternLength && diff >= 2) ||
-    longer.length > maxPatternLength
+  return (longer.length >= 3 && diff > params.maxDifferenceInPatternLength) ||
+    (longer.length > params.maxUnequalPatternLength && diff >= 2) ||
+    longer.length > params.maxPatternLength
 }
 
 
@@ -132,11 +133,6 @@ internal fun casePatternHasSingleElement(a: Pattern, b: Pattern) : Option<List<P
 }
 
 
-internal val maxPatternLength = 15
-internal val maxUnequalPatternLength = 10
-internal val maxDifferenceInPatternLength = 5
-
-
 /**
  * Handle the case when
  *
@@ -157,9 +153,11 @@ internal val maxDifferenceInPatternLength = 5
  * -   the longest pattern is less than 10 and the difference in lengths is less than 5
  * -   the two patterns have the same length and are less than 15
  */
-internal fun caseVeryLongPatterns(a : Pattern, b : Pattern) : Option<List<Pattern>> {
+internal fun caseVeryLongPatterns(a : Pattern,
+                                  b : Pattern,
+                                  params : RapierParams) : Option<List<Pattern>> {
 
-  if (areVeryLong(a, b)) {
+  if (areVeryLong(a, b, params)) {
     val longer = sort(a, b).second
     return listOf(Pattern(PatternList(length = longer.length))).toOption()
   }

@@ -38,7 +38,7 @@ class RuleMetric(private val rule : IRule,
                  private val params : RapierParams,
                  private val examples : Examples) {
 
-  private val ruleSize : Double by lazy { rule.ruleSize(params.k_SizeWeight) }
+  private val ruleSize : Double by lazy { rule.ruleSize(params.ruleSizeWeight) }
 
   /**
    * Go through each Example Document and try to find a Rule match. If a match is
@@ -63,7 +63,7 @@ class RuleMetric(private val rule : IRule,
       p = result.positives.size,
       n = result.negatives.size,
       ruleSize = ruleSize,
-      kMinCov = params.k_MinCov
+      kMinCov = params.metricMinPositiveMatches
     )
   }
 }

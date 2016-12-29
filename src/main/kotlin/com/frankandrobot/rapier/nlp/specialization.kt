@@ -44,15 +44,15 @@ fun specializePostFiller(rule : IDerivedRule, n : Int, params : RapierParams) =
  * Must satisfy these contraints in order to apply specialization algorithm:
  * - areBasesLongEnough = basePreFillerLen1 >= n1 && basePreFillerLen2 >= n2
  * - usedLessThanRequested = n1 > numUsed1 && n2 > numUsed2
- * - underSearchLimit = n1 - numUsed1 <= k_MaxNoGainSearch &&
- *   n2 - numUsed2 <= k_MaxNoGainSearch
+ * - underSearchLimit = n1 - numUsed1 <= maxElementsToSpecialize &&
+ *   n2 - numUsed2 <= maxElementsToSpecialize
  */
 internal fun specializePreFiller(rule : RuleWithPositionInfo,
                                  params : RapierParams,
                                  n1 : Int,
                                  n2 : Int) : List<RuleWithPositionInfo> {
 
-  val k_MaxNoGainSearch = params.k_MaxNoGainSearch
+  val maxElements = params.maxElementsToSpecialize
   val numUsed1 = rule.preFillerInfo.numUsed1
   val numUsed2 = rule.preFillerInfo.numUsed2
   val basePreFiller1 = rule.baseRule1.preFiller
@@ -68,13 +68,14 @@ internal fun specializePreFiller(rule : RuleWithPositionInfo,
       basePreFiller1.subPattern(
         fromIndex = basePreFillerLen1 - n1,
         toIndex = basePreFillerLen1 - numUsed1,
-        maxElements = k_MaxNoGainSearch
+        maxElements = maxElements
       ),
       basePreFiller2.subPattern(
         fromIndex = basePreFillerLen2 - n2,
         toIndex = basePreFillerLen2 - numUsed2,
-        maxElements = k_MaxNoGainSearch
-      )
+        maxElements = maxElements
+      ),
+      params = params
     ).filter { it.isDefined() }
       .map { pattern ->
         val newPreFiller = pattern.get() + rule.preFiller
@@ -114,7 +115,7 @@ internal fun specializePostFiller(rule : RuleWithPositionInfo,
                                   n1 : Int,
                                   n2 : Int) : List<RuleWithPositionInfo> {
 
-  val k_MaxNoGainSearch = params.k_MaxNoGainSearch
+  val maxElements = params.maxElementsToSpecialize
   val numUsed1 = rule.postFillerInfo.numUsed1
   val numUsed2 = rule.postFillerInfo.numUsed2
   val postFiller1 = rule.baseRule1.postFiller
@@ -124,13 +125,14 @@ internal fun specializePostFiller(rule : RuleWithPositionInfo,
     postFiller1.subPattern(
       fromIndex = numUsed1,
       toIndex = n1,
-      maxElements = k_MaxNoGainSearch
+      maxElements = maxElements
     ),
     postFiller2.subPattern(
       fromIndex = numUsed2,
       toIndex = n2,
-      maxElements = k_MaxNoGainSearch
-    )
+      maxElements = maxElements
+    ),
+    params = params
   ).filter { it.isDefined() }
     .map { pattern ->
       val newPostFiller = rule.postFiller + pattern.get()

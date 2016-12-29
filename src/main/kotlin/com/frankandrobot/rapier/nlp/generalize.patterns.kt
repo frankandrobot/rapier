@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.util.combinations
 import com.frankandrobot.rapier.util.sort
@@ -106,25 +107,25 @@ internal fun partitionByExactMatches(a : Pattern, b : Pattern) : List<Pair<Patte
 }
 
 
-fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
+fun generalize(a : Pattern, b : Pattern, params : RapierParams) : List<Pattern> {
 
   val segments : List<Pair<Pattern,Pattern>> = partitionByExactMatches(a, b)
   // find the generalized patterns for the partitions
   val partitionPatterns : List<List<Pattern>> = segments.map{ patterns ->
 
-    val veryLongPatterns = caseVeryLongPatterns(patterns.first, patterns.second)
+    val veryLongPatterns = caseVeryLongPatterns(patterns.first, patterns.second, params)
     val equalSizePatterns = caseEqualLengthPatterns(patterns.first, patterns.second)
     val hasSingleElementPattern = casePatternHasSingleElement(patterns.first, patterns.second)
     val hasEmptyPattern = caseAnEmptyPattern(patterns.first, patterns.second)
 
     return when(veryLongPatterns) {
-      is Option.Some<List<Pattern>> -> veryLongPatterns.get()
+      is Some<List<Pattern>> -> veryLongPatterns.get()
       else -> when (equalSizePatterns) {
-        is Option.Some<List<Pattern>> -> equalSizePatterns.get()
+        is Some<List<Pattern>> -> equalSizePatterns.get()
         else -> when (hasSingleElementPattern) {
-          is Option.Some<List<Pattern>> -> hasSingleElementPattern.get()
+          is Some<List<Pattern>> -> hasSingleElementPattern.get()
           else -> when (hasEmptyPattern) {
-            is Option.Some<List<Pattern>> -> hasEmptyPattern.get()
+            is Some<List<Pattern>> -> hasEmptyPattern.get()
             else -> caseGeneral(patterns.first, patterns.second).get()
           }
         }
@@ -143,10 +144,12 @@ fun generalize(a : Pattern, b : Pattern) : List<Pattern> {
 }
 
 
-fun generalize(a : Option<Pattern>, b : Option<Pattern>) : List<Option<Pattern>> {
+fun generalize(a : Option<Pattern>,
+               b : Option<Pattern>,
+               params : RapierParams) : List<Option<Pattern>> {
 
   if (a.isDefined() && b.isDefined()) {
-    return generalize(a.get(), b.get()).map{Some(it)}
+    return generalize(a.get(), b.get(), params = params).map{Some(it)}
   }
 
   return listOf(None)

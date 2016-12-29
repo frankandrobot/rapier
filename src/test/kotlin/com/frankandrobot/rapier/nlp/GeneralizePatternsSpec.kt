@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
@@ -157,6 +158,8 @@ class GeneralizePatternsSpec : Spek ({
   describe("generalize") {
 
     describe("example 2") {
+      val params = RapierParams()
+
       var a : Pattern
       var b : Pattern
       var result = emptyList<Pattern>()
@@ -164,7 +167,7 @@ class GeneralizePatternsSpec : Spek ({
       beforeEach{
         a = patternOfWordItems("kansas", "city")
         b = patternOfWordItems("atlanta")
-        result = generalize(a, b)
+        result = generalize(a, b, params = params)
       }
 
       it("should produce two patterns") {

@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier.nlp
 
 import com.frankandrobot.rapier.dummySlotName
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.rule.BaseRule
 import com.frankandrobot.rapier.rule.DerivedRule
@@ -12,6 +13,7 @@ import org.jetbrains.spek.api.Spek
 
 class InitialRulesSpec : Spek({
   describe("initialRules") {
+    val params = RapierParams()
     val rule1 = {
       BaseRule(
         preFiller = Pattern(
@@ -42,7 +44,7 @@ class InitialRulesSpec : Spek({
     var result = emptyList<IDerivedRule>()
 
     beforeEach {
-      result = initialRules(listOf(Pair(rule1(),rule2())))
+      result = initialRules(listOf(Pair(rule1(),rule2())),params = params)
     }
 
 

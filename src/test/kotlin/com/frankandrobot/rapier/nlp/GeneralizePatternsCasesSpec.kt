@@ -1,5 +1,6 @@
 package com.frankandrobot.rapier.nlp
 
+import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.patternOfWordItems
 import org.jetbrains.spek.api.Spek
@@ -13,6 +14,7 @@ class GeneralizePatternsCasesSpec : Spek({
   val two = patternOfWordItems("one", "two")
   val three = patternOfWordItems("one", "two", "three")
   val anyPattern = patternOfWordItems("one", "two", "three")
+  val params = RapierParams()
 
   describe("caseEqualLengthPatterns") {
 
@@ -188,14 +190,14 @@ class GeneralizePatternsCasesSpec : Spek({
     describe("max pattern length difference") {
 
       val length = 5
-      val maxPatternLength = length + maxDifferenceInPatternLength + 1
+      val maxPatternLength = length + params.maxDifferenceInPatternLength + 1
       val a = {pattern(1..length)}
       val b = {pattern(1..maxPatternLength)}
 
       var result = emptyList<Pattern>()
 
       beforeEach {
-        result = caseVeryLongPatterns(a(), b()).get()
+        result = caseVeryLongPatterns(a(), b(), params).get()
       }
 
       it("should return one pattern") {
@@ -215,14 +217,14 @@ class GeneralizePatternsCasesSpec : Spek({
 
     describe("max unequal pattern length") {
 
-      val maxPatternLength = maxUnequalPatternLength + 2
-      val a = {pattern(1..maxUnequalPatternLength)}
+      val maxPatternLength = params.maxUnequalPatternLength + 2
+      val a = {pattern(1..params.maxUnequalPatternLength)}
       val b = {pattern(1..maxPatternLength)}
 
       var result = emptyList<Pattern>()
 
       beforeEach {
-        result = caseVeryLongPatterns(a(), b()).get()
+        result = caseVeryLongPatterns(a(), b(), params).get()
       }
 
       it("should return one pattern") {
@@ -242,13 +244,13 @@ class GeneralizePatternsCasesSpec : Spek({
 
     describe("longest pattern") {
 
-      val maxPatternLength = maxPatternLength + 1
+      val maxPatternLength = params.maxPatternLength + 1
 
       it("should return a single unconstrained pattern list if a pattern is too long") {
 
         val a = pattern(1..2)
         val b = pattern(1..maxPatternLength)
-        val result = caseVeryLongPatterns(a, b).get()
+        val result = caseVeryLongPatterns(a, b, params).get()
 
         assertEquals(1, result.size)
         assertEquals(true, result[0]()[0] is PatternList)
@@ -307,25 +309,25 @@ class GeneralizePatternsCasesSpec : Spek({
       //longer.length() > maxPatternLength
       //(length<=2 || diff<maxDiff) && (length <= maxUn || diff <= 1) && length <= maxPattern)
       it("should not handle the case when the pattern lengths are less than 3") {
-        assertEquals(false, areVeryLong(empty, empty))
-        assertEquals(false, areVeryLong(empty, one))
-        assertEquals(false, areVeryLong(one, one))
-        assertEquals(false, areVeryLong(two, one))
-        assertEquals(false, areVeryLong(two, two))
+        assertEquals(false, areVeryLong(empty, empty, params))
+        assertEquals(false, areVeryLong(empty, one, params))
+        assertEquals(false, areVeryLong(one, one, params))
+        assertEquals(false, areVeryLong(two, one, params))
+        assertEquals(false, areVeryLong(two, two, params))
       }
 
       it("should return false then the diff is <= maxDifferenceInPatternLength and the" +
         " pattern lengths are <= maxUnequalPatternLegnth ") {
         val a = pattern(1)
-        val b = pattern(maxDifferenceInPatternLength)
-        assertEquals(false, areVeryLong(a, b))
+        val b = pattern(params.maxDifferenceInPatternLength)
+        assertEquals(false, areVeryLong(a, b, params))
       }
 
       it("should return false then the diff is <= 1 and pattern lengths are <= " +
         "maxPatternLength") {
-        val a = pattern(maxPatternLength)
-        val b = pattern(maxPatternLength - 1)
-        assertEquals(false, areVeryLong(a, b))
+        val a = pattern(params.maxPatternLength)
+        val b = pattern(params.maxPatternLength - 1)
+        assertEquals(false, areVeryLong(a, b, params))
       }
     }
   }

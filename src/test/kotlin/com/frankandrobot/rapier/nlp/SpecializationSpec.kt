@@ -137,7 +137,7 @@ class SpecializationSpec : Spek({
 
       it("should not generate rules if first base rule will generalize over too many " +
         "pattern items") {
-        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val params = RapierParams(maxElementsToSpecialize = 4)
         val rule = RuleWithPositionInfo(
           preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
@@ -153,7 +153,7 @@ class SpecializationSpec : Spek({
 
       it("should not generate rules if second base rule will generalize over too many " +
         "pattern items") {
-        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val params = RapierParams(maxElementsToSpecialize = 4)
         val rule = RuleWithPositionInfo(
           preFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
@@ -168,7 +168,7 @@ class SpecializationSpec : Spek({
       }
 
       it("should generate rules when constraints satisfied") {
-        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val params = RapierParams(maxElementsToSpecialize = 4)
         val rule = RuleWithPositionInfo(
           preFillerInfo = FillerIndexInfo(numUsed1 = 1, numUsed2 = 0),
           baseRule1 = baseRule(),
@@ -185,7 +185,7 @@ class SpecializationSpec : Spek({
 
     describe("example") {
 
-      val params = RapierParams(k_BeamWidth = 2)
+      val params = RapierParams(compressionPriorityQueueSize = 2)
 
       var baseRule1 = emptyBaseRule()
       var baseRule2 = emptyBaseRule()
@@ -221,7 +221,7 @@ class SpecializationSpec : Spek({
           slotName = dummySlotName("any")
         )
 
-        fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
+        fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)), params=params)
           .map(::RuleWithPositionInfo)
         iteration1 = fillerRules
           .flatMap { specializePreFiller(rule = it, n = 1, params = params) }
@@ -398,7 +398,7 @@ class SpecializationSpec : Spek({
 
       it("should not generate rules if first base rule will generalize over too many " +
         "pattern items") {
-        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val params = RapierParams(maxElementsToSpecialize = 4)
         val rule = RuleWithPositionInfo(
           postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
@@ -414,7 +414,7 @@ class SpecializationSpec : Spek({
 
       it("should not generate rules if second base rule will generalize over too many " +
         "pattern items") {
-        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val params = RapierParams(maxElementsToSpecialize = 4)
         val rule = RuleWithPositionInfo(
           postFillerInfo = FillerIndexInfo(numUsed1 = 0, numUsed2 = 0),
           baseRule1 = baseRule(),
@@ -429,7 +429,7 @@ class SpecializationSpec : Spek({
       }
 
       it("should generate rules when constraints satisfied") {
-        val params = RapierParams(k_MaxNoGainSearch = 4)
+        val params = RapierParams(maxElementsToSpecialize = 4)
         val rule = RuleWithPositionInfo(
           postFillerInfo = FillerIndexInfo(numUsed1 = 1, numUsed2 = 0),
           baseRule1 = baseRule(),
@@ -446,7 +446,7 @@ class SpecializationSpec : Spek({
 
     describe("example") {
 
-      val params = RapierParams(k_BeamWidth = 2)
+      val params = RapierParams(compressionPriorityQueueSize = 2)
 
       var baseRule1 = emptyBaseRule()
       var baseRule2 = emptyBaseRule()
@@ -483,7 +483,7 @@ class SpecializationSpec : Spek({
           slotName = dummySlotName("any")
         )
 
-        fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
+        fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)), params=params)
           .map(::RuleWithPositionInfo)
         iteration1 = fillerRules
           .flatMap { specializePostFiller(rule = it, n = 1, params = params) }
@@ -575,7 +575,7 @@ class SpecializationSpec : Spek({
 
   describe("example") {
 
-    val params = RapierParams(k_BeamWidth = 2)
+    val params = RapierParams(compressionPriorityQueueSize = 2)
 
     var baseRule1 = emptyBaseRule()
     var baseRule2 = emptyBaseRule()
@@ -619,7 +619,7 @@ class SpecializationSpec : Spek({
         slotName = dummySlotName("any")
       )
 
-      fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)))
+      fillerRules = initialRules(listOf(Pair(baseRule1, baseRule2)), params=params)
         .map(::RuleWithPositionInfo)
 
       iteration1 = fillerRules
