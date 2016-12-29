@@ -80,7 +80,7 @@ fun randomPairs(n : Int, k : Int, random : Random = Random()) : List<Pair<Int,In
  * See #randomPairs for limitations and usage.
  */
 fun<T> ArrayList<T>.randomPairs(k : Int, random : Random = Random()) : List<Pair<T,T>> {
-  val kPairs = com.frankandrobot.rapier.util.randomPairs(n = size, k = k, random = random)
+  val kPairs = randomPairs(n = size, k = k, random = random)
 
   return kPairs.map{ Pair(this[it.first], this[it.second]) }
 }

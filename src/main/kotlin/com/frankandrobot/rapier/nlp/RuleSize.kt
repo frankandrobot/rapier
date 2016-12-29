@@ -4,6 +4,7 @@ import com.frankandrobot.rapier.pattern.Pattern
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
 import com.frankandrobot.rapier.rule.IRule
+import org.funktionale.memoization.memoize
 
 
 fun IRule.ruleSize(kRuleSizeWeight: Double) : Double {
@@ -13,9 +14,10 @@ fun IRule.ruleSize(kRuleSizeWeight: Double) : Double {
     postFiller.ruleSize(kRuleSizeWeight)
 }
 
+
 fun Pattern.ruleSize(kRuleSizeWeight: Double) : Double {
 
-  return _ruleSize(this) * kRuleSizeWeight
+  return _unweightedRuleSize(this) * kRuleSizeWeight
 }
 
 /**
@@ -25,9 +27,9 @@ fun Pattern.ruleSize(kRuleSizeWeight: Double) : Double {
  * - each disjunct in a POS tag constraint counts 1
  * - each disjunct in a semantic constraint counts 1
  */
-internal fun _ruleSize(pattern : Pattern) : Int {
+internal var _unweightedRuleSize: (Pattern) -> Int  = { pattern : Pattern ->
 
-  return pattern().map{ patternElement ->
+  pattern().map{ patternElement ->
 
     var metric = 0
 
@@ -41,4 +43,4 @@ internal fun _ruleSize(pattern : Pattern) : Int {
     metric
 
   }.fold(0) { total, cur -> total + cur }
-}
+}.memoize()
