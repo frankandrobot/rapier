@@ -38,12 +38,11 @@ data class MetricResults(val positives : List<SlotFiller>,
  * word property, not the tag or semantic class.
  *
  */
-fun IRule.metricResults(params : RapierParams,
-                        examples : Examples) : MetricResults
-  = _metricResults(this, params, examples)
+fun IRule.metricResults(examples : Examples) : MetricResults
+  = _metricResults(this, examples)
 
 
-private val _metricResults = { rule : IRule, params : RapierParams, examples : Examples ->
+private val _metricResults = { rule : IRule, examples : Examples ->
 
   val results = rule.getMatchedFillers(examples)
   MetricResults(positives = results.positives, negatives = results.negatives)
@@ -54,7 +53,7 @@ private val _metricResults = { rule : IRule, params : RapierParams, examples : E
 fun IRule.metric(params : RapierParams,
                  examples: Examples) : Double {
 
-  val result = this.metricResults(params, examples)
+  val result = this.metricResults(examples)
   return metricResults(
       p = result.positives.size,
       n = result.negatives.size,

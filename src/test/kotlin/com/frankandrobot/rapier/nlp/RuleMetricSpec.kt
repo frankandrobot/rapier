@@ -134,19 +134,18 @@ class RuleMetricSpec : Spek({
     describe("metricResults") {
 
       it("should find positive matches in simple rules") {
-        val result = aSimpleRule.metricResults(params, Examples(listOf(aSimpleExample)))
+        val result = aSimpleRule.metricResults(Examples(listOf(aSimpleExample)))
         result.positives.size shouldEqual 1
         result.positives shouldContain wordSlotFiller("java")
       }
 
       it("should find no negative matches in simple rules") {
-        val result = aSimpleRule.metricResults(params, Examples(listOf(aSimpleExample)))
+        val result = aSimpleRule.metricResults(Examples(listOf(aSimpleExample)))
         result.negatives.size shouldEqual 0
       }
 
       it("should find two positive matches in example with two pattern items in filler") {
         val result = aRuleWithTwoPatternItemsInFiller.metricResults(
-          params,
           Examples(listOf(anExampleWithTwoPatternItemsInFiller))
         )
         result.positives shouldEqual listOf(
@@ -157,7 +156,6 @@ class RuleMetricSpec : Spek({
 
       it("should find no negative matches in example with two pattern items in filler") {
         val result = aRuleWithTwoPatternItemsInFiller.metricResults(
-          params,
           Examples(listOf(anExampleWithTwoPatternItemsInFiller))
         )
         result.negatives.size shouldEqual 0
@@ -165,7 +163,6 @@ class RuleMetricSpec : Spek({
 
       it("should find positive matches in example with two constraints in filler") {
         val result = aRuleWithTwoConstraintsInFiller.metricResults(
-          params,
           Examples(listOf(anExampleWithTwoConstraintsInFiller))
         )
         result.positives shouldEqual listOf(
@@ -175,7 +172,6 @@ class RuleMetricSpec : Spek({
 
       it("should find no negative matches in example with two constraints in filler") {
         val result = aRuleWithTwoConstraintsInFiller.metricResults(
-          params,
           Examples(listOf(anExampleWithTwoConstraintsInFiller))
         )
         result.negatives.size shouldEqual 0
@@ -183,7 +179,6 @@ class RuleMetricSpec : Spek({
 
       it("should find negative matches in example with negative matches") {
         val result = anyRuleWithNegativeMatches.metricResults(
-          params,
           Examples(listOf(anyExampleWithNegativeMatches))
         )
         result.negatives.size shouldEqual 1
