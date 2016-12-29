@@ -17,7 +17,7 @@ internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
  * Don't ask me where "1.442695" comes from...that was in the original source code and
  * not mentioned in the research paper.
  */
-internal fun metric(p : Int, n : Int, ruleSize : Double, kMinCov : Int) : Double =
+internal fun metricResults(p : Int, n : Int, ruleSize : Double, kMinCov : Int) : Double =
   if (p < kMinCov) Double.POSITIVE_INFINITY
   else -1.442695*log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
@@ -35,7 +35,8 @@ data class MetricResults(val positives : List<SlotFiller>,
  * @param kRuleSizeWeight the weight used to scale the rule size
  */
 class RuleMetric(private val rule : IRule,
-                 private val params : RapierParams) {
+                 private val params : RapierParams,
+                 private val examples : Examples) {
 
   private val ruleSize : Double by lazy { rule.ruleSize(params.k_SizeWeight) }
 
@@ -51,17 +52,14 @@ class RuleMetric(private val rule : IRule,
    *
    * @param examples
    */
-  fun metric(examples : Examples) : MetricResults {
-
+  val metricResults : MetricResults by lazy {
     val results = rule.getMatchedFillers(examples)
-
-    return MetricResults(positives = results.positives, negatives = results.negatives)
+    MetricResults(positives = results.positives, negatives = results.negatives)
   }
 
-
-  fun evaluate(examples : Examples) : Double {
-    val result = metric(examples)
-    return metric(
+  val metric : Double by lazy {
+    val result = metricResults
+    metricResults(
       p = result.positives.size,
       n = result.negatives.size,
       ruleSize = ruleSize,

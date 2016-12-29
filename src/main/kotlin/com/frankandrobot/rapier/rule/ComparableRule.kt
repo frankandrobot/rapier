@@ -13,10 +13,10 @@ data class ComparableRule<T : IDerivedRule>(
   private val params : RapierParams,
   private val rule : T) : Comparable<ComparableRule<T>> {
 
-  private val ruleMetric = RuleMetric(rule, params)
+  private val ruleMetric = RuleMetric(rule, params, examples)
 
   override fun compareTo(other: ComparableRule<T>): Int {
-    return ruleMetric.evaluate(examples).compareTo(other.ruleMetric.evaluate(examples))
+    return ruleMetric.metric.compareTo(other.ruleMetric.metric)
   }
 
   operator fun invoke() = rule
