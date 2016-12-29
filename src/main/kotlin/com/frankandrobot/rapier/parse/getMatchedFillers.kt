@@ -5,6 +5,7 @@ import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.SlotFiller
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.rule.IRule
+import org.funktionale.memoization.memoize
 import java.util.*
 
 
@@ -17,7 +18,7 @@ data class FillerMatchResults(val positives : List<SlotFiller>,
  * Matches the rule against the example. If a filler occurs in the Example
  * enabledSlotFiller, then it is a positive match. Otherwise, it is a negative match.
  */
-internal fun getMatchedFillers(rule : IRule, example : Example) : FillerMatchResults {
+private val _getMatchedFillers = { rule: IRule, example: Example ->
 
   val slot = example[rule.slotName]
 
@@ -34,21 +35,30 @@ internal fun getMatchedFillers(rule : IRule, example : Example) : FillerMatchRes
     val positives = slotFillers.filter { slot.slotFillers.contains(it) }
     val negatives = slotFillers.filter { !slot.slotFillers.contains(it) }
 
-    return FillerMatchResults(positives = positives, negatives = negatives)
+    FillerMatchResults(positives = positives, negatives = negatives)
   }
+  else {
 
-  return FillerMatchResults(positives = emptyList(), negatives = emptyList())
-}
+    FillerMatchResults(positives = emptyList(), negatives = emptyList())
+  }
+}.memoize()
 
 
-fun IRule.getMatchedFillers(examples : Examples) : FillerMatchResults {
+internal fun getMatchedFillers(rule : IRule, example : Example) : FillerMatchResults
+  = _getMatchedFillers(rule, example)
 
-  return examples()
-    .map{ example -> getMatchedFillers(this, example) }
+
+private val _ruleGetMatchedFillers = { rule : IRule, examples : Examples ->
+  examples()
+    .map{ example -> getMatchedFillers(rule, example) }
     .fold(FillerMatchResults(emptyList(), emptyList())) { total, cur ->
       FillerMatchResults(
         positives = total.positives + cur.positives,
         negatives = total.negatives + cur.negatives
       )
     }
-}
+}.memoize()
+
+
+fun IRule.getMatchedFillers(examples : Examples) : FillerMatchResults
+  = _ruleGetMatchedFillers(this, examples)
