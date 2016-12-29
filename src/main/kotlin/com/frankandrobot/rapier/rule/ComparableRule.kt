@@ -2,7 +2,7 @@ package com.frankandrobot.rapier.rule
 
 import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.RapierParams
-import com.frankandrobot.rapier.nlp.RuleMetric
+import com.frankandrobot.rapier.nlp.metric
 
 
 /**
@@ -13,10 +13,8 @@ data class ComparableRule<T : IDerivedRule>(
   private val params : RapierParams,
   private val rule : T) : Comparable<ComparableRule<T>> {
 
-  private val ruleMetric = RuleMetric(rule, params, examples)
-
   override fun compareTo(other: ComparableRule<T>): Int {
-    return ruleMetric.metric.compareTo(other.ruleMetric.metric)
+    return rule.metric(params, examples).compareTo(other().metric(params, examples))
   }
 
   operator fun invoke() = rule

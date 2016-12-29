@@ -134,22 +134,21 @@ class RuleMetricSpec : Spek({
     describe("metricResults") {
 
       it("should find positive matches in simple rules") {
-        val result =
-          RuleMetric(aSimpleRule, params, Examples(listOf(aSimpleExample))).metricResults
+        val result = aSimpleRule.metricResults(params, Examples(listOf(aSimpleExample)))
         result.positives.size shouldEqual 1
         result.positives shouldContain wordSlotFiller("java")
       }
 
       it("should find no negative matches in simple rules") {
-        val result =
-          RuleMetric(aSimpleRule, params, Examples(listOf(aSimpleExample))).metricResults
+        val result = aSimpleRule.metricResults(params, Examples(listOf(aSimpleExample)))
         result.negatives.size shouldEqual 0
       }
 
       it("should find two positive matches in example with two pattern items in filler") {
-        val result =
-          RuleMetric(aRuleWithTwoPatternItemsInFiller, params,
-            Examples(listOf(anExampleWithTwoPatternItemsInFiller))).metricResults
+        val result = aRuleWithTwoPatternItemsInFiller.metricResults(
+          params,
+          Examples(listOf(anExampleWithTwoPatternItemsInFiller))
+        )
         result.positives shouldEqual listOf(
           wordSlotFiller("java"),
           wordSlotFiller("c#")
@@ -157,32 +156,36 @@ class RuleMetricSpec : Spek({
       }
 
       it("should find no negative matches in example with two pattern items in filler") {
-        val result =
-          RuleMetric(aRuleWithTwoPatternItemsInFiller, params,
-            Examples(listOf(anExampleWithTwoPatternItemsInFiller))).metricResults
+        val result = aRuleWithTwoPatternItemsInFiller.metricResults(
+          params,
+          Examples(listOf(anExampleWithTwoPatternItemsInFiller))
+        )
         result.negatives.size shouldEqual 0
       }
 
       it("should find positive matches in example with two constraints in filler") {
-        val result =
-          RuleMetric(aRuleWithTwoConstraintsInFiller, params,
-            Examples(listOf(anExampleWithTwoConstraintsInFiller))).metricResults
+        val result = aRuleWithTwoConstraintsInFiller.metricResults(
+          params,
+          Examples(listOf(anExampleWithTwoConstraintsInFiller))
+        )
         result.positives shouldEqual listOf(
           wordSlotFiller("go", "lang")
         )
       }
 
       it("should find no negative matches in example with two constraints in filler") {
-        val result =
-          RuleMetric(aRuleWithTwoConstraintsInFiller, params,
-            Examples(listOf(anExampleWithTwoConstraintsInFiller))).metricResults
+        val result = aRuleWithTwoConstraintsInFiller.metricResults(
+          params,
+          Examples(listOf(anExampleWithTwoConstraintsInFiller))
+        )
         result.negatives.size shouldEqual 0
       }
 
       it("should find negative matches in example with negative matches") {
-        val result =
-          RuleMetric(anyRuleWithNegativeMatches, params,
-            Examples(listOf(anyExampleWithNegativeMatches))).metricResults
+        val result = anyRuleWithNegativeMatches.metricResults(
+          params,
+          Examples(listOf(anyExampleWithNegativeMatches))
+        )
         result.negatives.size shouldEqual 1
         result.negatives shouldEqual listOf(wordSlotFiller("rust"))
       }
@@ -206,7 +209,7 @@ class RuleMetricSpec : Spek({
         val kMinCov = 0
         val expected = 1.963539434299987
         val actual = metricResults(p = anyPvalue, n = anyNvalue, ruleSize = anyRuleSize,
-          kMinCov = kMinCov)
+          minPosMatches = kMinCov)
 
         assert(Math.abs(expected - actual) < 0.00000000000001)
       }
@@ -220,7 +223,7 @@ class RuleMetricSpec : Spek({
         val kMinCov = 0
         val expected = 0.9860575047077227
         val actual = metricResults(p = anyPvalue, n = anyNvalue, ruleSize = anyRuleSize,
-          kMinCov = kMinCov)
+          minPosMatches = kMinCov)
 
         assert(Math.abs(expected - actual) < 0.00000000000001)
       }
@@ -244,8 +247,8 @@ class RuleMetricSpec : Spek({
         val anyMinCov = 1
         val anyNvalue = 5
 
-        val rule = metricResults(p = 5, n = anyNvalue, ruleSize = anyRuleSize, kMinCov = anyMinCov)
-        val betterRule = metricResults(p = 6, n = anyNvalue, ruleSize = anyRuleSize, kMinCov = anyMinCov)
+        val rule = metricResults(p = 5, n = anyNvalue, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+        val betterRule = metricResults(p = 6, n = anyNvalue, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
 
         assert(betterRule < rule)
       }
@@ -256,8 +259,8 @@ class RuleMetricSpec : Spek({
         val anyMinCov = 1
         val anyPvalue = 5
 
-        val rule = metricResults(p = anyPvalue, n = 5, ruleSize = anyRuleSize, kMinCov = anyMinCov)
-        val worseRule = metricResults(p = anyPvalue, n = 6, ruleSize = anyRuleSize, kMinCov = anyMinCov)
+        val rule = metricResults(p = anyPvalue, n = 5, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+        val worseRule = metricResults(p = anyPvalue, n = 6, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
 
         assert(worseRule > rule)
       }
