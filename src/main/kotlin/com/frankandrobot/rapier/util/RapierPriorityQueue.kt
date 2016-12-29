@@ -3,23 +3,33 @@ package com.frankandrobot.rapier.util
 import java.util.*
 
 
+interface IPriorityQueue<T : Comparable<T>> {
+
+  val best : T
+  val worst : T
+  val size : Int
+
+  fun addAll(collection : Collection<T>) : RapierPriorityQueue<T>
+  fun iterator() : Iterable<T>
+}
+
 /**
  * Performance is not great at all. However, rapier uses a small capacity (<10),
  * so performance is good enough.
  */
-class RapierPriorityQueue<T : Comparable<T>>(val capacity : Int) {
+class RapierPriorityQueue<T : Comparable<T>>(val capacity : Int) : IPriorityQueue<T> {
 
   private val queue = ArrayList<T>(capacity)
 
   internal operator fun invoke() = queue
 
-  val best : T
+  override val best : T
     get() = queue[0]
 
-  val worst : T
+  override val worst : T
     get() = queue.last()
 
-  val size : Int
+  override val size : Int
     get() = queue.lastIndex + 1
 
 
@@ -47,7 +57,7 @@ class RapierPriorityQueue<T : Comparable<T>>(val capacity : Int) {
     return this
   }
 
-  fun addAll(collection : Collection<T>) : RapierPriorityQueue<T> {
+  override fun addAll(collection : Collection<T>) : RapierPriorityQueue<T> {
 
     collection.forEach{insert(it)}
 
@@ -55,5 +65,5 @@ class RapierPriorityQueue<T : Comparable<T>>(val capacity : Int) {
   }
 
 
-  fun iterator() = queue.asIterable()
+  override fun iterator() = queue.asIterable()
 }

@@ -61,6 +61,7 @@ val emptyExample = Example(
   document = Document(),
   filledTemplate = FilledTemplate(Slots(hashMapOf()))
 )
+val emptyExamples = Examples(listOf(emptyExample))
 
 
 fun parseResult(tokens : BetterIterator<Token>,
