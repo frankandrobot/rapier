@@ -199,18 +199,55 @@ class CompressionSpec : Spek({
         ))
       )
     ))
-    val params = RapierParams()
+    val params = RapierParams(metricMinPositiveMatches = 1)
 
-    fit("should compress to one rule") {
+    it("should compress to one rule") {
       val result = arrayListOf(rule1, rule2).compressRuleArray(params, examples)
 
       result shouldEqual listOf(DerivedRule(
-        preFiller = patternOfWordItems("1"),
+        preFiller = Pattern(),
         filler = Pattern(patternItemOfWords("a","b")),
-        postFiller = patternOfWordItems("2"),
+        postFiller = Pattern(),
         slotName = SlotName("slot"),
         baseRule1 = rule1,
         baseRule2 = rule2
+      ))
+    }
+  }
+
+
+  describe("example with longer identical pre/post fillers") {
+    val rule1 = BaseRule(
+      preFiller = patternOfWordItems("1","2"),
+      filler = patternOfWordItems("a"),
+      postFiller = patternOfWordItems("3","4"),
+      slotName = SlotName("slot")
+    )
+    val rule2 = BaseRule(
+      preFiller = patternOfWordItems("1","2"),
+      filler = patternOfWordItems("b"),
+      postFiller = patternOfWordItems("3","4"),
+      slotName = SlotName("slot")
+    )
+    val examples = Examples(listOf(
+      Example(
+        BlankTemplate(name = "test", slots = slotNames("slot")),
+        Document(tokens = textTokenList("xxxx 1 2 a 3 4 xxxx 1 2 b 3 4 xxxx")),
+        FilledTemplate(slots(
+          SlotName("slot") to slotFillers(wordTokens("a"), wordTokens("b"))
+        ))
+      )
+    ))
+    val params = RapierParams(metricMinPositiveMatches = 1)
+
+    it("should compress to one rule") {
+      val result = arrayListOf(rule1, rule2).compressRuleArray(params, examples)
+
+      result.map(::toBaseRule) shouldEqual listOf(BaseRule(
+        preFiller = patternOfWordsList(1, "2"),
+        filler = Pattern(patternItemOfWords("a","b")),
+        postFiller = patternOfWordsList(1, "3"),
+        slotName = SlotName("slot")
       ))
     }
   }

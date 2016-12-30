@@ -6,6 +6,7 @@ import com.frankandrobot.rapier.nlp.WordToken
 import com.frankandrobot.rapier.parse.ParseResult
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.rule.BaseRule
+import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.util.BetterIterator
 import org.funktionale.option.Option
 import org.funktionale.option.Option.None
@@ -53,6 +54,12 @@ fun emptyBaseRule() = BaseRule(
   filler = Pattern(),
   postFiller = Pattern(),
   slotName = SlotName("none")
+)
+fun toBaseRule(rule : IRule) = BaseRule(
+  preFiller = rule.preFiller,
+  filler = rule.filler,
+  postFiller = rule.postFiller,
+  slotName = rule.slotName
 )
 
 
