@@ -45,19 +45,22 @@ private fun swap(a : ArrayList<Pair<Int,Int>>, i : Int, j : Int) {
  *
  * Thus, we (arbitrarily) limit the size of n at 5,000.
  */
-fun randomPairs(n : Int, k : Int, random : Random = Random()) : List<Pair<Int,Int>> {
+fun randomPairs(n: Int, k: Int, random : Random = Random()) : List<Pair<Int,Int>> {
 
   assert(k > 0)
-  assert(k <= n)
   assert(n <= 5000)
+
+  val _k = Math.min(n, k)
 
   if (n > 1) {
 
     val allPairs = generatePairs(n).clone() as ArrayList<Pair<Int, Int>>
-    val pairs = ArrayList<Pair<Int, Int>>(k)
+    val pairs = ArrayList<Pair<Int, Int>>(_k)
+    val maxValue = Math.min(_k, allPairs.size)
 
     var j = 0
-    while (j < k) {
+
+    while (j < maxValue) {
 
       val i = random.nextInt(allPairs.size - j) + j
       val randomPair = allPairs[i]

@@ -1,15 +1,9 @@
 package com.frankandrobot.rapier.nlp
 
-import com.frankandrobot.rapier.emptyExamples
+import com.frankandrobot.rapier.*
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.patternOfWordItems
-import com.frankandrobot.rapier.rule.BaseRule
-import com.frankandrobot.rapier.rule.ComparableRule
-import com.frankandrobot.rapier.rule.IRule
-import com.frankandrobot.rapier.rule.derivedRuleWithEmptyPreAndPostFillers
-import com.frankandrobot.rapier.textTokenList
-import com.frankandrobot.rapier.wordTokens
+import com.frankandrobot.rapier.rule.*
 import org.amshove.kluent.shouldEqual
 import org.funktionale.option.Option.None
 import org.funktionale.option.Option.Some
@@ -124,4 +118,100 @@ class CompressionSpec : Spek({
   }
 
 
+  describe("main loop") {
+
+    it("should increment n") {}
+
+    it("should exit when perfect rule found") {}
+
+    it("should exit when more than consecutive number of failures") {}
+
+    it("should call specializePreFiller with n") {}
+
+    it("should call specializePostFiller with n") {}
+
+    it("should add new prefiller rules to rule list") {}
+
+    it("should add new postfiller rules to rule list") {}
+  }
+
+
+  /**
+   * This example fails because rules are identical (nothing to generalize)
+   */
+  describe("example with identical rules") {
+    val rule1 = BaseRule(
+      preFiller = Pattern(),
+      filler = patternOfWordItems("a"),
+      postFiller = Pattern(),
+      slotName = SlotName("slot")
+    )
+    val rule2 = BaseRule(
+      preFiller = Pattern(),
+      filler = patternOfWordItems("a"),
+      postFiller = Pattern(),
+      slotName = SlotName("slot")
+    )
+    val examples = Examples(listOf(
+      Example(
+        BlankTemplate(name = "test", slots = slotNames("slot")),
+        Document(tokens = textTokenList("xxxx a xxxx")),
+        FilledTemplate(slots(
+          SlotName("slot") to slotFillers(wordTokens("a"))
+        ))
+      )
+    ))
+    val params = RapierParams()
+
+    it("should compress to one rule") {
+      val result = arrayListOf(rule1, rule2).compressRuleArray(params, examples)
+      result shouldEqual listOf(DerivedRule(
+        preFiller = Pattern(),
+        filler = patternOfWordItems("a"),
+        postFiller = Pattern(),
+        slotName = SlotName("slot"),
+        baseRule1 = rule1,
+        baseRule2 = rule2
+      ))
+    }
+  }
+
+
+  describe("example with identical pre/post fillers") {
+    val rule1 = BaseRule(
+      preFiller = patternOfWordItems("1"),
+      filler = patternOfWordItems("a"),
+      postFiller = patternOfWordItems("2"),
+      slotName = SlotName("slot")
+    )
+    val rule2 = BaseRule(
+      preFiller = patternOfWordItems("1"),
+      filler = patternOfWordItems("b"),
+      postFiller = patternOfWordItems("2"),
+      slotName = SlotName("slot")
+    )
+    val examples = Examples(listOf(
+      Example(
+        BlankTemplate(name = "test", slots = slotNames("slot")),
+        Document(tokens = textTokenList("xxxx a xxxx b xxxx")),
+        FilledTemplate(slots(
+          SlotName("slot") to slotFillers(wordTokens("a"), wordTokens("b"))
+        ))
+      )
+    ))
+    val params = RapierParams()
+
+    fit("should compress to one rule") {
+      val result = arrayListOf(rule1, rule2).compressRuleArray(params, examples)
+
+      result shouldEqual listOf(DerivedRule(
+        preFiller = patternOfWordItems("1"),
+        filler = Pattern(patternItemOfWords("a","b")),
+        postFiller = patternOfWordItems("2"),
+        slotName = SlotName("slot"),
+        baseRule1 = rule1,
+        baseRule2 = rule2
+      ))
+    }
+  }
 })

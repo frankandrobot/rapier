@@ -18,7 +18,7 @@ internal fun log2(a : Double) = Math.log(a) / Math.log(2.0)
  * Don't ask me where "1.442695" comes from...that was in the original source code and
  * not mentioned in the research paper.
  */
-internal fun metricResults(p : Int, n : Int, ruleSize : Double, minPosMatches: Int) : Double =
+internal fun metric(p : Int, n : Int, ruleSize : Double, minPosMatches: Int) : Double =
   if (p < minPosMatches) Double.POSITIVE_INFINITY
   else -1.442695*log2((p+1.0)/(p+n+2.0)) + ruleSize / (p.toDouble())
 
@@ -54,7 +54,7 @@ fun IRule.metric(params : RapierParams,
                  examples: Examples) : Double {
 
   val result = this.metricResults(examples)
-  return metricResults(
+  return metric(
       p = result.positives.size,
       n = result.negatives.size,
       ruleSize = this.ruleSize(params.ruleSizeWeight),

@@ -14,9 +14,9 @@ import org.funktionale.option.Option.Some
 import java.util.*
 
 
-fun ArrayList<IRule>.compressRuleArray(
-  examples : Examples,
+fun ArrayList<out IRule>.compressRuleArray(
   params : RapierParams,
+  examples : Examples,
   // testing args
   _ruleList: IPriorityQueue<ComparableRule<IDerivedRule>>
   = RapierPriorityQueue<ComparableRule<IDerivedRule>>(params.compressionPriorityQueueSize),
@@ -25,10 +25,6 @@ fun ArrayList<IRule>.compressRuleArray(
   = randomPairsWrapper(_random)) : ArrayList<IRule> {
 
   var learnedRule : Option<IRule> = None
-
-  val toComparableRule = { rule : IDerivedRule ->
-    ComparableRule(examples = examples, params = params, rule = rule)
-  }
 
   val initialRules = setup(
     list = this,
@@ -43,19 +39,19 @@ fun ArrayList<IRule>.compressRuleArray(
 
     var numNoImprovements = 0
     var n = 1
-    var prevBest = _ruleList.best
 
     while (learnedRule.isEmpty() && (numNoImprovements < params.compressionFails)) {
 
+      val prevBest = _ruleList.best
       val newPreFillerRules = _ruleList.iterator()
         .flatMap { specializePreFiller(rule = it(), n = n, params = params) }
-        .map(toComparableRule)
+        .map(comparableRule(params, examples))
 
       _ruleList.addAll(newPreFillerRules)
 
       val newPostFillerRules = _ruleList.iterator()
         .flatMap { specializePostFiller(rule = it(), n = n, params = params) }
-        .map(toComparableRule)
+        .map(comparableRule(params, examples))
 
       _ruleList.addAll(newPostFillerRules)
 
@@ -68,7 +64,6 @@ fun ArrayList<IRule>.compressRuleArray(
       } else if (prevBest <= _ruleList.best) {
         numNoImprovements++
       } else {
-        prevBest = _ruleList.best
         numNoImprovements = 0
       }
     }
@@ -87,7 +82,7 @@ fun ArrayList<IRule>.compressRuleArray(
       val newRule = learnedRule.get()
       return (this.removeRedundantRules(newRule, examples) + newRule) as ArrayList
     }
-    else -> this
+    else -> this as ArrayList<IRule>
   }
 }
 
@@ -101,7 +96,7 @@ internal fun setup(list : ArrayList<out IRule>,
   val pairs = randomPairs(list, params.compressionRandomPairs)
   val initial =
     initialRules(pairs = pairs, params = params)
-    .map{ ComparableRule(examples = examples, params = params, rule = it) }
+    .map(comparableRule(params, examples))
 
   return initial
 }
@@ -125,5 +120,16 @@ internal fun testBestRule(bestRule: IRule,
 internal val randomPairsWrapper = {random : Random ->
   {
     list: ArrayList<out IRule>, k: Int -> list.randomPairs(k = k, random = random)
+  }
+}
+
+internal val comparableRule = { params : RapierParams, examples : Examples ->
+  {
+    rule : IDerivedRule ->
+    ComparableRule(
+      examples = examples,
+      params = params,
+      rule = rule
+    )
   }
 }

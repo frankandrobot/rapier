@@ -194,7 +194,7 @@ class RuleMetricSpec : Spek({
      * f(p,n,ruleSize) := -1.442695*log2((p+1)/(p+n+2)) + ruleSize/p;
      */
 
-    describe("metricResults") {
+    describe("metric") {
 
       it ("should use the correct formula 1") {
 
@@ -203,7 +203,7 @@ class RuleMetricSpec : Spek({
         val anyRuleSize = 0.4
         val kMinCov = 0
         val expected = 1.963539434299987
-        val actual = metricResults(p = anyPvalue, n = anyNvalue, ruleSize = anyRuleSize,
+        val actual = metric(p = anyPvalue, n = anyNvalue, ruleSize = anyRuleSize,
           minPosMatches = kMinCov)
 
         assert(Math.abs(expected - actual) < 0.00000000000001)
@@ -217,7 +217,7 @@ class RuleMetricSpec : Spek({
         val anyRuleSize = 0.8
         val kMinCov = 0
         val expected = 0.9860575047077227
-        val actual = metricResults(p = anyPvalue, n = anyNvalue, ruleSize = anyRuleSize,
+        val actual = metric(p = anyPvalue, n = anyNvalue, ruleSize = anyRuleSize,
           minPosMatches = kMinCov)
 
         assert(Math.abs(expected - actual) < 0.00000000000001)
@@ -230,7 +230,7 @@ class RuleMetricSpec : Spek({
         val anyNvalue = 3
         val anyRuleSize = 0.9860575047077227
         val kMinCov = 3
-        val actual = metricResults(pValue, anyNvalue, anyRuleSize, kMinCov)
+        val actual = metric(pValue, anyNvalue, anyRuleSize, kMinCov)
 
         assertEquals(Double.POSITIVE_INFINITY, actual)
       }
@@ -242,20 +242,31 @@ class RuleMetricSpec : Spek({
         val anyMinCov = 1
         val anyNvalue = 5
 
-        val rule = metricResults(p = 5, n = anyNvalue, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
-        val betterRule = metricResults(p = 6, n = anyNvalue, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+        val rule = metric(p = 5, n = anyNvalue, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+        val betterRule = metric(p = 6, n = anyNvalue, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
 
         assert(betterRule < rule)
       }
 
       it("rules that cover more negative matches should evaluate to higher values") {
-
         val anyRuleSize = 0.1
         val anyMinCov = 1
         val anyPvalue = 5
 
-        val rule = metricResults(p = anyPvalue, n = 5, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
-        val worseRule = metricResults(p = anyPvalue, n = 6, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+        val rule = metric(p = anyPvalue, n = 5, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+        val worseRule = metric(p = anyPvalue, n = 6, ruleSize = anyRuleSize, minPosMatches = anyMinCov)
+
+        assert(worseRule > rule)
+      }
+
+      it("rules with larger ruleSize should evaluate to higher values") {
+        val anyMinCov = 1
+        val anyPvalue = 5
+
+        val rule = metric(p = anyPvalue, n = anyPvalue, ruleSize = 5.0,
+          minPosMatches = anyMinCov)
+        val worseRule = metric(p = anyPvalue, n = anyPvalue, ruleSize = 10.0,
+          minPosMatches = anyMinCov)
 
         assert(worseRule > rule)
       }
