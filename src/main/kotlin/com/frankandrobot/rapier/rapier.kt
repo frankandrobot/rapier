@@ -34,8 +34,8 @@ fun rapier(blankTemplate : BlankTemplate,
 
   val result = mostSpecificSlotRules.map { result ->
 
-    val slotName = result.first
-    val mostSpecificRules = result.second
+    val slotName = result.key
+    val mostSpecificRules = result.value
 
     var rules = mostSpecificRules
     var failures = 0

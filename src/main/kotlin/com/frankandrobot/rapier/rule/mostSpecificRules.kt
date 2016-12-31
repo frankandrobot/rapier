@@ -32,22 +32,26 @@ import java.util.*
  * Goes thru each slot and creates the most specific rules for each Example
  */
 fun mostSpecificRules(blankTemplate : BlankTemplate,
-                      examples : Examples) : List<Pair<SlotName, ArrayList<IRule>>> {
+                      examples : Examples) : HashMap<SlotName, ArrayList<IRule>> {
 
   examples().forEach{ assert(it.blankTemplate == blankTemplate) }
 
   return blankTemplate().map{ slotName ->
 
-    val examplesWithSlotEnabled =
-      examples().filter{ example -> example[slotName].enabled }
-
-    val mostSpecificRules = examplesWithSlotEnabled.flatMap{ example ->
+    // gather all rules for the slot
+    val exampleWithSlotEnabled = examples().filter{ example -> example[slotName].enabled }
+    val mostSpecificRulesForExample = exampleWithSlotEnabled.flatMap{ example ->
       val slot = example[slotName]
       val document = example.document()
       mostSpecificSlotRules(slot, document)
     } as ArrayList<IRule>
 
-    Pair(slotName, mostSpecificRules)
+    Pair(slotName, mostSpecificRulesForExample)
+
+  }.fold(HashMap<SlotName, ArrayList<IRule>>()) { total, cur ->
+
+    total[cur.first] = cur.second
+    total
   }
 }
 

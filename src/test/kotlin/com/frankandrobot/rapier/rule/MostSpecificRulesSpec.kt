@@ -61,22 +61,22 @@ class MostSpecificRulesSpec : Spek({
         )
       )
     )
-    var result : List<Pair<SlotName, List<IRule>>> = emptyList()
+    var result : HashMap<SlotName, ArrayList<IRule>> = HashMap()
 
     beforeEach() {
       result = mostSpecificRules(blankTemplate, Examples(listOf(example1, example2)))
     }
 
     it("should ignore disabled slots") {
-      val cResult = result.find{ it.first == SlotName("b") }
+      val cResult = result[SlotName("b")]
       cResult `should not be` null
-      cResult!!.second.size shouldEqual 0
+      cResult!!.size shouldEqual 0
     }
 
     it("should get rules for all examples for a") {
-      val aResult = result.find{ it.first == SlotName("a") }
+      val aResult = result[SlotName("a")]
       aResult `should not be` null
-      val aRules = aResult!!.second
+      val aRules = aResult!!
 
       aRules.size shouldEqual 3
 
