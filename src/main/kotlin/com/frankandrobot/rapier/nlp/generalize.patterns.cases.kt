@@ -191,7 +191,7 @@ internal fun caseGeneral(a : Pattern, b : Pattern) : Option<List<Pattern>> {
 
   val newPatterns = extend(shorter().listIterator(), shorter.length, longer.length)
 
-  return newPatterns.flatMap{ caseEqualLengthPatterns(it, b).get() }.toOption()
+  return newPatterns.flatMap{ caseEqualLengthPatterns(it, longer).get() }.toOption()
 }
 
 
