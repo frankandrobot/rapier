@@ -5,7 +5,7 @@ data class RapierParams(
   /**
    * the number of consecutive outer-loop failures before giving up.
    */
-  val outerLoopFails: Int = 4,
+  val maxOuterLoopFails: Int = 4,
   /**
    * The number of random pairs to use in the compression algorithm
    */

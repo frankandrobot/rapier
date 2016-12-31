@@ -22,7 +22,7 @@ class MostSpecificRulesSpec : Spek({
 
     val blankTemplate = BlankTemplate(
       name = "test",
-      slots = hashSetOf(SlotName("a"), SlotName("b"))
+      slots = slotNames("a", "b")
     )
     val example1 = Example(
       blankTemplate = blankTemplate,

@@ -11,32 +11,32 @@ import com.frankandrobot.rapier.rule.mostSpecificRules
 
 fun outerLoop(blankTemplate : BlankTemplate,
               examples : Examples,
-              params : RapierParams) : List<Pair<SlotName,List<IRule>>> {
+              params : RapierParams) : List<Results> {
 
   val mostSpecificSlotRules = mostSpecificRules(blankTemplate, examples)
 
   val result = mostSpecificSlotRules.map { result ->
 
     val slotName = result.first
+    val mostSpecificRules = result.second
 
-    var ruleArray = result.second
+    var rules = mostSpecificRules
     var failures = 0
 
-    if (ruleArray.size > 0) {
-      while ((failures < params.k_CompressFails) &&
-        (failures < ruleArray.size.toDouble() / params.k_NumPairs.toDouble() + 1.0) &&
-        (ruleArray.size > 1)) {
+    if (rules.size > 0) {
+      while ((failures < params.maxOuterLoopFails) &&
+        (failures < rules.size.toDouble() / params.compressionRandomPairs.toDouble() + 1.0) &&
+        (rules.size > 1)) {
 
-        // write rules
-        val oldSize = ruleArray.size
+        val prevRuleSize = rules.size
 
-        ruleArray = ruleArray.compressRuleArray(examples, params)
+        rules = rules.compressRuleArray(params, examples)
 
-        if (0 < ruleArray.size && ruleArray.size < oldSize) {
+        if (0 < rules.size && rules.size < prevRuleSize) {
           failures = 0
         }
-        else if (oldSize < ruleArray.size) {
-          failures = ruleArray.size
+        else if (prevRuleSize < rules.size) {
+          failures = rules.size
         }
         else {
           failures++
@@ -44,8 +44,11 @@ fun outerLoop(blankTemplate : BlankTemplate,
       }
     }
 
-    slotName to ruleArray
+    Results(slotName, rules)
   }
 
   return result
 }
+
+
+data class Results(val slotName : SlotName, val learnedRules : List<IRule>)
