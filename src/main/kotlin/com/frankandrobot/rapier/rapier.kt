@@ -26,9 +26,9 @@ import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.rule.mostSpecificRules
 
 
-fun outerLoop(blankTemplate : BlankTemplate,
-              examples : Examples,
-              params : RapierParams) : List<Results> {
+fun rapier(blankTemplate : BlankTemplate,
+           examples : Examples,
+           params : RapierParams) : List<Results> {
 
   val mostSpecificSlotRules = mostSpecificRules(blankTemplate, examples)
 
