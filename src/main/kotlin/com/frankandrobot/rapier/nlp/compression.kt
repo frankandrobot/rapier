@@ -20,9 +20,8 @@ fun ArrayList<out IRule>.compressRuleArray(
   // testing args
   _ruleList: IPriorityQueue<ComparableRule<IDerivedRule>>
   = RapierPriorityQueue<ComparableRule<IDerivedRule>>(params.compressionPriorityQueueSize),
-  _random: Random = Random(),
   _randomPairs: (ArrayList<out IRule>, Int) -> List<Pair<IRule, IRule>>
-  = randomPairsWrapper(_random)) : ArrayList<IRule> {
+  = randomPairsWrapper(params.Random)) : ArrayList<IRule> {
 
   var learnedRule : Option<IRule> = None
 

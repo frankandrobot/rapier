@@ -1,5 +1,7 @@
 package com.frankandrobot.rapier.meta
 
+import java.util.*
+
 
 data class RapierParams(
   /**
@@ -49,5 +51,6 @@ data class RapierParams(
    * Range for this value is basically limited by CPU. Larger
    * values require faster CPU.
    */
-  val maxDifferenceInPatternLength: Int = 5
+  val maxDifferenceInPatternLength: Int = 5,
+  val Random : Random = Random()
 )
