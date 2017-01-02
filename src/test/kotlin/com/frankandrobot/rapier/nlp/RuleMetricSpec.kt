@@ -201,6 +201,36 @@ class RuleMetricSpec : Spek({
         result.negatives.size shouldEqual 1
         result.negatives shouldEqual listOf(wordSlotFiller("rust"))
       }
+
+      it("should find a rule with more than one positive match") {
+        val base = BlankTemplate(
+          "test",
+          slotNames("test")
+        )
+        val example1 = Example(
+          base,
+          Document(tokens = textTokenList("xxxx a xxxx")),
+          FilledTemplate(slots(
+            SlotName("test") to slotFillers(wordTokens("a"))
+          ))
+        )
+        val example2 = Example(
+          base,
+          Document(tokens = textTokenList("yyyy a yyyy")),
+          FilledTemplate(slots(
+            SlotName("test") to slotFillers(wordTokens("a"))
+          ))
+        )
+        val examples = Examples(listOf(example1, example2))
+        val rule = BaseRule(
+          preFiller = Pattern(),
+          filler = patternOfWordItems("a"),
+          postFiller = Pattern(),
+          slotName = SlotName("test")
+        )
+        val result = rule.metricResults(examples)
+        result.positives.size shouldEqual 2
+      }
     }
 
 

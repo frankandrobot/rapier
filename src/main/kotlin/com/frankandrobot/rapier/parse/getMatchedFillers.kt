@@ -76,6 +76,12 @@ private val _ruleGetMatchedFillers = { rule : IRule, examples : Examples ->
     }
 }.memoize()
 
-
+/**
+ * Matches the rule against the examples. If a filler occurs in an Example
+ * enabledSlotFiller, then it is a positive match. Otherwise, it is a negative match.
+ *
+ * Note that the results may contain duplicates. This corresponds to the (valid) case
+ * where the rule matches the same filler in two or more examples.
+ */
 fun IRule.getMatchedFillers(examples : Examples) : FillerMatchResults
   = _ruleGetMatchedFillers(this, examples)
