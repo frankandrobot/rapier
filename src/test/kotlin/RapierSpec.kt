@@ -1,10 +1,7 @@
 package com.frankandrobot.rapier
 
 import com.frankandrobot.rapier.meta.*
-import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.tags
-import com.frankandrobot.rapier.pattern.words
+import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.rule.BaseRule
 import org.amshove.kluent.shouldEqual
 import org.funktionale.option.Option.Some
@@ -48,13 +45,17 @@ class RapierSpec : Spek({
         val result = rapier(blankTemplate, examples = examples, params = params)
         result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
           BaseRule(
-            preFiller = Pattern(),
+            preFiller = Pattern(
+              PatternList(words("a"), tags("DT"), length = 1)
+            ),
             filler = Pattern(
               PatternItem(words("Senior"), tags("NNP")),
               PatternItem(words("Software"), tags("NNP")),
               PatternItem(words("Engineer"), tags("NNP"))
             ),
-            postFiller = Pattern(),
+            postFiller = Pattern(
+              PatternList(words("in"), tags("IN"), length = 1)
+            ),
             slotName = SlotName("role")
           )
         )
