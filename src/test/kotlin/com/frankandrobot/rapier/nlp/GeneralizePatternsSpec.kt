@@ -23,6 +23,7 @@ import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.PatternList
 import com.frankandrobot.rapier.pattern.words
 import com.frankandrobot.rapier.patternOfWordItems
+import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import java.util.*
 import kotlin.test.assertEquals
@@ -173,6 +174,19 @@ class GeneralizePatternsSpec : Spek ({
   }
 
   describe("generalize") {
+
+    describe("two identical patterns") {
+      it("should return themselves") {
+        val a = patternOfWordItems("a","b","c")
+        val b = patternOfWordItems("a","b","c")
+        val params = RapierParams()
+        val result = generalize(a, b, params = params)
+        result shouldEqual listOf(
+          patternOfWordItems("a","b","c")
+        )
+      }
+    }
+
 
     describe("example 2") {
       val params = RapierParams()

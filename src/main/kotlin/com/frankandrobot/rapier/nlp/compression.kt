@@ -96,7 +96,7 @@ fun ArrayList<out IRule>.compressRuleArray(
   return when (learnedRule) {
     is Some<IRule> -> {
       val newRule = learnedRule.get()
-      return (this.removeRedundantRules(newRule, examples) + newRule) as ArrayList
+      (this.removeRedundantRules(newRule, examples) + newRule) as ArrayList
     }
     else -> this as ArrayList<IRule>
   }

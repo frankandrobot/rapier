@@ -135,7 +135,7 @@ fun generalize(a : Pattern, b : Pattern, params : RapierParams) : List<Pattern> 
     val hasSingleElementPattern = casePatternHasSingleElement(patterns.first, patterns.second)
     val hasEmptyPattern = caseAnEmptyPattern(patterns.first, patterns.second)
 
-    return when(veryLongPatterns) {
+    when(veryLongPatterns) {
       is Some<List<Pattern>> -> veryLongPatterns.get()
       else -> when (equalSizePatterns) {
         is Some<List<Pattern>> -> equalSizePatterns.get()
