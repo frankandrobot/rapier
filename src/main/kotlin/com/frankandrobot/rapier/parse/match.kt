@@ -58,7 +58,10 @@ fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult>
                           preFillerResult.index,
                           preFillerResult.matches
                         ),
-                        fillerMatch = fillerResult.matches._toOption(),
+                        fillerMatch = MatchInfo(
+                          fillerResult.index,
+                          fillerResult.matches
+                        ),
                         postFillerMatch = postFillerResult.matches._toOption(),
                         matchFound = postFillerResult.matchFound
                       )
@@ -75,7 +78,7 @@ fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult>
       // all don't, this corresponds to case when the prefiller, filler, and
       // postfiller are all pattern lists of length = 0...this case shouldn't be
       // counted so we filter it out
-      (it.preFillerMatch().isDefined() || it.fillerMatch.isDefined()
+      (it.preFillerMatch().isDefined() || it.fillerMatch().isDefined()
         || it.postFillerMatch.isDefined()) }
 }
 
@@ -87,15 +90,15 @@ fun IRule.exactMatch(documentTokens : ArrayList<Token>) : List<MatchResult> {
 
 
 data class MatchResult(val preFillerMatch : MatchInfo,
-                       val fillerMatch : Option<ArrayList<Token>>,
+                       val fillerMatch : MatchInfo,
                        val postFillerMatch : Option<ArrayList<Token>>,
                        val matchFound : Boolean = true) {
 
   internal constructor(preFillerMatch : MatchInfo,
-              fillerMatch : ArrayList<Token>,
+              fillerMatch : MatchInfo,
               postFillerMatch : ArrayList<Token>,
               matchFound : Boolean = true)
-  : this(preFillerMatch, Some(fillerMatch), Some(postFillerMatch), matchFound)
+  : this(preFillerMatch, fillerMatch, Some(postFillerMatch), matchFound)
 }
 
 data class MatchInfo(val index : Option<Int>,

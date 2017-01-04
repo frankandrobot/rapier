@@ -57,7 +57,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = tokens("a", "b")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(3),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("e", "f")
         )
       }
@@ -73,7 +76,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = tokens("a", "b")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(3),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("e", "f")
         )
         result shouldContain MatchResult(
@@ -81,7 +87,10 @@ class MatchSpec : Spek({
             index = Some(10),
             matches = tokens("a", "b")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(12),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("e", "f")
         )
       }
@@ -113,20 +122,26 @@ class MatchSpec : Spek({
         )
         val result = rule.exactMatch(textTokenIterator("a C D e f xxxxx b C D e f"))
         result.size shouldEqual 2
-        result.first() shouldEqual MatchResult(
+        result shouldContain MatchResult(
           preFillerMatch = MatchInfo(
             index = Some(0),
             matches = tokens("a")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("e", "f")
         )
-        result.last() shouldEqual MatchResult(
+        result shouldContain MatchResult(
           preFillerMatch = MatchInfo(
             index = Some(6),
             matches = tokens("b")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(7),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("e", "f")
         )
       }
@@ -145,7 +160,10 @@ class MatchSpec : Spek({
             index = Some(0),
             matches = tokens("a", "b")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("e")
         )
         result.last() shouldEqual MatchResult(
@@ -153,7 +171,10 @@ class MatchSpec : Spek({
             index = Some(6),
             matches = tokens("a", "b")
           ),
-          fillerMatch = tokens("C", "D"),
+          fillerMatch = MatchInfo(
+            index = Some(8),
+            matches = tokens("C", "D")
+          ),
           postFillerMatch = tokens("f")
         )
       }
@@ -190,7 +211,10 @@ class MatchSpec : Spek({
             index = Some(0),
             matches = tokens("a")
           ),
-          fillerMatch = tokens("B"),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("B")
+          ),
           postFillerMatch = tokens("c")
         )
       }
@@ -202,7 +226,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = None
           ),
-          fillerMatch = Some(tokens("B")),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("B")
+          ),
           postFillerMatch = None
         )
       }
@@ -216,7 +243,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = None
           ),
-          fillerMatch = Some(tokens("B")),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("B")
+          ),
           postFillerMatch = Some(tokens("c"))
         )
         result shouldContain MatchResult(
@@ -224,7 +254,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = None
           ),
-          fillerMatch = Some(tokens("B")),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("B")
+          ),
           postFillerMatch = None
         )
       }
@@ -238,7 +271,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = tokens("a")
           ),
-          fillerMatch = Some(tokens("B")),
+          fillerMatch = MatchInfo(
+            index = Some(2),
+            matches = tokens("B")
+          ),
           postFillerMatch = None
         )
         result shouldContain MatchResult(
@@ -246,7 +282,10 @@ class MatchSpec : Spek({
             index = Some(2),
             matches = None
           ),
-          fillerMatch = Some(tokens("B")),
+          fillerMatch = MatchInfo(
+            index = Some(2),
+            matches = tokens("B")
+          ),
           postFillerMatch = None
         )
       }
@@ -260,7 +299,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = None
           ),
-          fillerMatch = Some(tokens("B")),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("B")
+          ),
           postFillerMatch = None
         )
       }
@@ -273,7 +315,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = None
           ),
-          fillerMatch = None,
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           postFillerMatch = None
         )
       }
@@ -293,7 +338,10 @@ class MatchSpec : Spek({
             index = Some(1),
             matches = None
           ),
-          fillerMatch = None,
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           postFillerMatch = None
         )
       }
@@ -323,7 +371,10 @@ class MatchSpec : Spek({
             index = Some(0),
             matches = tokens("A")
           ),
-          fillerMatch = Some(tokens("java")),
+          fillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("java")
+          ),
           postFillerMatch = Some(tokens("Z"))
         )
         result shouldContain MatchResult(
@@ -331,7 +382,10 @@ class MatchSpec : Spek({
             index = Some(4),
             matches = tokens("A")
           ),
-          fillerMatch = Some(tokens("c#")),
+          fillerMatch = MatchInfo(
+            index = Some(5),
+            matches = tokens("c#")
+          ),
           postFillerMatch = Some(tokens("Z"))
         )
       }

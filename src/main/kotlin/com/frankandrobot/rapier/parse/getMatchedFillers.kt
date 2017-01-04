@@ -42,11 +42,14 @@ private val _getMatchedFillers = { rule: IRule, example: Example ->
   if (slot.enabled) {
     val doc = example.document()
     val matchResults = rule.exactMatch(doc)
-    val fillerMatchResults = matchResults.map { it.fillerMatch }.filter { it.isDefined() }
+    val fillerMatchResults =
+      matchResults
+        .map { it.fillerMatch }
+        .filter { it().isDefined() }
     // put the match results in a SlotFiller
     val slotFillers =
       fillerMatchResults
-        .map { it.get().map(Token::dropTagAndSemanticProperties) }
+        .map { it().get().map(Token::dropTagAndSemanticProperties) }
         .map { SlotFiller(tokens = it as ArrayList) }
 
     val positives = slotFillers.filter { slot.slotFillers.contains(it) }
