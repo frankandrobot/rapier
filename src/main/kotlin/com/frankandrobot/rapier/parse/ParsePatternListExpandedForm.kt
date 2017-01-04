@@ -23,22 +23,19 @@ import java.util.*
 
 
 /**
- * The collection of all possible PatternItem lists the PatternList represents.
- * For example, the pattern list {word:[foo, bar], length: 2} expands to:
+ * A PatternList expands to a collection of PatternItem lists.
+ * For example, the PatternList {word:[foo, bar], length: 2} expands to:
  *
  * - `` (empty)
  * - `foo`
+ * - `bar`
  * - `foo`, `foo`
  * - `foo`, `bar`
- * - `bar`
  * - `bar`, `foo`
  * - `bar`, `bar`
  *
- * Each element of the collection is of type ParsePatternItemList.
- *
- * Note that the empty expansion is technically not part of the expanded form. However,
- * it is there as a convenience for matching --- we need to be able to match against
- * elements not being there
+ * Note that the empty expansion is also included. This corresponds to an
+ * expansion of length 0.
  */
 class ParsePatternListExpandedForm(private val patternList : PatternList) {
 

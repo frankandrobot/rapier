@@ -53,9 +53,9 @@ fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult>
                     .map { it.parse(fillerResult.tokens()) }
                     .map{ postFillerResult ->
                       MatchResult(
-                        preFillerMatch = preFillerResult.matches._toTokenList()._toOption(),
-                        fillerMatch = fillerResult.matches._toTokenList()._toOption(),
-                        postFillerMatch = postFillerResult.matches._toTokenList()._toOption(),
+                        preFillerMatch = preFillerResult.matches._toOption(),
+                        fillerMatch = fillerResult.matches._toOption(),
+                        postFillerMatch = postFillerResult.matches._toOption(),
                         matchFound = postFillerResult.matchFound
                       )
                     }

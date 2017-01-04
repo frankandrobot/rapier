@@ -33,8 +33,8 @@ import java.util.*
  */
 data class ParseResult(private val tokens : BetterIterator<Token>,
                        val index : Option<Int> = None,
-                       val matches : ArrayList<Option<Token>>
-                       = ArrayList<Option<Token>>()) {
+                       val matches : ArrayList<Token>
+                       = ArrayList<Token>()) {
 
   val matchFound : Boolean
     get() = index.isDefined()

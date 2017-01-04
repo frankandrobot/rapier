@@ -102,7 +102,7 @@ class ParseSpec : Spek({
       result shouldEqual ParseResult(
         tokens = initialTokens,
         index = Some(0),
-        matches = arrayListOf(None)
+        matches = arrayListOf()
       )
     }
   }

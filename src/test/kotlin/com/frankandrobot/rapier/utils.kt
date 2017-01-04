@@ -99,5 +99,5 @@ fun parseResult(tokens : BetterIterator<Token>,
   ParseResult(
     tokens = tokens,
     index = index,
-    matches = matches.map{Some(token(it))} as ArrayList<Option<Token>>
+    matches = matches.map(::token) as ArrayList<Token>
   )

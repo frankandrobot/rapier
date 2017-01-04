@@ -20,8 +20,6 @@ package com.frankandrobot.rapier.parse
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.util.BetterIterator
-import org.funktionale.option.Option
-import org.funktionale.option.Option.None
 import org.funktionale.option.Option.Some
 import java.util.*
 
@@ -43,7 +41,9 @@ fun ParsePatternItemList.parse(tokens : BetterIterator<Token>) : ParseResult
 
 fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
-  // the ParsePatternItemList of length = 0 is a special case
+  // A ParsePatternItemList of length = 0 is a special case. It has a match index
+  // but doesn't consume tokens.
+  //
   if (this.length == 0) {
 
     val tokens = parseResult.tokens()
@@ -51,7 +51,7 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
     return ParseResult(
       tokens = tokens,
       index = Some(tokens.curIndex),
-      matches = parseResult.matches.plus(None) as ArrayList
+      matches = parseResult.matches
     )
   }
 
@@ -63,7 +63,7 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
   if (consumed) {
 
-    val matches = parseResult.tokens().peek(this.length).map{Some(it)}
+    val matches = parseResult.tokens().peek(this.length)
 
     return ParseResult(
       tokens = consumedTokens,
@@ -94,12 +94,12 @@ fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
   if (tokens.hasNext() && this.test(tokens.peek())) {
 
     val index = tokens.curIndex
-    val matches = Some(tokens.next())
+    val matches = tokens.next()
 
     return ParseResult(
       tokens = tokens,
       index = Some(index),
-      matches = parseResult.matches.plus(matches) as ArrayList<Option<Token>>
+      matches = parseResult.matches.plus(matches) as ArrayList<Token>
     )
   }
 

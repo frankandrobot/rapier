@@ -158,19 +158,26 @@ class MatchSpec : Spek({
       }
       val text = { textTokenIterator("a B c") }
 
-      it("should match all expanded patterns") {
-
+      fit("should match all expanded patterns") {
         val result = patternListRule().exactMatch(text())
         result.size shouldEqual 4
       }
 
       it("should match full expansion: a B c") {
-
         val result = patternListRule().exactMatch(text())
         result shouldContain MatchResult(
           preFillerMatch = tokens("a"),
           fillerMatch = tokens("B"),
           postFillerMatch = tokens("c")
+        )
+      }
+
+      it("should match the empty expansion") {
+        val result = patternListRule().exactMatch(text())
+        result shouldContain MatchResult(
+          preFillerMatch = None,
+          fillerMatch = Some(tokens("B")),
+          postFillerMatch = None
         )
       }
 
