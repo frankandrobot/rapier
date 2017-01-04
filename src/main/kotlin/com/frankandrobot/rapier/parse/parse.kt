@@ -43,33 +43,35 @@ fun ParsePatternItemList.parse(tokens : BetterIterator<Token>) : ParseResult
 
 fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
 
-  val tokens = parseResult.tokens
-
   // the ParsePatternItemList of length = 0 is a special case
   if (this.length == 0) {
 
+    val tokens = parseResult.tokens()
+
     return ParseResult(
-      tokens,
-      matchFound = true,
+      tokens = tokens,
+      index = Some(tokens.curIndex),
       matches = parseResult.matches.plus(None) as ArrayList
     )
   }
 
+  val consumedTokens = parseResult.tokens()
+  val originalTokens = parseResult.tokens()
   val consumed =
-      this().all{ patternItem -> tokens.hasNext() && patternItem.test(tokens.next()) }
+      this().all{ patternItem -> consumedTokens.hasNext() && patternItem.test(consumedTokens.next()) }
 
   if (consumed) {
 
-    val matches = parseResult.tokens.peek(this.length).map{Some(it)}
+    val matches = parseResult.tokens().peek(this.length).map{Some(it)}
 
     return ParseResult(
-      tokens,
-      matchFound = true,
+      tokens = consumedTokens,
+      index = Some(originalTokens.curIndex),
       matches = parseResult.matches.plus(matches) as ArrayList
     )
   }
 
-  return ParseResult(parseResult.tokens, matchFound = false)
+  return ParseResult(tokens = originalTokens)
 }
 
 
@@ -86,16 +88,19 @@ fun PatternItem.parse(tokens : BetterIterator<Token>) : ParseResult
 
 fun PatternItem.parse(parseResult: ParseResult) : ParseResult {
 
-  val tokens = parseResult.tokens
+  val tokens = parseResult.tokens()
 
   if (tokens.hasNext() && this.test(tokens.peek())) {
 
+    val index = tokens.curIndex
+    val matches = Some(tokens.next())
+
     return ParseResult(
-      tokens,
-      matchFound = true,
-      matches = parseResult.matches.plus(Some(tokens.next())) as ArrayList<Option<Token>>
+      tokens = tokens,
+      index = Some(index),
+      matches = parseResult.matches.plus(matches) as ArrayList<Option<Token>>
     )
   }
 
-  return ParseResult(parseResult.tokens, matchFound = false)
+  return ParseResult(tokens)
 }

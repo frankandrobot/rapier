@@ -89,10 +89,10 @@ val emptyExamples = Examples(listOf(emptyExample))
 
 
 fun parseResult(tokens : BetterIterator<Token>,
-                matchFound : Boolean = true,
+                index : Option<Int> = None,
                 vararg matches : String) =
   ParseResult(
-    _tokens = tokens,
-    matchFound = matchFound,
+    tokens = tokens,
+    index = index,
     matches = matches.map{Some(token(it))} as ArrayList<Option<Token>>
   )

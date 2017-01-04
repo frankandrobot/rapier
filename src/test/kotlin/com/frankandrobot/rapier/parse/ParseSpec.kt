@@ -21,8 +21,10 @@ import com.frankandrobot.rapier.parseResult
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.words
 import com.frankandrobot.rapier.textTokenIterator
+import org.amshove.kluent.shouldEqual
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 import org.jetbrains.spek.api.Spek
-import kotlin.test.assertEquals
 
 
 class ParseSpec : Spek({
@@ -46,14 +48,18 @@ class ParseSpec : Spek({
       val nextTokens = tokenIterator(nextToken)
       val result = anyItem().parse(initialTokens)
 
-      assertEquals(parseResult(nextTokens, matchFound = true, matches = "one"), result)
+      result shouldEqual parseResult(
+        tokens = nextTokens,
+        index = Some(startToken),
+        matches = "one"
+      )
     }
 
     it("should work when no match") {
       val noMatch = textTokenIterator("two three")
       val result = anyItem().parse(noMatch)
 
-      assertEquals(ParseResult(noMatch, matchFound = false), result)
+      result shouldEqual ParseResult(tokens = noMatch, index = None)
     }
   }
 
@@ -68,14 +74,18 @@ class ParseSpec : Spek({
       val nextTokens = tokenIterator(nextToken)
       val result = anyItemList().parse(ParseResult(initialTokens))
 
-      assertEquals(parseResult(nextTokens, true, "one", "two"), result)
+      result shouldEqual parseResult(
+        nextTokens,
+        Some(startToken),
+        "one", "two"
+      )
     }
 
     it("should work when no match") {
       val noMatch = textTokenIterator("two three")
       val result = anyItemList().parse(ParseResult(noMatch))
 
-      assertEquals(ParseResult(noMatch, matchFound = false), result)
+      result shouldEqual parseResult(tokens = noMatch)
     }
   }
 })

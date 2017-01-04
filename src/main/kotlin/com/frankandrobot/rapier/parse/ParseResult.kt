@@ -20,6 +20,7 @@ package com.frankandrobot.rapier.parse
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.util.BetterIterator
 import org.funktionale.option.Option
+import org.funktionale.option.Option.None
 import java.util.*
 
 
@@ -30,13 +31,15 @@ import java.util.*
  * - as well as the current matches
  * - if matchFound, continuation function will execute if called
  */
-data class ParseResult(private val _tokens : BetterIterator<Token>,
-                       val matchFound : Boolean = true,
+data class ParseResult(private val tokens : BetterIterator<Token>,
+                       val index : Option<Int> = None,
                        val matches : ArrayList<Option<Token>>
                        = ArrayList<Option<Token>>()) {
 
-  val tokens : BetterIterator<Token>
-    get() = _tokens.clone()
+  val matchFound : Boolean
+    get() = index.isDefined()
+
+  fun tokens() = tokens.clone()
 
   fun <T> then(next : (ParseResult) -> List<T>) : List<T> {
 

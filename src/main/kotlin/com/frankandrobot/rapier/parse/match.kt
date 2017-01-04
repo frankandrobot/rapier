@@ -45,12 +45,12 @@ fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult>
           // returns it just returns an empty list
           preFillerResult.then {
             filler.expandedForm
-              .map { it.parse(preFillerResult.tokens) }
+              .map { it.parse(preFillerResult.tokens()) }
               .flatMap { fillerResult ->
                 // ditto
                 fillerResult.then {
                   postFiller.expandedForm
-                    .map { it.parse(fillerResult.tokens) }
+                    .map { it.parse(fillerResult.tokens()) }
                     .map{ postFillerResult ->
                       MatchResult(
                         preFillerMatch = preFillerResult.matches._toTokenList()._toOption(),
@@ -94,6 +94,10 @@ data class MatchResult(val preFillerMatch : Option<ArrayList<Token>>,
   : this(Some(preFillerMatch), Some(fillerMatch), Some(postFillerMatch), matchFound)
 }
 
+data class MatchInfo(val index : Option<Int>,
+                     val match : Option<ArrayList<Token>>) {
+  operator fun invoke() = match
+}
 
 internal fun ArrayList<Option<Token>>._toTokenList() =
   this.filter{ it.isDefined() }.map{ it.get() } as ArrayList<Token>
