@@ -17,6 +17,7 @@
 
 package com.frankandrobot.rapier.parse
 
+import com.frankandrobot.rapier.parsePatternItemList
 import com.frankandrobot.rapier.parseResult
 import com.frankandrobot.rapier.pattern.PatternItem
 import com.frankandrobot.rapier.pattern.words
@@ -30,7 +31,8 @@ import org.jetbrains.spek.api.Spek
 class ParseSpec : Spek({
 
   val anyItem = { PatternItem(words("one")) }
-  val anyItemList = { ParsePatternItemList("one", "two") }
+  val anyItemList = { parsePatternItemList("one", "two") }
+  val emptyItemList = { parsePatternItemList() }
 
   val tokenIterator = { start : Int -> textTokenIterator(
     "one two three four",
@@ -38,10 +40,11 @@ class ParseSpec : Spek({
   )}
 
 
-  describe("parse PatternItem") {
+  describe("PatternItem#parse") {
 
     val startToken = 0
     val nextToken = 1
+
 
     it("should parse a match") {
       val initialTokens = tokenIterator(startToken)
@@ -55,6 +58,7 @@ class ParseSpec : Spek({
       )
     }
 
+
     it("should work when no match") {
       val noMatch = textTokenIterator("two three")
       val result = anyItem().parse(noMatch)
@@ -64,10 +68,11 @@ class ParseSpec : Spek({
   }
 
 
-  describe("parse PatternList") {
+  describe("ParsePatternItemList#parse") {
 
     val startToken = 0
     val nextToken = 2
+
 
     it("should parse a match") {
       val initialTokens = tokenIterator(startToken)
@@ -81,11 +86,24 @@ class ParseSpec : Spek({
       )
     }
 
+
     it("should work when no match") {
       val noMatch = textTokenIterator("two three")
       val result = anyItemList().parse(ParseResult(noMatch))
 
       result shouldEqual parseResult(tokens = noMatch)
+    }
+
+
+    it("should work when pattern list has length 0") {
+      val initialTokens = tokenIterator(startToken)
+      val result = emptyItemList().parse(initialTokens)
+
+      result shouldEqual ParseResult(
+        tokens = initialTokens,
+        index = Some(0),
+        matches = arrayListOf(None)
+      )
     }
   }
 })

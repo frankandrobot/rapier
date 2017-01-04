@@ -20,6 +20,7 @@ package com.frankandrobot.rapier
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.nlp.WordToken
+import com.frankandrobot.rapier.parse.ParsePatternItemList
 import com.frankandrobot.rapier.parse.ParseResult
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.rule.BaseRule
@@ -88,6 +89,10 @@ val emptyExample = Example(
 val emptyExamples = Examples(listOf(emptyExample))
 
 
+fun parsePatternItemList(vararg word : String)
+ = ParsePatternItemList(
+  (ArrayList<PatternItem>() + word.map{PatternItem(words(it))}) as ArrayList<PatternItem>
+)
 fun parseResult(tokens : BetterIterator<Token>,
                 index : Option<Int> = None,
                 vararg matches : String) =

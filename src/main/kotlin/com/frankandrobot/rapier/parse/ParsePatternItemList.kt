@@ -18,7 +18,6 @@
 package com.frankandrobot.rapier.parse
 
 import com.frankandrobot.rapier.pattern.PatternItem
-import com.frankandrobot.rapier.pattern.words
 import java.util.*
 
 
@@ -32,12 +31,6 @@ data class ParsePatternItemList(
 
   internal constructor(vararg patternItem : PatternItem)
   : this((ArrayList<PatternItem>() + patternItem.asList()) as ArrayList<PatternItem>)
-
-//  internal constructor(vararg constraints : WordConstraint)
-//  : this((ArrayList<PatternItem>() + constraints.map{PatternItem(it)}) as ArrayList<PatternItem>)
-
-  internal constructor(vararg word : String)
-  : this((ArrayList<PatternItem>() + word.map{PatternItem(words(it))}) as ArrayList<PatternItem>)
 
 
   operator fun invoke() = items

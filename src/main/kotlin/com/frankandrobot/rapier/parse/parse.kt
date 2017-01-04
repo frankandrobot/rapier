@@ -58,7 +58,8 @@ fun ParsePatternItemList.parse(parseResult: ParseResult) : ParseResult {
   val consumedTokens = parseResult.tokens()
   val originalTokens = parseResult.tokens()
   val consumed =
-      this().all{ patternItem -> consumedTokens.hasNext() && patternItem.test(consumedTokens.next()) }
+      this().all{ patternItem ->
+        consumedTokens.hasNext() && patternItem.test(consumedTokens.next()) }
 
   if (consumed) {
 
