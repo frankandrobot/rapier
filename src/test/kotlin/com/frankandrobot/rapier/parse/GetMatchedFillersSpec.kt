@@ -141,7 +141,7 @@ class GetMatchedFillersSpec : Spek ({
     }
 
 
-    describe("RuleMetric") {
+    describe("getMatchedFillers") {
 
       it("should find positive matches in simple rules") {
         val result = getMatchedFillers(aSimpleRule, aSimpleExample)
@@ -198,6 +198,19 @@ class GetMatchedFillersSpec : Spek ({
         )
         result.negatives.size shouldEqual 1
         result.negatives shouldEqual listOf(wordSlotFiller("rust"))
+      }
+
+      describe("rule with pattern lists") {
+        it("should return one match") {
+          val rule = BaseRule(
+            preFiller = patternOfWordsList(length = 1, word = "A"),
+            filler = patternOfWordItems("java"),
+            postFiller = patternOfWordsList(length = 1, word = "Z"),
+            slotName = SlotName("language")
+          )
+          val result = getMatchedFillers(rule, aSimpleExample)
+          result.positives.size shouldEqual 1
+        }
       }
     }
   }

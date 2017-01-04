@@ -21,6 +21,7 @@ import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.util.BetterIterator
 import org.funktionale.option.Option
+import org.funktionale.option.Option.None
 import org.funktionale.option.Option.Some
 import java.util.*
 
@@ -30,8 +31,8 @@ import java.util.*
  * represent matches. For example, if the documentTokens are [a,b,c,d,e] and the rule
  * matches [a,b,c], then it will return [a,b,c]. Doh!
  *
- * Parsing by a PatternList returns a token list with a None (corresponding to matching
- * when the length of the PatternList is 0).
+ * Note that one consequence of how list parsing works is that a rule with PatternLists
+ * for pre/post fillers and filler will match the entire document!
  */
 fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult> {
 
@@ -53,7 +54,10 @@ fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult>
                     .map { it.parse(fillerResult.tokens()) }
                     .map{ postFillerResult ->
                       MatchResult(
-                        preFillerMatch = preFillerResult.matches._toOption(),
+                        preFillerMatch = MatchInfo(
+                          preFillerResult.index,
+                          preFillerResult.matches
+                        ),
                         fillerMatch = fillerResult.matches._toOption(),
                         postFillerMatch = postFillerResult.matches._toOption(),
                         matchFound = postFillerResult.matchFound
@@ -71,7 +75,7 @@ fun IRule.exactMatch(documentTokens : BetterIterator<Token>) : List<MatchResult>
       // all don't, this corresponds to case when the prefiller, filler, and
       // postfiller are all pattern lists of length = 0...this case shouldn't be
       // counted so we filter it out
-      (it.preFillerMatch.isDefined() || it.fillerMatch.isDefined()
+      (it.preFillerMatch().isDefined() || it.fillerMatch.isDefined()
         || it.postFillerMatch.isDefined()) }
 }
 
@@ -82,26 +86,27 @@ fun IRule.exactMatch(documentTokens : ArrayList<Token>) : List<MatchResult> {
 }
 
 
-data class MatchResult(val preFillerMatch : Option<ArrayList<Token>>,
+data class MatchResult(val preFillerMatch : MatchInfo,
                        val fillerMatch : Option<ArrayList<Token>>,
                        val postFillerMatch : Option<ArrayList<Token>>,
                        val matchFound : Boolean = true) {
 
-  constructor(preFillerMatch : ArrayList<Token>,
+  internal constructor(preFillerMatch : MatchInfo,
               fillerMatch : ArrayList<Token>,
               postFillerMatch : ArrayList<Token>,
               matchFound : Boolean = true)
-  : this(Some(preFillerMatch), Some(fillerMatch), Some(postFillerMatch), matchFound)
+  : this(preFillerMatch, Some(fillerMatch), Some(postFillerMatch), matchFound)
 }
 
 data class MatchInfo(val index : Option<Int>,
-                     val match : Option<ArrayList<Token>>) {
-  operator fun invoke() = match
+                     val matches : Option<ArrayList<Token>>) {
+
+  constructor(index : Option<Int>, matches : ArrayList<Token>)
+  : this(index, matches._toOption())
+
+  operator fun invoke() = matches
 }
 
-internal fun ArrayList<Option<Token>>._toTokenList() =
-  this.filter{ it.isDefined() }.map{ it.get() } as ArrayList<Token>
-
 internal fun ArrayList<Token>._toOption() =
-  if (this.size == 0) Option.None
-  else Option.Some(this)
+  if (this.size == 0) None
+  else Some(this)

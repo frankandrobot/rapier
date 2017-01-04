@@ -46,33 +46,41 @@ class MatchSpec : Spek({
         filler = patternOfWordItems("C", "D"),
         postFiller = patternOfWordItems("e", "f"),
         slotName = anySlot().name
-      )
-      }
+      ) }
 
 
       it("should match a simple rule") {
         val result = patternItemRule().exactMatch(anyText())
         result.size shouldEqual 1
-        result.first() shouldEqual MatchResult(
-          preFillerMatch = tokens("a", "b"),
+        result shouldContain MatchResult(
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("a", "b")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("e", "f")
         )
       }
 
-      it("should repeatedly match a simple rule") {
+      fit("should repeatedly match a simple rule") {
         val text = textTokenIterator(
-          "start  a b C D e f  x x x  a b C D e f   end"
+          "start a b C D e f x x x a b C D e f end"
         )
         val result = patternItemRule().exactMatch(text)
         result.size shouldEqual 2
-        result.first() shouldEqual MatchResult(
-          preFillerMatch = tokens("a", "b"),
+        result shouldContain MatchResult(
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("a", "b")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("e", "f")
         )
-        result.last() shouldEqual MatchResult(
-          preFillerMatch = tokens("a", "b"),
+        result shouldContain MatchResult(
+          preFillerMatch = MatchInfo(
+            index = Some(10),
+            matches = tokens("a", "b")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("e", "f")
         )
@@ -106,12 +114,18 @@ class MatchSpec : Spek({
         val result = rule.exactMatch(textTokenIterator("a C D e f xxxxx b C D e f"))
         result.size shouldEqual 2
         result.first() shouldEqual MatchResult(
-          preFillerMatch = tokens("a"),
+          preFillerMatch = MatchInfo(
+            index = Some(0),
+            matches = tokens("a")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("e", "f")
         )
         result.last() shouldEqual MatchResult(
-          preFillerMatch = tokens("b"),
+          preFillerMatch = MatchInfo(
+            index = Some(6),
+            matches = tokens("b")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("e", "f")
         )
@@ -127,12 +141,18 @@ class MatchSpec : Spek({
         val result = rule.exactMatch(textTokenIterator("a b C D e xxxxx a b C D f"))
         result.size shouldEqual 2
         result.first() shouldEqual MatchResult(
-          preFillerMatch = tokens("a", "b"),
+          preFillerMatch = MatchInfo(
+            index = Some(0),
+            matches = tokens("a", "b")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("e")
         )
         result.last() shouldEqual MatchResult(
-          preFillerMatch = tokens("a", "b"),
+          preFillerMatch = MatchInfo(
+            index = Some(6),
+            matches = tokens("a", "b")
+          ),
           fillerMatch = tokens("C", "D"),
           postFillerMatch = tokens("f")
         )
@@ -158,7 +178,7 @@ class MatchSpec : Spek({
       }
       val text = { textTokenIterator("a B c") }
 
-      fit("should match all expanded patterns") {
+      it("should match all expanded patterns") {
         val result = patternListRule().exactMatch(text())
         result.size shouldEqual 4
       }
@@ -166,7 +186,10 @@ class MatchSpec : Spek({
       it("should match full expansion: a B c") {
         val result = patternListRule().exactMatch(text())
         result shouldContain MatchResult(
-          preFillerMatch = tokens("a"),
+          preFillerMatch = MatchInfo(
+            index = Some(0),
+            matches = tokens("a")
+          ),
           fillerMatch = tokens("B"),
           postFillerMatch = tokens("c")
         )
@@ -175,7 +198,10 @@ class MatchSpec : Spek({
       it("should match the empty expansion") {
         val result = patternListRule().exactMatch(text())
         result shouldContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
@@ -186,12 +212,18 @@ class MatchSpec : Spek({
         val result = patternListRule().exactMatch(text)
         result.size shouldEqual 2
         result shouldContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           fillerMatch = Some(tokens("B")),
           postFillerMatch = Some(tokens("c"))
         )
         result shouldContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
@@ -202,12 +234,18 @@ class MatchSpec : Spek({
         val result = patternListRule().exactMatch(text)
         result.size shouldEqual 2
         result shouldContain MatchResult(
-          preFillerMatch = Some(tokens("a")),
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = tokens("a")
+          ),
           fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
         result shouldContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(2),
+            matches = None
+          ),
           fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
@@ -218,7 +256,10 @@ class MatchSpec : Spek({
         val result = patternListRule().exactMatch(text)
         result.size shouldEqual 1
         result shouldContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           fillerMatch = Some(tokens("B")),
           postFillerMatch = None
         )
@@ -228,7 +269,10 @@ class MatchSpec : Spek({
         val text = textTokenIterator("start end")
         val result = patternListRule().exactMatch(text)
         result shouldNotContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           fillerMatch = None,
           postFillerMatch = None
         )
@@ -245,7 +289,10 @@ class MatchSpec : Spek({
 
         val result = patternListRule.exactMatch(text)
         result shouldNotContain MatchResult(
-          preFillerMatch = None,
+          preFillerMatch = MatchInfo(
+            index = Some(1),
+            matches = None
+          ),
           fillerMatch = None,
           postFillerMatch = None
         )
@@ -272,12 +319,18 @@ class MatchSpec : Spek({
         val result = ruleMatchingTwoFillers.exactMatch(text)
         result.size shouldEqual 2
         result shouldContain MatchResult(
-          preFillerMatch = Some(tokens("A")),
+          preFillerMatch = MatchInfo(
+            index = Some(0),
+            matches = tokens("A")
+          ),
           fillerMatch = Some(tokens("java")),
           postFillerMatch = Some(tokens("Z"))
         )
         result shouldContain MatchResult(
-          preFillerMatch = Some(tokens("A")),
+          preFillerMatch = MatchInfo(
+            index = Some(4),
+            matches = tokens("A")
+          ),
           fillerMatch = Some(tokens("c#")),
           postFillerMatch = Some(tokens("Z"))
         )
