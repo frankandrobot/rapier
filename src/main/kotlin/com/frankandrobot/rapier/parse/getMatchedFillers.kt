@@ -41,7 +41,7 @@ private val _getMatchedFillers = { rule: IRule, example: Example ->
 
   if (slot.enabled) {
     val doc = example.document()
-    val matchResults = rule.exactMatch(doc)
+    val matchResults = rule.exactMatch(doc).distinctBy { it.fillerMatch.index }
     val fillerMatchResults =
       matchResults
         .map { it.fillerMatch }
