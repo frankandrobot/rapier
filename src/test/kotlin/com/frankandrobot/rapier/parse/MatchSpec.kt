@@ -67,7 +67,7 @@ class MatchSpec : Spek({
         )
       }
 
-      fit("should repeatedly match a simple rule") {
+      it("should repeatedly match a simple rule") {
         val text = textTokenIterator(
           "start a b C D e f x x x a b C D e f end"
         )
@@ -175,11 +175,11 @@ class MatchSpec : Spek({
             matches = tokens("a", "b")
           ),
           fillerMatch = MatchInfo(
-            index = Some(1),
+            index = Some(2),
             matches = tokens("C", "D")
           ),
           postFillerMatch = MatchInfo(
-            index = Some(3),
+            index = Some(4),
             matches = tokens("e")
           )
         )

@@ -22,27 +22,41 @@ class RapierSpec : Spek({
         blankTemplate,
         roleDocument,
         FilledTemplate(slots(
-          SlotName("role") to slotFillers(wordTokens("Senior", "Software", "Engineer"))
+          SlotName("role") to slotFillers(
+            wordTokens("Senior", "Software", "Engineer"),
+            wordTokens("Software", "Engineer")
+          )
         ))
       )
       val example2 = Example(
         blankTemplate,
         roleDocument2,
         FilledTemplate(slots(
-          SlotName("role") to slotFillers(wordTokens("Senior", "Software", "Engineer"))
+          SlotName("role") to slotFillers(
+            wordTokens("Senior", "Software", "Engineer"),
+            wordTokens("Software", "Engineer")
+          )
         ))
       )
-      val examples = Examples(listOf(example, example2))
+      val example3 = Example(
+        blankTemplate,
+        roleDocument3,
+        FilledTemplate(slots(
+          SlotName("role") to slotFillers(wordTokens("Software", "Engineer"))
+        ))
+      )
+      val examples = Examples(listOf(example, example2, example3))
       val params = RapierParams(
         Random = Random(20),
-        compressionFails = 7,
-        metricMinPositiveMatches = 1,
+        compressionFails = 3,
+        metricMinPositiveMatches = 2,
         compressionPriorityQueueSize = 7,
         ruleSizeWeight = 100.0
       )
 
-      it("should find a rule") {
+      fit("should find a rule") {
         val result = rapier(blankTemplate, examples = examples, params = params)
+        print(result[0].learnedRules)
         result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
           BaseRule(
             preFiller = Pattern(
@@ -140,15 +154,15 @@ backlog and delivering production-ready code.  You must be willing to go beyond 
 routine and prepared to do a little bit of everything.
 """))
 
-private var document3 = Document((Some("""
+private var roleDocument3 = Document(Some("""
 We help people get jobs.
 At Indeed, we know that mobile is big. 50% of all job searches on Indeed come from a
-mobile device.This is why want to make applying to any job on your mobile or on your
+mobile device. This is why want to make applying to any job on your mobile or on your
 tablet a breeze - no more pinching or zooming. As a Software Engineer - Client
 Implementation, you will create mobile-friendly mirrors of clients’ career sites and
 make sure our software knows how to send jobseekers’ applications correctly to the
 original site.
-""")))
+"""))
 
 private var yearsDocument1 = Document(Some("""
 Requirements:

@@ -255,7 +255,7 @@ class CompressionSpec : Spek({
         ))
       )
     ))
-    val params = RapierParams(metricMinPositiveMatches = 1)
+    val params = RapierParams(metricMinPositiveMatches = 1, ruleSizeWeight = 0.001)
 
     it("should compress to one rule") {
       val result = arrayListOf(rule1, rule2).compressRuleArray(params, examples)
