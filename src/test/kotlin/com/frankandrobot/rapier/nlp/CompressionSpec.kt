@@ -261,9 +261,9 @@ class CompressionSpec : Spek({
       val result = arrayListOf(rule1, rule2).compressRuleArray(params, examples)
 
       result.map(::toBaseRule) shouldEqual listOf(BaseRule(
-        preFiller = patternOfWordsList(1, "2"),
+        preFiller = Pattern(),
         filler = Pattern(patternItemOfWords("a","b")),
-        postFiller = patternOfWordsList(1, "3"),
+        postFiller = Pattern(),
         slotName = SlotName("slot")
       ))
     }

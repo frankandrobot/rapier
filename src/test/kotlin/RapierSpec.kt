@@ -23,8 +23,7 @@ class RapierSpec : Spek({
         roleDocument,
         FilledTemplate(slots(
           SlotName("role") to slotFillers(
-            wordTokens("Senior", "Software", "Engineer"),
-            wordTokens("Software", "Engineer")
+            wordTokens("Senior", "Software", "Engineer")
           )
         ))
       )
@@ -33,48 +32,36 @@ class RapierSpec : Spek({
         roleDocument2,
         FilledTemplate(slots(
           SlotName("role") to slotFillers(
-            wordTokens("Senior", "Software", "Engineer"),
-            wordTokens("Software", "Engineer")
+            wordTokens("Senior", "Software", "Engineer")
           )
         ))
       )
-      val example3 = Example(
-        blankTemplate,
-        roleDocument3,
-        FilledTemplate(slots(
-          SlotName("role") to slotFillers(wordTokens("Software", "Engineer"))
-        ))
-      )
-      val examples = Examples(listOf(example, example2, example3))
+      val examples = Examples(listOf(example, example2))
       val params = RapierParams(
         Random = Random(20),
         compressionFails = 3,
-        metricMinPositiveMatches = 2,
+        metricMinPositiveMatches = 1,
         compressionPriorityQueueSize = 7,
-        ruleSizeWeight = 100.0
+        ruleSizeWeight = 0.01
       )
 
-      fit("should find a rule") {
+      it("should find simplest rule") {
         val result = rapier(blankTemplate, examples = examples, params = params)
-        print(result[0].learnedRules)
         result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
           BaseRule(
-            preFiller = Pattern(
-              PatternList(words("a"), tags("DT"), length = 1)
-            ),
+            preFiller = Pattern(),
             filler = Pattern(
               PatternItem(words("Senior"), tags("NNP")),
               PatternItem(words("Software"), tags("NNP")),
               PatternItem(words("Engineer"), tags("NNP"))
             ),
-            postFiller = Pattern(
-              PatternList(words("in"), tags("IN"), length = 1)
-            ),
+            postFiller = Pattern(),
             slotName = SlotName("role")
           )
         )
       }
     }
+
 
     describe("two examples with similar fillers") {
 
@@ -107,12 +94,9 @@ class RapierSpec : Spek({
 
       it("should find a rule") {
         val result = rapier(blankTemplate, examples = examples, params = params)
-        print(result[0].learnedRules.map(::toBaseRule))
         result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
           BaseRule(
-            preFiller = Pattern(
-              PatternList(words("*"), tags("SYM"), length = 1)
-            ),
+            preFiller = Pattern(),
             filler = Pattern(
               PatternItem(posTagConstraints = tags("CD")),
               PatternItem(words("+"), tags("SYM")),
@@ -123,6 +107,66 @@ class RapierSpec : Spek({
               PatternItem(posTagConstraints = tags("IN", "VBG"))
             ),
             slotName=SlotName(name="exp")
+          )
+        )
+      }
+    }
+
+
+    describe("non-intuitive filledTemplate examples") {
+
+      val blankTemplate = BlankTemplate(
+        name = "test",
+        slots = slotNames("role")
+      )
+      val example = Example(
+        blankTemplate,
+        roleDocument,
+        FilledTemplate(slots(
+          SlotName("role") to slotFillers(
+            wordTokens("Senior", "Software", "Engineer"),
+            wordTokens("Software", "Engineer")
+          )
+        ))
+      )
+      val example2 = Example(
+        blankTemplate,
+        roleDocument2,
+        FilledTemplate(slots(
+          SlotName("role") to slotFillers(
+            wordTokens("Senior", "Software", "Engineer"),
+            wordTokens("Software", "Engineer")
+          )
+        ))
+      )
+      val example3 = Example(
+        blankTemplate,
+        roleDocument3,
+        FilledTemplate(slots(
+          SlotName("role") to slotFillers(wordTokens("Software", "Engineer"))
+        ))
+      )
+      val examples = Examples(listOf(example, example2, example3))
+      val params = RapierParams(
+        Random = Random(20),
+        compressionFails = 3,
+        metricMinPositiveMatches = 1,
+        compressionPriorityQueueSize = 7,
+        ruleSizeWeight = 0.01
+      )
+
+      it("should find a simple rule") {
+        val result = rapier(blankTemplate, examples = examples, params = params)
+        result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
+          BaseRule(
+            preFiller = Pattern(),
+            filler = Pattern(
+              PatternList(words("Senior"), tags("NNP"), length = 1),
+              PatternItem(words("Software"), tags("NNP")),
+              PatternItem(words("Engineer"), tags("NNP"))
+            ),
+            postFiller = Pattern(),
+            slotName = SlotName("role")
           )
         )
       }
