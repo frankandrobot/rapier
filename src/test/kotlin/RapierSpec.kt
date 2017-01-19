@@ -174,7 +174,7 @@ class RapierSpec : Spek({
   }
 })
 
-private val roleDocument = Document(Some("""
+private val roleDocument = Document("""
 As a Senior Software Engineer in our Engineering team you will lead the technical
 efforts to expand Cognitive Scale’s product capabilities.  You will work closely with
 the CTO and the advanced technology team to create unique and differentiating
@@ -186,9 +186,9 @@ department and are equally comfortable working with developers, user experience
 designers, project managers, sales teams, and DevOps folks. In this role, you will
 have the opportunity to put cognitive computin g in action to truly change the world!
 Come join us on our journey....
-    """))
+    """)
 
-private var roleDocument2 = Document(Some("""
+private var roleDocument2 = Document("""
 The role is a self-organized Senior Software Engineer with solid Java and web service
 development experience.  In this position, you are first and foremost a passionate and
 talented developer that can work in a dynamic environment as a member of Agile Scrum
@@ -196,9 +196,9 @@ teams.  Your strong technical leadership, problem solving abilities, coding, tes
 and debugging skills is just a start.  You must be dedicated to filling product
 backlog and delivering production-ready code.  You must be willing to go beyond the
 routine and prepared to do a little bit of everything.
-"""))
+""")
 
-private var roleDocument3 = Document(Some("""
+private var roleDocument3 = Document("""
 We help people get jobs.
 At Indeed, we know that mobile is big. 50% of all job searches on Indeed come from a
 mobile device. This is why want to make applying to any job on your mobile or on your
@@ -206,9 +206,9 @@ tablet a breeze - no more pinching or zooming. As a Software Engineer - Client
 Implementation, you will create mobile-friendly mirrors of clients’ career sites and
 make sure our software knows how to send jobseekers’ applications correctly to the
 original site.
-"""))
+""")
 
-private var yearsDocument1 = Document(Some("""
+private var yearsDocument1 = Document("""
 Requirements:
 
 * 5+ years experience in Object Oriented Design and Programming or Functional Programing
@@ -224,9 +224,9 @@ all levels of the organization
 * Keen business judgment, focus, and ability to see the "big picture" and prioritize
 * Excellent communication and presentation skills with the ability to present and
 translate complex information to both internal and external teams in relevant business terms
-"""))
+""")
 
-private var yearsDocument2 = Document(Some("""
+private var yearsDocument2 = Document("""
 We are looking for someone with:
 * Bachelor's degree in Computer Science or similar desired
 * 6+ years developing high-quality software
@@ -236,5 +236,4 @@ We are looking for someone with:
 * Database knowledge; SQLServer and MongoDB
 * Strong interest in learning and expanding your personal toolbox of skills
 * High emotional intelligence
-"""))
-
+""")
