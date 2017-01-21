@@ -20,7 +20,6 @@ package com.frankandrobot.rapier.parse
 import com.frankandrobot.rapier.nlp.Token
 import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.util.BetterIterator
-import org.funktionale.option.Option
 import org.funktionale.option.Option.None
 import org.funktionale.option.Option.Some
 import java.util.*
@@ -91,20 +90,6 @@ fun IRule.exactMatch(documentTokens : ArrayList<Token>) : List<MatchResult> {
   return this.exactMatch(BetterIterator(documentTokens))
 }
 
-
-data class MatchResult(val preFillerMatch : MatchInfo,
-                       val fillerMatch : MatchInfo,
-                       val postFillerMatch : MatchInfo,
-                       val matchFound : Boolean = true)
-
-data class MatchInfo(val index : Option<Int>,
-                     val matches : Option<ArrayList<Token>>) {
-
-  constructor(index : Option<Int>, matches : ArrayList<Token>)
-  : this(index, matches._toOption())
-
-  operator fun invoke() = matches
-}
 
 internal fun ArrayList<Token>._toOption() =
   if (this.size == 0) None
