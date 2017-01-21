@@ -36,9 +36,18 @@ fun tokens(vararg words : String) = words.map(::token) as ArrayList
 fun token(word : String) = Token(
   word = Some(word),
   posTag = None,
-  semanticClass = None
+  semanticClass = None,
+  startIndex = None,
+  endIndex = None
 )
 fun wordTokens(vararg words : String) = words.map{ WordToken(Some(it)) } as ArrayList
+fun wordTagToken(word : String, tag : String) = Token(
+  word = Some(word),
+  posTag = Some(tag),
+  semanticClass = None,
+  startIndex = None,
+  endIndex = None
+)
 /**
  * @deprecated use tokens
  */

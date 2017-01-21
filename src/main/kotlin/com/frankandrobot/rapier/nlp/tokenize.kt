@@ -33,7 +33,11 @@ fun tokenize(string: String) =
 
   decoder.decode(string)
     .drop(1)
-    .map({ node -> wordTagToken(node.wordForm, node.partOfSpeechTag) })
+    .map({ node -> wordTagToken(
+      word = node.wordForm,
+      tag = node.partOfSpeechTag,
+      start = node.startOffset - 1,
+      end = node.endOffset - 1) })
     as ArrayList<Token>
 
 fun tokenizeWords(string: String) =

@@ -24,15 +24,19 @@ import org.funktionale.option.Option.Some
 
 data class Token(val word : Option<String>,
                  val posTag : Option<String>,
-                 val semanticClass : Option<String>) {
+                 val semanticClass : Option<String>,
+                 val startIndex : Option<Int>,
+                 val endIndex : Option<Int>) {
 
   fun dropTagAndSemanticProperties() = WordToken(word)
 }
 
-fun wordTagToken(word : String, tag : String) = Token(
+fun wordTagToken(word : String, tag : String, start : Int, end : Int) = Token(
   word = Some(word),
   posTag = Some(tag),
-  semanticClass = None
+  semanticClass = None,
+  startIndex = Some(start),
+  endIndex = Some(end)
 )
 
 

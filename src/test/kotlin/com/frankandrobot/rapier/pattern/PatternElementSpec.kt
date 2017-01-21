@@ -17,7 +17,7 @@
 
 package com.frankandrobot.rapier.pattern
 
-import com.frankandrobot.rapier.nlp.wordTagToken
+import com.frankandrobot.rapier.wordTagToken
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
@@ -43,12 +43,12 @@ class PatternElementSpec : Spek({
     describe("PatternItem equality") {
       it("should work when equal constrains are out of order") {
         val a = PatternItem(
-          listOf("a", "b").map{WordConstraint(it)}.toHashSet(),
-          listOf("tag1", "tag2").map{PosTagConstraint(it)}.toHashSet()
+          listOf("a", "b").map(::WordConstraint).toHashSet(),
+          listOf("tag1", "tag2").map(::PosTagConstraint).toHashSet()
         )
         val b = PatternItem(
-          listOf("b", "a").map{WordConstraint(it)}.toHashSet(),
-          listOf("tag2", "tag1").map{PosTagConstraint(it)}.toHashSet()
+          listOf("b", "a").map(::WordConstraint).toHashSet(),
+          listOf("tag2", "tag1").map(::PosTagConstraint).toHashSet()
         )
         assertEquals(true, a == b)
       }
@@ -57,8 +57,8 @@ class PatternElementSpec : Spek({
     describe("PatternList equality") {
       it("should work when equal constrains are out of order") {
         val a = PatternList(
-          listOf("a", "b").map{WordConstraint(it)}.toHashSet(),
-          listOf("tag1", "tag2").map{PosTagConstraint(it)}.toHashSet(),
+          listOf("a", "b").map(::WordConstraint).toHashSet(),
+          listOf("tag1", "tag2").map(::PosTagConstraint).toHashSet(),
           length = 1
         )
         val b = PatternList(
