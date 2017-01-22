@@ -51,6 +51,15 @@ class TokenizeSpec : Spek({
 
       assertEquals(listOf("explain", "#simply"), result)
     }
+
+    it("should add index information") {
+
+      val text = "  explain   #simply   "
+      val result = tokenize(text).map{IntRange(it.startIndex.get(), it.endIndex.get())}
+
+      text.substring(result[0]) shouldEqual "explain"
+      text.substring(result[1]) shouldEqual "#simply"
+    }
   }
 
 

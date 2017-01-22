@@ -36,7 +36,7 @@ fun tokenize(string: String) =
     .map({ node -> wordTagToken(
       word = node.wordForm,
       tag = node.partOfSpeechTag,
-      start = node.startOffset - 1,
+      start = node.startOffset,
       end = node.endOffset - 1) })
     as ArrayList<Token>
 
