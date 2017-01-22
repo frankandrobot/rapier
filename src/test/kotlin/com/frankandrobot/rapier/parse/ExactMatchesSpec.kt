@@ -31,7 +31,7 @@ import org.jetbrains.spek.api.Spek
 import java.util.*
 
 
-class MatchSpec : Spek({
+class ExactMatchesSpec : Spek({
 
   val anyText = { textTokenIterator("A a b C D e f Z") }
   val anySlot = { Slot(SlotName("any slot"), slotFillers = HashSet<SlotFiller>()) }
