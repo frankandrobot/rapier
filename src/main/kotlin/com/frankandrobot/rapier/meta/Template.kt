@@ -20,7 +20,10 @@ package com.frankandrobot.rapier.meta
 import java.util.*
 
 
-data class BlankTemplate(val name : String, private val slots: HashSet<SlotName>) {
+data class BlankTemplate(@JvmField val name : String,
+                         private val slots: HashSet<SlotName>) {
+  constructor(name : String, slots : List<String>)
+    : this(name, slots.map(::SlotName).toHashSet())
   operator fun invoke() = slots
 }
 
