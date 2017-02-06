@@ -22,7 +22,7 @@ import java.util.*
 
 data class BlankTemplate(@JvmField val name : String,
                          private val slots: HashSet<SlotName>) {
-  constructor(name : String, slots : List<String>)
+  constructor(name : String, slots : ArrayList<String>)
     : this(name, slots.map(::SlotName).toHashSet())
   operator fun invoke() = slots
 }
