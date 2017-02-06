@@ -96,6 +96,16 @@ data. However, a command line interface is in the works. In the mean time, check
 7.   Extract information from new documents using the learned rules.
   
      ```kotlin
-     val result = allLearnedRules[SlotName("title)"].findMatches(aDocument)
+     val rulesForTitleSlot = allLearnedRules[SlotName("title")]
+     val results = rulesForTitleSlot.findMatches(aDocument)
      println(result[SlotName("title")])
+     ```
+     
+     Or find all the matches for each slot in one shot.
+     
+     ```kotlin
+     val allResults = allLearnedRules()
+       .flatMap { learnedRule -> learnedRule.value }
+       .findMatches(aDocument)
+     println(allResults[SlotName("title")])
      ```
