@@ -24,15 +24,16 @@ import com.frankandrobot.rapier.meta.SlotName
 import com.frankandrobot.rapier.nlp.compressRuleArray
 import com.frankandrobot.rapier.rule.IRule
 import com.frankandrobot.rapier.rule.mostSpecificRules
+import java.util.*
 
 
 fun rapier(blankTemplate : BlankTemplate,
            examples : Examples,
-           params : RapierParams) : List<Results> {
+           params : RapierParams) : LearnedRules {
 
   val mostSpecificSlotRules = mostSpecificRules(blankTemplate, examples)
 
-  val result = mostSpecificSlotRules.map { result ->
+  val results = mostSpecificSlotRules.map { result ->
 
     val slotName = result.key
     val mostSpecificRules = result.value
@@ -61,11 +62,22 @@ fun rapier(blankTemplate : BlankTemplate,
       }
     }
 
-    Results(slotName, rules)
+    SlotRules(slotName, rules)
+
+  }.fold(HashMap<SlotName,List<IRule>>()) { total, cur ->
+    total[cur.slotName] = cur.learnedRules
+    total
   }
 
-  return result
+  return LearnedRules(results)
 }
 
 
-data class Results(val slotName : SlotName, val learnedRules : List<IRule>)
+data class SlotRules(val slotName : SlotName, val learnedRules : List<IRule>)
+
+data class LearnedRules(private val results : HashMap<SlotName,List<IRule>>) {
+
+  operator fun get(slotName : SlotName) = results[slotName]!!
+
+  operator fun invoke() = results
+}

@@ -1,6 +1,7 @@
 package com.frankandrobot.rapier
 
 import com.frankandrobot.rapier.meta.*
+import com.frankandrobot.rapier.parse.findMatches
 import com.frankandrobot.rapier.pattern.*
 import com.frankandrobot.rapier.rule.BaseRule
 import org.amshove.kluent.shouldEqual
@@ -47,7 +48,7 @@ class RapierSpec : Spek({
 
       it("should find simplest rule") {
         val result = rapier(blankTemplate, examples = examples, params = params)
-        result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
+        result[SlotName("role")].map(::toBaseRule) shouldEqual listOf(
           BaseRule(
             preFiller = Pattern(),
             filler = Pattern(
@@ -94,7 +95,7 @@ class RapierSpec : Spek({
 
       it("should find a rule") {
         val result = rapier(blankTemplate, examples = examples, params = params)
-        result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
+        result[SlotName("exp")].map(::toBaseRule) shouldEqual listOf(
           BaseRule(
             preFiller = Pattern(),
             filler = Pattern(
@@ -157,7 +158,7 @@ class RapierSpec : Spek({
 
       it("should find a simple rule") {
         val result = rapier(blankTemplate, examples = examples, params = params)
-        result[0].learnedRules.map(::toBaseRule) shouldEqual listOf(
+        result[SlotName("role")].map(::toBaseRule) shouldEqual listOf(
           BaseRule(
             preFiller = Pattern(),
             filler = Pattern(

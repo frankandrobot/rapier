@@ -90,12 +90,12 @@ data. However, a command line interface is in the works. In the mean time, check
 
      ```kotlin
      val examples = Examples(listOf(example))
-     val learnedRules = rapier(blankTemplate, examples = examples, params = params)
+     val allLearnedRules = rapier(blankTemplate, examples = examples, params = params)
      ```
-     
+
 7.   Extract information from new documents using the learned rules.
   
      ```kotlin
-     val result = learnedRules.findMatches(aDocument)
+     val result = allLearnedRules[SlotName("title)"].findMatches(aDocument)
      println(result[SlotName("title")])
      ```
