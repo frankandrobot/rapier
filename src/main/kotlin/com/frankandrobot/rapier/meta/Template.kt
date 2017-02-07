@@ -23,19 +23,19 @@ import java.util.*
 
 data class BlankTemplate(@JvmField val name : String,
                          private val slots: HashSet<SlotName>) {
-  constructor(name : String, slots : ArrayList<String>)
+  constructor(name : String, slots : java.util.List<String>)
     : this(name, slots.map(::SlotName).toHashSet())
   operator fun invoke() = slots
 }
 
 data class FilledTemplate(private val slots : Slots) {
 
-  constructor(slots : HashMap<String,ArrayList<String>>)
+  constructor(slots : java.util.Map<String,java.util.List<String>>)
   : this (
     Slots(
       // is there a cleaner way of transforming maps in kotlin?
-      slots
-        .map {Slot(SlotName(it.key), it.value.map{SlotFiller(Some(it))}.toHashSet()) }
+      slots.keySet()
+        .map {Slot(SlotName(it), slots[it].map{SlotFiller(Some(it))}.toHashSet()) }
         .fold(HashMap<SlotName, Slot>()){ total,cur -> total[cur.name] = cur; total }
     )
   )

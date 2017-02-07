@@ -23,6 +23,8 @@ import org.amshove.kluent.shouldEqual
 import org.funktionale.option.Option
 import org.funktionale.option.Option.*
 import org.jetbrains.spek.api.Spek
+import java.util.List
+import java.util.Map
 
 
 class FilledTemplateSpec : Spek({
@@ -43,7 +45,7 @@ class FilledTemplateSpec : Spek({
           hashMapOf(
             "1" to arrayListOf("one two", "three four"),
             "2" to arrayListOf("second")
-          )
+          ) as Map<String, List<String>>
         )
         val defaultCons = FilledTemplate(Slots(
           hashMapOf(
