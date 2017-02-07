@@ -20,6 +20,8 @@ package com.frankandrobot.rapier.meta
 import com.frankandrobot.rapier.wordSlotFiller
 import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.shouldEqual
+import org.funktionale.option.Option
+import org.funktionale.option.Option.*
 import org.jetbrains.spek.api.Spek
 
 
@@ -33,6 +35,35 @@ class FilledTemplateSpec : Spek({
         SlotName("slot"),
         slotFillers = hashSetOf(wordSlotFiller("filler"))
       )
+    }
+
+    describe("alternate constructor") {
+      it("should work") {
+        val template = FilledTemplate(
+          hashMapOf(
+            "1" to arrayListOf("one two", "three four"),
+            "2" to arrayListOf("second")
+          )
+        )
+        val defaultCons = FilledTemplate(Slots(
+          hashMapOf(
+            SlotName("1") to Slot(
+              SlotName("1"),
+              hashSetOf(
+                SlotFiller(Some("one two")),
+                SlotFiller(Some("three four"))
+              )
+            ),
+            SlotName("2") to Slot(
+              SlotName("2"),
+              hashSetOf(
+                SlotFiller(Some("second"))
+              )
+            )
+          )
+        ))
+        template shouldEqual defaultCons
+      }
     }
   }
 })

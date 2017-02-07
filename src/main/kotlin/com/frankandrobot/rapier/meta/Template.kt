@@ -17,6 +17,7 @@
 
 package com.frankandrobot.rapier.meta
 
+import org.funktionale.option.Option.*
 import java.util.*
 
 
@@ -28,5 +29,15 @@ data class BlankTemplate(@JvmField val name : String,
 }
 
 data class FilledTemplate(private val slots : Slots) {
+
+  constructor(slots : HashMap<String,ArrayList<String>>)
+  : this (
+    Slots(
+      // is there a cleaner way of transforming maps in kotlin?
+      slots
+        .map {Slot(SlotName(it.key), it.value.map{SlotFiller(Some(it))}.toHashSet()) }
+        .fold(HashMap<SlotName, Slot>()){ total,cur -> total[cur.name] = cur; total }
+    )
+  )
   operator fun get(slotName : SlotName) = slots[slotName]
 }
