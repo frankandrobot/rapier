@@ -7,6 +7,9 @@ import edu.mit.jwi.IDictionary
 fun load(path : String) : IDictionary {
   val url =  java.net.URL("file",null ,path)
   val dict = Dictionary(url)
+
+  dict.open()
+
   return dict
 }
 

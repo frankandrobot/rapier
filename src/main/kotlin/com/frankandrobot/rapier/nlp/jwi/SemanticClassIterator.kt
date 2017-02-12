@@ -4,6 +4,8 @@ import edu.mit.jwi.IDictionary
 import edu.mit.jwi.item.ISynset
 import edu.mit.jwi.item.POS
 import edu.mit.jwi.item.Pointer
+import org.funktionale.option.Option
+import org.funktionale.option.Option.*
 import java.util.*
 
 
@@ -16,7 +18,10 @@ private val posList = listOf(POS.ADJECTIVE, POS.ADVERB, POS.NOUN, POS.VERB)
 data class SemanticClassIterator(val dict : IDictionary, val word : String) :
   Iterator<HashSet<ISynset>> {
 
-  private val initialSemanticClasses : HashSet<ISynset> by lazy {
+  private var calculatedNext = false
+  private var next : Option<HashSet<ISynset>> = None
+
+  private fun initialSemanticClasses() : HashSet<ISynset> {
     val idxWords = posList
       .map{dict.getIndexWord(word, it)}
       .filter{it != null}
@@ -28,27 +33,35 @@ data class SemanticClassIterator(val dict : IDictionary, val word : String) :
       .distinct()
       .toHashSet()
 
-    synsets
+    return synsets
   }
 
-  private var initial = false
-  private var curSynsets : HashSet<ISynset> = HashSet()
-
-  override fun hasNext(): Boolean {
-    return !initial || curSynsets.size > 0
-  }
-
-  override fun next(): HashSet<ISynset> {
-    if (!initial) {
-      initial = true
-      curSynsets = initialSemanticClasses
-    }
+  private fun next(current : Option<HashSet<ISynset>>) =
+    if (current.isEmpty()) Some(initialSemanticClasses())
     else {
-      curSynsets = curSynsets.flatMap{it.getRelatedSynsets (Pointer.HYPERNYM)}
+      val result = current.get()
+        .flatMap{it.getRelatedSynsets (Pointer.HYPERNYM)}
         .distinct()
         .map{dict.getSynset(it)}
         .toHashSet()
+
+      if (result.size > 0) Some(result)
+      else None
     }
-    return curSynsets
+
+  override fun hasNext(): Boolean {
+    if (!calculatedNext) {
+      next = next(next)
+      calculatedNext = true
+    }
+    return next.isDefined()
+  }
+
+  override fun next(): HashSet<ISynset> {
+    if (!calculatedNext) {
+      next = next(next)
+    }
+    calculatedNext = false
+    return next.get()
   }
 }
