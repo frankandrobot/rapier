@@ -1,0 +1,71 @@
+package com.frankandrobot.rapier.nlp.jwi
+
+import org.amshove.kluent.shouldEqual
+import org.jetbrains.spek.api.Spek
+
+import java.io.File
+
+
+class SemanticClassIteratorSpec : Spek({
+  describe("SemanticClassIterator") {
+    val userDir = System.getProperty("user.dir")
+    val s = File.separator
+    val path = "$userDir${s}src${s}main${s}resources${s}wordnet${s}dict"
+    val dict = load(path)
+    var iterator : SemanticClassIterator = SemanticClassIterator(dict, "woman")
+
+    beforeEach {
+      iterator = SemanticClassIterator(dict, "woman")
+    }
+
+    describe("initial semantic classes") {
+      it("should haveNext") {
+        iterator.hasNext() shouldEqual true
+      }
+
+      it("should exist") {
+        val initial = iterator.next()
+        val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
+        words shouldEqual listOf("womanhood", "woman", "fair_sex", "adult_female",
+          "charwoman", "char", "cleaning_woman", "cleaning_lady")
+      }
+
+      it("should exist after calling haveNext twice") {
+        iterator.hasNext() shouldEqual true
+        iterator.hasNext() shouldEqual true
+        val initial = iterator.next()
+        val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
+        words shouldEqual listOf("womanhood", "woman", "fair_sex", "adult_female",
+          "charwoman", "char", "cleaning_woman", "cleaning_lady")
+      }
+    }
+
+    describe("non-initial semantic classes") {
+      beforeEach {
+        iterator.next()
+      }
+
+      it("should haveNext") {
+        iterator.hasNext() shouldEqual true
+      }
+
+      it("should exist") {
+        val initial = iterator.next()
+        val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
+        words shouldEqual listOf("class", "stratum", "social_class",
+          "socio-economic_class", "female", "female_person", "cleaner", "adult",
+          "grownup")
+      }
+
+      it("should exist after calling haveNext twice") {
+        iterator.hasNext() shouldEqual true
+        iterator.hasNext() shouldEqual true
+        val initial = iterator.next()
+        val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
+        words shouldEqual listOf("class", "stratum", "social_class",
+          "socio-economic_class", "female", "female_person", "cleaner", "adult",
+          "grownup")
+      }
+    }
+  }
+})

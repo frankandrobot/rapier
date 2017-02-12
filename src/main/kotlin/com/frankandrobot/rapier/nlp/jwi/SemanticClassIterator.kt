@@ -30,7 +30,6 @@ data class SemanticClassIterator(val dict : IDictionary, val word : String) :
       .flatMap{it.wordIDs}
       .map{dict.getWord(it)}
       .map{it.synset}
-      .distinct()
       .toHashSet()
 
     return synsets
@@ -41,7 +40,6 @@ data class SemanticClassIterator(val dict : IDictionary, val word : String) :
     else {
       val result = current.get()
         .flatMap{it.getRelatedSynsets (Pointer.HYPERNYM)}
-        .distinct()
         .map{dict.getSynset(it)}
         .toHashSet()
 

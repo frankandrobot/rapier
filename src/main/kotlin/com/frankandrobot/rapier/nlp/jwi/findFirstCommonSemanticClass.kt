@@ -2,24 +2,30 @@ package com.frankandrobot.rapier.nlp.jwi
 
 import edu.mit.jwi.IDictionary
 import edu.mit.jwi.item.ISynset
+import edu.mit.jwi.item.ISynsetID
 import org.funktionale.option.Option
+import org.funktionale.option.Option.*
+import java.util.*
 
 
 fun IDictionary.findFirstCommonSemanticClass(lemma1 : String, lemma2 : String)
   : Option<ISynset> {
+  // first get all synsets
+  val iter1Synsets = ArrayList<ISynsetID>(20)
+  val iter2Synsets = ArrayList<ISynsetID>(20)
   val iter1 = SemanticClassIterator(this, lemma1)
   val iter2 = SemanticClassIterator(this, lemma2)
 
-  while(iter1.hasNext() && iter2.hasNext()) {
-    val classes1 = iter1.next()
-    val classes2 = iter2.next()
+  iter1.forEach{iter1Synsets.addAll(it.map{it.id})}
+  iter2.forEach{iter2Synsets.addAll(it.map{it.id})}
 
-    for(semClass in classes2) {
-      if (classes1.contains(semClass)) {
-        return Option.Some(semClass)
-      }
-    }
-  }
+  // now find first match
+  val semClass1 = iter1Synsets.iterator()
+  val semClass2 = iter2Synsets.iterator()
 
-  return Option.None
+  for(id1 in iter1Synsets)
+    for(id2 in iter2Synsets)
+      if (id1.equals(id2)) { return Some(this.getSynset(id1)) }
+
+  return None
 }
