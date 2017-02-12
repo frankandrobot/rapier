@@ -4,7 +4,8 @@ import edu.mit.jwi.IDictionary
 import edu.mit.jwi.item.ISynset
 import edu.mit.jwi.item.ISynsetID
 import org.funktionale.option.Option
-import org.funktionale.option.Option.*
+import org.funktionale.option.Option.None
+import org.funktionale.option.Option.Some
 import java.util.*
 
 
@@ -20,9 +21,6 @@ fun IDictionary.findFirstCommonSemanticClass(lemma1 : String, lemma2 : String)
   iter2.forEach{iter2Synsets.addAll(it.map{it.id})}
 
   // now find first match
-  val semClass1 = iter1Synsets.iterator()
-  val semClass2 = iter2Synsets.iterator()
-
   for(id1 in iter1Synsets)
     for(id2 in iter2Synsets)
       if (id1.equals(id2)) { return Some(this.getSynset(id1)) }

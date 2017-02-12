@@ -2,7 +2,6 @@ package com.frankandrobot.rapier.nlp.jwi
 
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
-
 import java.io.File
 
 
@@ -26,8 +25,9 @@ class SemanticClassIteratorSpec : Spek({
       it("should exist") {
         val initial = iterator.next()
         val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
-        words shouldEqual listOf("womanhood", "woman", "fair_sex", "adult_female",
+        val expected = listOf("womanhood", "woman", "fair_sex", "adult_female",
           "charwoman", "char", "cleaning_woman", "cleaning_lady")
+        words.toHashSet() shouldEqual expected.toHashSet()
       }
 
       it("should exist after calling haveNext twice") {
@@ -35,8 +35,9 @@ class SemanticClassIteratorSpec : Spek({
         iterator.hasNext() shouldEqual true
         val initial = iterator.next()
         val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
-        words shouldEqual listOf("womanhood", "woman", "fair_sex", "adult_female",
+        val expected = listOf("womanhood", "woman", "fair_sex", "adult_female",
           "charwoman", "char", "cleaning_woman", "cleaning_lady")
+        words.toHashSet() shouldEqual expected.toHashSet()
       }
     }
 
@@ -52,9 +53,10 @@ class SemanticClassIteratorSpec : Spek({
       it("should exist") {
         val initial = iterator.next()
         val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
-        words shouldEqual listOf("class", "stratum", "social_class",
-          "socio-economic_class", "female", "female_person", "cleaner", "adult",
-          "grownup")
+        val expected = listOf("class", "stratum", "social_class",
+        "socio-economic_class", "female", "female_person", "cleaner", "adult",
+        "grownup")
+        words.toHashSet() shouldEqual expected.toHashSet()
       }
 
       it("should exist after calling haveNext twice") {
@@ -62,9 +64,10 @@ class SemanticClassIteratorSpec : Spek({
         iterator.hasNext() shouldEqual true
         val initial = iterator.next()
         val words = initial.flatMap { it.words }.map{it.lemma}.distinct()
-        words shouldEqual listOf("class", "stratum", "social_class",
+        val expected = listOf("class", "stratum", "social_class",
           "socio-economic_class", "female", "female_person", "cleaner", "adult",
           "grownup")
+        words.toHashSet() shouldEqual expected.toHashSet()
       }
     }
   }
