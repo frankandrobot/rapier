@@ -37,7 +37,8 @@ fun tokenize(string: String) =
       word = node.wordForm,
       tag = node.partOfSpeechTag,
       start = node.startOffset,
-      end = node.endOffset - 1) })
+      end = node.endOffset - 1,
+      lemma = node.lemma) })
     as ArrayList<Token>
 
 fun tokenizeWords(string: String) =

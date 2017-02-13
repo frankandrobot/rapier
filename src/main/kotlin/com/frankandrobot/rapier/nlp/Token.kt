@@ -26,17 +26,20 @@ data class Token(val word : Option<String>,
                  val posTag : Option<String>,
                  val semanticClass : Option<String>,
                  val startIndex : Option<Int>,
-                 val endIndex : Option<Int>) {
+                 val endIndex : Option<Int>,
+                 val lemma : Option<String>) {
 
   fun dropTagAndSemanticProperties() = WordToken(word)
 }
 
-fun wordTagToken(word : String, tag : String, start : Int, end : Int) = Token(
-  word = Some(word),
-  posTag = Some(tag),
-  semanticClass = None,
-  startIndex = Some(start),
-  endIndex = Some(end)
-)
+fun wordTagToken(word : String, tag : String, start : Int, end : Int, lemma : String) =
+  Token(
+    word = Some(word),
+    posTag = Some(tag),
+    semanticClass = None,
+    startIndex = Some(start),
+    endIndex = Some(end),
+    lemma = Some(lemma)
+  )
 
 
