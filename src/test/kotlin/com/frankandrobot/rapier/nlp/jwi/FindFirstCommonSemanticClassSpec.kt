@@ -2,6 +2,7 @@ package com.frankandrobot.rapier.nlp.jwi
 
 import com.frankandrobot.rapier.lemmaToken
 import org.amshove.kluent.shouldEqual
+import org.funktionale.option.Option.None
 import org.jetbrains.spek.api.Spek
 import java.io.File
 
@@ -21,13 +22,12 @@ class FindFirstCommonSemanticClassSpec : Spek({
       result shouldEqual listOf("adult", "grownup")
     }
 
-    fit("should work for man/world") {
+    it("should work for man/world") {
       val result = dict.findFirstCommonSemanticClass(
         lemmaToken("man", "NN"),
         lemmaToken("world", "NN")
       ).get().words.map{it.lemma}.distinct()
-      result shouldEqual listOf("world", "human_race", "humanity", "humankind",
-        "human_beings", "humans", "mankind", "man")
+      result shouldEqual listOf("homo", "man", "human_being", "human")
     }
 
     it("should work for man/rock") {
@@ -45,6 +45,14 @@ class FindFirstCommonSemanticClassSpec : Spek({
         lemmaToken("entity", "NN")
       ).get().words.map{it.lemma}.distinct()
       result shouldEqual listOf("entity")
+    }
+
+    it("should work for tom/jeff") {
+      val result = dict.findFirstCommonSemanticClass(
+        lemmaToken("tom", "NNP"),
+        lemmaToken("jeff", "NNP")
+      )
+      result shouldEqual None
     }
   }
 })

@@ -39,7 +39,7 @@ fun IDictionary.findFirstCommonSemanticClass(word1 : Token, word2 : Token)
   val iter2 = SemanticClassIterator(
     this,
     lemma = word2.lemma.get(),
-    pos = toJWIPOS(word1.posTag.get())
+    pos = toJWIPOS(word2.posTag.get())
   )
 
   iter1.forEach{iter1Synsets.addAll(it.map{it.id})}
