@@ -38,7 +38,8 @@ fun token(word : String) = Token(
   posTag = None,
   semanticClass = None,
   startIndex = None,
-  endIndex = None
+  endIndex = None,
+  lemma = None
 )
 fun wordTokens(vararg words : String) = words.map{ WordToken(Some(it)) } as ArrayList
 fun wordTagToken(word : String, tag : String) = Token(
@@ -46,7 +47,8 @@ fun wordTagToken(word : String, tag : String) = Token(
   posTag = Some(tag),
   semanticClass = None,
   startIndex = None,
-  endIndex = None
+  endIndex = None,
+  lemma = None
 )
 /**
  * @deprecated use tokens
