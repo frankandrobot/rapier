@@ -60,6 +60,18 @@ class TokenizeSpec : Spek({
       text.substring(result[0]) shouldEqual "explain"
       text.substring(result[1]) shouldEqual "#simply"
     }
+
+    describe("example") {
+
+      val text = """
+      Shows are eligible while they're on the air — and for one week after their finales.
+      (Netflix's One Day at a Time, for instance, released its premiere season January
+      6, 2017, so it is eligible for our list through February 17, 2017.) The list is
+      curated entirely by Todd VanDerWerff, who watches more TV than you do (probably).
+      """
+
+      println(tokenize(text).map{"${it.word}:${it.posTag}:${it.lemma}"})
+    }
   }
 
 

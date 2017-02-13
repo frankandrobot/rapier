@@ -1,6 +1,8 @@
 package com.frankandrobot.rapier.nlp.jwi
 
+import edu.mit.jwi.item.POS
 import org.amshove.kluent.shouldEqual
+import org.funktionale.option.Option.Some
 import org.jetbrains.spek.api.Spek
 import java.io.File
 
@@ -11,10 +13,10 @@ class SemanticClassIteratorSpec : Spek({
     val s = File.separator
     val path = "$userDir${s}src${s}main${s}resources${s}wordnet${s}dict"
     val dict = load(path)
-    var iterator : SemanticClassIterator = SemanticClassIterator(dict, "woman")
+    var iterator = SemanticClassIterator(dict, "woman", Some(POS.NOUN))
 
     beforeEach {
-      iterator = SemanticClassIterator(dict, "woman")
+      iterator = SemanticClassIterator(dict, "woman", Some(POS.NOUN))
     }
 
     describe("initial semantic classes") {

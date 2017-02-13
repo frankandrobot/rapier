@@ -16,27 +16,32 @@ import java.util.*
  */
 data class SemanticClassIterator(val dict : IDictionary,
                                  val lemma: String,
-                                 val pos : POS) : Iterator<HashSet<ISynset>> {
+                                 val pos : Option<POS>) : Iterator<HashSet<ISynset>> {
 
   private var calculatedNext = false
   private var next : Option<HashSet<ISynset>> = None
 
-  private fun initialSemanticClasses() : HashSet<ISynset> {
-    val idxWords = listOf(1)
-      .map{dict.getIndexWord(lemma, pos)}
-      .filter{it != null}
-      .map{it!!}
-    val synsets = idxWords
-      .flatMap{it.wordIDs}
-      .map{dict.getWord(it)}
-      .map{it.synset}
-      .toHashSet()
+  private fun initialSemanticClasses() : Option<HashSet<ISynset>> {
+    return when(pos) {
+      is Some<POS> -> {
+        val idxWords = listOf(1)
+          .map { dict.getIndexWord(lemma, pos.get()) }
+          .filter { it != null }
+          .map { it!! }
+        val synsets = idxWords
+          .flatMap { it.wordIDs }
+          .map { dict.getWord(it) }
+          .map { it.synset }
+          .toHashSet()
 
-    return synsets
+        Some(synsets)
+      }
+      else -> None
+    }
   }
 
   private fun next(current : Option<HashSet<ISynset>>) =
-    if (current.isEmpty()) Some(initialSemanticClasses())
+    if (current.isEmpty()) initialSemanticClasses()
     else {
       val result = current.get()
         .flatMap{it.getRelatedSynsets (Pointer.HYPERNYM)}

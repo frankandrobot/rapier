@@ -50,6 +50,14 @@ fun wordTagToken(word : String, tag : String) = Token(
   endIndex = None,
   lemma = None
 )
+fun lemmaToken(lemma : String, posTag : String) = Token(
+  word = None,
+  posTag = Some(posTag),
+  semanticClass = None,
+  startIndex = None,
+  endIndex = None,
+  lemma = Some(lemma)
+)
 /**
  * @deprecated use tokens
  */
