@@ -17,26 +17,40 @@
 
 package com.frankandrobot.rapier.meta
 
-import org.funktionale.option.Option.*
+import com.frankandrobot.rapier.nlp.WordToken
+import org.funktionale.option.Option.Some
 import java.util.*
 
 
 data class BlankTemplate(@JvmField val name : String,
                          private val slots: HashSet<SlotName>) {
+  /**
+   * Used by Java
+   */
   constructor(name : String, slots : java.util.List<String>)
     : this(name, slots.map(::SlotName).toHashSet())
   operator fun invoke() = slots
 }
 
 data class FilledTemplate(private val slots : Slots) {
-
+  /**
+   * Used by Java
+   */
   constructor(slots : java.util.Map<String,java.util.List<String>>)
   : this (
     Slots(
       // is there a cleaner way of transforming maps in kotlin?
-      slots.keySet()
-        .map {Slot(SlotName(it), slots[it].map{SlotFiller(Some(it))}.toHashSet()) }
-        .fold(HashMap<SlotName, Slot>()){ total,cur -> total[cur.name] = cur; total }
+      slots = slots.entrySet().map {Slot(
+        name = SlotName(it.key),
+        slotFillers = it.value.map{ slotFiller ->
+          SlotFiller(
+            tokens = slotFiller
+              .replace("  ", " ")
+              .split(" ")
+              .map{WordToken(Some(it))} as ArrayList<WordToken>
+          )
+        }.toHashSet()
+      )}.fold(HashMap<SlotName, Slot>()){ total,cur -> total[cur.name] = cur; total }
     )
   )
   operator fun get(slotName : SlotName) = slots[slotName]

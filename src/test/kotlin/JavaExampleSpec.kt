@@ -1,16 +1,16 @@
 import com.frankandrobot.rapier.meta.*
 import com.frankandrobot.rapier.rapier
-import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.shouldNotEqual
 import org.jetbrains.spek.api.Spek
+import java.util.List
 
 
-class ExampleSpec : Spek({
+class JavaExampleSpec : Spek({
 
-  val blankTemplate = BlankTemplate("blue", hashSetOf(
-    SlotName("playtime"),
-    SlotName("btVersion"), SlotName("range"), SlotName("watts")
-  ))
+  val blankTemplate = BlankTemplate(
+    "blue",
+    listOf("playtime", "btVersion", "range", "watts") as java.util.List<String>
+  )
   val ex1 = Example(
     blankTemplate,
     Document(
@@ -51,14 +51,12 @@ class ExampleSpec : Spek({
         | 33 unobstructed feet away
       """.replace("|", "")
     ),
-    FilledTemplate(slots(
-      SlotName("playtime") to slotFillers(
-        wordTokens("12", "hours"), wordTokens("12", "hour")
-      ),
-      SlotName("range") to slotFillers(
-        wordTokens("33", "unobstructed", "feet")
-      )
-    ))
+    FilledTemplate(
+      hashMapOf(
+        "playtime" to listOf("12 hours", "12 hour") as java.util.List<String>,
+        "range" to listOf("33 unobstructed feet") as java.util.List<String>
+      ) as java.util.Map<String, List<String>>
+    )
   )
 
   val ex2 = Example(
@@ -100,9 +98,9 @@ class ExampleSpec : Spek({
         |     B01HRO56ZK
       """.replace("|", "")
     ),
-    FilledTemplate(slots(
-      SlotName("btVersion") to slotFillers(wordTokens("V4.0"))
-    ))
+    FilledTemplate(hashMapOf(
+      "btVersion" to listOf("V4.0") as java.util.List<String>
+    ) as java.util.Map<String, List<String>>)
   )
 
   val ex3 = Example(
@@ -127,11 +125,11 @@ class ExampleSpec : Spek({
         |  warranty and friendly customer service, which make your purchase absolutely risk-free.
       """.replace("|","")
     ),
-    FilledTemplate(slots(
-      SlotName("watts") to slotFillers(wordTokens("10W")),
-      SlotName("playtime") to slotFillers(wordTokens("6","hours")),
-      SlotName("range") to slotFillers(wordTokens("66", "feet"))
-    ))
+    FilledTemplate(hashMapOf(
+      "watts" to listOf("10W") as java.util.List<String>,
+      "playtime" to listOf("6 hours") as java.util.List<String>,
+      "range" to listOf("66 feet") as java.util.List<String>
+    ) as java.util.Map<String, List<String>>)
   )
 
   val ex4 = Example(
@@ -153,11 +151,11 @@ class ExampleSpec : Spek({
         |12 hours playtime. Recharge in just 3-4 hours with included micro USB cable
       """.replace("|", "")
     ),
-    FilledTemplate(slots(
-      SlotName("btVersion") to slotFillers(wordTokens("Bluetooth", "4.0")),
-      SlotName("watts") to slotFillers(wordTokens("12W")),
-      SlotName("playtime") to slotFillers(wordTokens("12", "hours"))
-    ))
+    FilledTemplate(hashMapOf(
+      "btVersion" to listOf("Bluetooth 4.0") as java.util.List<String>,
+      "watts" to listOf("12W") as java.util.List<String>,
+      "playtime" to listOf("12 hours") as java.util.List<String>
+    ) as java.util.Map<String, List<String>>)
   )
 
   val result = rapier(
@@ -173,8 +171,9 @@ class ExampleSpec : Spek({
 
   it("should have rules for range") {
     val finalResult = result.removeMostSpecific().toBaseRules()
-
     finalResult[SlotName("range")].size shouldNotEqual 0
+
+    println(finalResult)
   }
 })
 
