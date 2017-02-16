@@ -110,7 +110,7 @@ class JavaExampleSpec : Spek({
         |SUPERIOR SOUND QUALITY: Experience your music in full-bodied stereo and enjoy a
         |   High Definition stereo sound with a impressive volume. Up to 2X volume than
         |   most speaker in the market
-        |COMPACT WIRELESS BLUETOOTH SPEAKER LOUD SOUND: Equiped with 10W total acoustic
+        |COMPACT WIRELESS BLUETOOTH SPEAKER LOUD SOUND: Equiped with 10 W total acoustic
         |  drivers produce a wide audio spectrum. The newly designed passive radiator
         |   could provide strong bass without distortion even at highest volume.
         |   Outstanding connection range of up to 66 feet.
@@ -126,7 +126,7 @@ class JavaExampleSpec : Spek({
       """.replace("|","")
     ),
     FilledTemplate(hashMapOf(
-      "watts" to listOf("10W") as java.util.List<String>,
+      "watts" to listOf("10 W") as java.util.List<String>,
       "playtime" to listOf("6 hours") as java.util.List<String>,
       "range" to listOf("66 feet") as java.util.List<String>
     ) as java.util.Map<String, List<String>>)
@@ -145,7 +145,7 @@ class JavaExampleSpec : Spek({
         |Bluetooth 4.0 technology: Equipped with the advanced technology,compatible
         |with all Bluetooth compacity devices.Speaker automatically reconnects to the
         |last device used
-        |Superior sound quality: Enjoy your music in 12W full-bodied stereo realized
+        |Superior sound quality: Enjoy your music in 12 W full-bodied stereo realized
         |through dual high-performance drivers and an unique enhanced bass
         |Long playtime: Built-in Li-Ion 2200 mAh rechargeable battery guarantees up to
         |12 hours playtime. Recharge in just 3-4 hours with included micro USB cable
@@ -153,7 +153,7 @@ class JavaExampleSpec : Spek({
     ),
     FilledTemplate(hashMapOf(
       "btVersion" to listOf("Bluetooth 4.0") as java.util.List<String>,
-      "watts" to listOf("12W") as java.util.List<String>,
+      "watts" to listOf("12 W") as java.util.List<String>,
       "playtime" to listOf("12 hours") as java.util.List<String>
     ) as java.util.Map<String, List<String>>)
   )
@@ -172,8 +172,6 @@ class JavaExampleSpec : Spek({
   it("should have rules for range") {
     val finalResult = result.removeMostSpecific().toBaseRules()
     finalResult[SlotName("range")].size shouldNotEqual 0
-
-    println(finalResult)
   }
 })
 
