@@ -22,7 +22,9 @@ import com.frankandrobot.rapier.meta.Examples
 import com.frankandrobot.rapier.meta.RapierParams
 import com.frankandrobot.rapier.meta.SlotName
 import com.frankandrobot.rapier.nlp.compressRuleArray
+import com.frankandrobot.rapier.rule.BaseRule
 import com.frankandrobot.rapier.rule.IRule
+import com.frankandrobot.rapier.rule.MostSpecificRule
 import com.frankandrobot.rapier.rule.mostSpecificRules
 import java.util.*
 
@@ -65,7 +67,7 @@ fun rapier(blankTemplate : BlankTemplate,
     SlotRules(slotName, rules)
 
   }.fold(HashMap<SlotName,List<IRule>>()) { total, cur ->
-    total[cur.slotName] = cur.learnedRules
+    total[cur.slotName] = total.getOrDefault(cur.slotName, emptyList()) + cur.learnedRules
     total
   }
 
@@ -80,4 +82,24 @@ data class LearnedRules(private val results : HashMap<SlotName,List<IRule>>) {
   operator fun get(slotName : SlotName) = results[slotName]!!
 
   operator fun invoke() = results
+
+  override fun toString(): String {
+    return results.map { Pair(it.key, it.value).toString() }.joinToString("\n")
+  }
+
+  fun removeMostSpecific() = LearnedRules(
+    results.mapValues { it.value.filter{ !(it is MostSpecificRule)} }
+      as HashMap<SlotName, List<IRule>>
+  )
+
+  fun toBaseRules() = LearnedRules(
+    results.mapValues { it.value.map{
+      BaseRule(
+        preFiller = it.preFiller,
+        filler = it.filler,
+        postFiller = it.postFiller,
+        slotName = it.slotName
+      )
+    }} as HashMap<SlotName, List<IRule>>
+  )
 }

@@ -53,6 +53,15 @@ data class RuleWithPositionInfo(
     baseRule2 = baseRule2,
     slotName = slotName
   )
+
+  override fun toString(): String {
+    return BaseRule(
+      preFiller = preFiller,
+      filler = filler,
+      postFiller = postFiller,
+      slotName = slotName
+    ).toString()
+  }
 }
 
 data class FillerIndexInfo(val numUsed1 : Int = 0, val numUsed2 : Int = 0)

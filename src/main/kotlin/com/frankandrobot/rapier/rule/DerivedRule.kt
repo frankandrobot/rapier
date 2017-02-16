@@ -19,7 +19,6 @@ package com.frankandrobot.rapier.rule
 
 import com.frankandrobot.rapier.meta.SlotName
 import com.frankandrobot.rapier.pattern.Pattern
-import com.frankandrobot.rapier.util.indent
 
 /**
  * It's called a DerivedRule because it's based on the two base rules
@@ -33,17 +32,11 @@ data class DerivedRule(
   override val baseRule2 : IRule) : IDerivedRule {
 
   override fun toString() : String {
-    val pre = preFiller.toString()
-    val filler = filler.toString()
-    val post = postFiller.toString()
-
-    return """Pattern
-  PreFiller:
-${pre.indent(4)}
-  Filler:
-${filler.indent(4)}
-  PostFiller:
-${post.indent(4)}
-"""
+    return BaseRule(
+      preFiller = preFiller,
+      filler = filler,
+      postFiller = postFiller,
+      slotName = slotName
+    ).toString()
   }
 }
