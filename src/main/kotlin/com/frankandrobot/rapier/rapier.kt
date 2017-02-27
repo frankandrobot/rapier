@@ -35,6 +35,7 @@ fun rapier(blankTemplate : BlankTemplate,
 
   val mostSpecificSlotRules = mostSpecificRules(blankTemplate, examples)
 
+  // list by slot
   val results = mostSpecificSlotRules.map { result ->
 
     val slotName = result.key
@@ -54,52 +55,67 @@ fun rapier(blankTemplate : BlankTemplate,
 
         if (0 < rules.size && rules.size < prevRuleSize) {
           failures = 0
-        }
-        else if (prevRuleSize < rules.size) {
+        } else if (prevRuleSize < rules.size) {
           failures = rules.size
-        }
-        else {
+        } else {
           failures++
         }
       }
     }
 
     SlotRules(slotName, rules)
-
-  }.fold(HashMap<SlotName,List<IRule>>()) { total, cur ->
-    total[cur.slotName] = total.getOrDefault(cur.slotName, emptyList()) + cur.learnedRules
-    total
   }
 
   return LearnedRules(results)
 }
 
 
-data class SlotRules(val slotName : SlotName, val learnedRules : List<IRule>)
+data class SlotRules(val slotName : SlotName, val learnedRules : List<IRule>) {
 
-data class LearnedRules(private val results : HashMap<SlotName,List<IRule>>) {
-
-  operator fun get(slotName : SlotName) = results[slotName]!!
-
-  operator fun invoke() = results
-
-  override fun toString(): String {
-    return results.map { Pair(it.key, it.value).toString() }.joinToString("\n")
-  }
-
-  fun removeMostSpecific() = LearnedRules(
-    results.mapValues { it.value.filter{ !(it is MostSpecificRule)} }
-      as HashMap<SlotName, List<IRule>>
+  fun removeMostSpecific() = SlotRules(
+    slotName,
+    learnedRules.filter { !(it is MostSpecificRule) }
   )
 
-  fun toBaseRules() = LearnedRules(
-    results.mapValues { it.value.map{
+  fun toBaseRules() = SlotRules(
+    slotName,
+    learnedRules.map {
       BaseRule(
         preFiller = it.preFiller,
         filler = it.filler,
         postFiller = it.postFiller,
         slotName = it.slotName
       )
-    }} as HashMap<SlotName, List<IRule>>
+    }
   )
+
+  override fun toString() : String {
+    return Pair(slotName, learnedRules).toString()
+  }
+}
+
+
+data class LearnedRules(private val results : List<SlotRules>) {
+
+  private val resultsMap by lazy {
+    results.fold(HashMap<SlotName, List<IRule>>()) { total, cur ->
+      total[cur.slotName] =
+        total.getOrDefault(cur.slotName, emptyList()) + cur.learnedRules
+      total
+    }
+  }
+
+  operator fun get(slotName : SlotName) = resultsMap[slotName]!!
+
+  operator fun invoke() = resultsMap
+
+  override fun toString(): String {
+    return results.map { it.toString() }.joinToString("\n")
+  }
+
+  fun normalize() = LearnedRules(
+    results.map{it.removeMostSpecific()}.map{it.toBaseRules()}
+  )
+
+  fun all() = results.flatMap { it.learnedRules }
 }

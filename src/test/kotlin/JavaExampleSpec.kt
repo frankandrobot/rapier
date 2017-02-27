@@ -165,12 +165,12 @@ class JavaExampleSpec : Spek({
   )
 
   it("should work have rules for watts") {
-    val finalResult = result.removeMostSpecific().toBaseRules()
+    val finalResult = result.normalize()
     finalResult[SlotName("watts")].size shouldNotEqual 0
   }
 
   it("should have rules for range") {
-    val finalResult = result.removeMostSpecific().toBaseRules()
+    val finalResult = result.normalize()
     finalResult[SlotName("range")].size shouldNotEqual 0
   }
 })

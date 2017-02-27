@@ -90,13 +90,15 @@ data. However, a command line interface is in the works. In the mean time, check
 
      ```kotlin
      val examples = Examples(listOf(example))
-     val allLearnedRules = rapier(blankTemplate, examples = examples, params = params)
+     val learnedRules = 
+       rapier(blankTemplate, examples = examples, params = params)
+         .normalize() // remove useless rules and convert to simpler rule format
      ```
 
 7.   Extract information from new documents using the learned rules.
   
      ```kotlin
-     val rulesForTitleSlot = allLearnedRules[SlotName("title")]
+     val rulesForTitleSlot = learnedRules[SlotName("title")]
      val results = rulesForTitleSlot.findMatches(aDocument)
      println(result[SlotName("title")])
      ```
@@ -104,8 +106,6 @@ data. However, a command line interface is in the works. In the mean time, check
      Or find all the matches for each slot in one shot.
      
      ```kotlin
-     val allResults = allLearnedRules()
-       .flatMap { learnedRule -> learnedRule.value }
-       .findMatches(aDocument)
+     val allResults = learnedRules.all().findMatches(aDocument)
      println(allResults[SlotName("title")])
      ```
