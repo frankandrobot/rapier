@@ -20,8 +20,7 @@ package com.frankandrobot.rapier.meta
 import com.frankandrobot.rapier.wordSlotFiller
 import com.frankandrobot.rapier.wordTokens
 import org.amshove.kluent.shouldEqual
-import org.funktionale.option.Option
-import org.funktionale.option.Option.*
+import org.funktionale.option.Option.Some
 import org.jetbrains.spek.api.Spek
 import java.util.List
 import java.util.Map
@@ -40,31 +39,45 @@ class FilledTemplateSpec : Spek({
     }
 
     describe("alternate constructor") {
-      it("should work") {
-        val template = FilledTemplate(
-          hashMapOf(
-            "1" to arrayListOf("one two", "three four"),
-            "2" to arrayListOf("second")
-          ) as Map<String, List<String>>
-        )
-        val defaultCons = FilledTemplate(Slots(
-          hashMapOf(
-            SlotName("1") to Slot(
-              SlotName("1"),
-              hashSetOf(
-                SlotFiller(Some("one two")),
-                SlotFiller(Some("three four"))
-              )
-            ),
-            SlotName("2") to Slot(
-              SlotName("2"),
-              hashSetOf(
-                SlotFiller(Some("second"))
-              )
+      val template = FilledTemplate(
+        hashMapOf(
+          "1" to arrayListOf("one two", "three four"),
+          "2" to arrayListOf("second")
+        ) as Map<String, List<String>>
+      )
+      val defaultCons = FilledTemplate(Slots(
+        hashMapOf(
+          SlotName("1") to Slot(
+            SlotName("1"),
+            hashSetOf(
+              SlotFiller(Some("one two")),
+              SlotFiller(Some("three four"))
+            )
+          ),
+          SlotName("2") to Slot(
+            SlotName("2"),
+            hashSetOf(
+              SlotFiller(Some("second"))
             )
           )
-        ))
-        template shouldEqual defaultCons
+        )
+      ))
+
+      it("should map names correctly") {
+        template[SlotName("1")].name shouldEqual defaultCons[SlotName("1")].name
+        template[SlotName("2")].name shouldEqual defaultCons[SlotName("2")].name
+      }
+
+      it("should map slotfillers correctly 1") {
+        val actualTokens = template[SlotName("1")].slotFillers.map { it() }
+        val expectedTokens = defaultCons[SlotName("1")].slotFillers.map { it() }
+        actualTokens shouldEqual expectedTokens
+      }
+
+      it("should map slotfillers correctly 2") {
+        val actualTokens = template[SlotName("2")].slotFillers.map { it() }
+        val expectedTokens = defaultCons[SlotName("2")].slotFillers.map { it() }
+        actualTokens shouldEqual expectedTokens
       }
     }
   }
